@@ -1,0 +1,36 @@
+# Get the uselogic path 
+set script_path [ file dirname [ file normalize [ info script ] ]]
+puts $script_path
+puts "---------------------------"
+puts " INSERTING MID-UL FIRMWARE "
+puts "---------------------------"
+ 
+# - IPs 
+set_global_assignment -name IP_FILE $script_path/ip/fifo_16x8.ip
+set_global_assignment -name IP_FILE $script_path/ip/fifo_40x128.ip
+set_global_assignment -name IP_FILE $script_path/ip/fifo_168x128.ip
+set_global_assignment -name IP_FILE $script_path/ip/fifo_256x256.ip
+set_global_assignment -name IP_FILE $script_path/ip/fifo_64x8.ip
+# - Package 
+set_global_assignment -name VHDL_FILE $script_path/hdl/pack_mid_ul.vhd
+# - Modules 
+set_global_assignment -name VHDL_FILE $script_path/hdl/regional_decoder.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/regional_control.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/regional_elink.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/local_decoder.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/local_control.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/local_elink.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/elink_mux.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/transmitter.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/packetizer.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/update_header.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/zs_packet.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/zs_mux.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/dummy_ul_avalonMM.vhd
+set_global_assignment -name VHDL_FILE $script_path/hdl/gbt_selector.vhd
+# - CRU Modules 
+set_global_assignment -name VHDL_FILE $script_path/../../COMMON/hdl/prsg.vhd 
+# - top level entity
+set_global_assignment -name VHDL_FILE $script_path/hdl/user_logic.vhd
+
+

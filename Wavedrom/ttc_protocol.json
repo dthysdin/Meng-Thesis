@@ -1,0 +1,8 @@
+{signal: [
+  { wave: 'p.......',ration:1,  period: 2, phase:0},
+  { wave: 'lh.....l',ration:1, period:2},
+  { wave: 'l.hl....',ration:1, period:2},
+  {wave: 'x3.....x',ration:1, data: 'D1', period: 2}, ],
+ config:{skin:'narrow'}
+   
+}
