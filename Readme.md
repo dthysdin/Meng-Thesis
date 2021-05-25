@@ -1,21 +1,13 @@
-[![Build Status](https://travis-ci.com/AliceO2Group/ReadoutCard.svg?branch=master)](https://travis-ci.com/AliceO2Group/ReadoutCard)
-[![JIRA](https://img.shields.io/badge/JIRA-Report%20issue-blue.svg)](https://alice.its.cern.ch/jira/secure/CreateIssue.jspa?pid=11700&issuetype=1) [![](http://ali-ci.cern.ch/repo/buildstatus/AliceO2Group/ReadoutCard/master/build_ReadoutCard_o2-dataflow.svg)](https://ali-ci.cern.ch/repo/logs/AliceO2Group/ReadoutCard/master/latest/build_ReadoutCard_o2-dataflow/fullLog.txt)
 
-ReadoutCard (RoC) module
+Master of Engineering: Electrical Engineering
+Title: "ALICE CRU USER-LOGIC FOR THE MID READOUT CHAIN"
 ===================
 
 Table of Contents
 ===================
 1. [Introduction](#introduction)
-2. [Usage](#usage)
-  * [Addressing](#addressing)
-  * [DMA channels](#dma-channels)
-  * [Card Configurator](#card-configurator)
-  * [BAR interface](#bar-interface)
-  * [Parameters](#parameters-1)
-  * [Utility programs](#utility-programs)
-  * [Exceptions](#exceptions)
-  * [Python interface](#python-interface)
+2. [Books](#Books)
+2. [Chapters](#Chapters)
 3. [Installation](#installation)
 4. [Implementation notes](#implementation-notes)
 5. [Known issues](#known-issues)
@@ -23,7 +15,7 @@ Table of Contents
 
 Introduction
 ===================
-The ReadoutCard module`*` is a C++ library that provides a high-level interface for accessing and controlling 
+The ReadoutCard module is a C++ library that provides a high-level interface for accessing and controlling 
 high-performance data acquisition PCIe cards.
 
 Included in the library are several supporting command-line utilities for listing cards, accessing registers, 
@@ -727,6 +719,4 @@ Known issues
 ===================
 C-RORC concurrent channels
 -------------------
-On certain machines, initializing multiple C-RORC channels concurrently has led to hard lockups.
-The cause is unknown, but adding acpi=off to the Linux boot options fixed the issue.
 The issue has occurred on Dell R720 servers.
