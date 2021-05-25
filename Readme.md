@@ -1,9 +1,16 @@
 
-Master of Engineering: Electrical Engineering
-Title: "ALICE CRU USER-LOGIC FOR THE MID READOUT CHAIN"
+Master of Engineering: Electrical Engineering.
 ===================
 
-Table of Contents
+#TITLE: ALICE CRU USER LOGIC FIRMWARE FOR THE MID READOUT CHAIN
+===================
+
+# Abstract
+===================
+
+
+
+#Table of Contents
 ===================
 1. [Introduction](#introduction)
 2. [Books](#Books)
@@ -13,7 +20,7 @@ Table of Contents
 5. [Known issues](#known-issues)
 
 
-Introduction
+#Introduction
 ===================
 The ReadoutCard module is a C++ library that provides a high-level interface for accessing and controlling 
 high-performance data acquisition PCIe cards.
@@ -27,19 +34,7 @@ feel free to skip ahead to the section "Python interface" for the most convenien
 The library currently supports the C-RORC and CRU cards.
 
 
-## Terminology
-The following table provides an overview of the units in the memory layout that you might encounter 
-
-| Unit | Description | Typical size |
-| --- | --- | --- |
-| Channel buffer | A typically large buffer for DMA transfers from one DMA channel. Typically created by readout process by allocating hugepages | Several GiB |
-| Hugepage       | A large CPU MMU page | 2 MiB or 1 GiB |  
-| Superpage      | A physically contiguous subdivision of a hugepage (1 MiB multiple). It is passed to the driver, which will fill it with DMA pages without further intervention | 2 MiB |
-| DMA page       | The unit of individual DMA transfers used by the card | 8 KiB for CRU, configurable for C-RORC |
-
-
-
-Usage
+#Usage
 ===================
 For a simple usage example, see the program in `src/Example.cxx`.
 For high-performance readout, the benchmark program `src/CommandLineUtilities/ProgramDmaBench.cxx` may be more
