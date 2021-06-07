@@ -10,7 +10,7 @@
 -- Created   : 2020-06-27
 -- Platform  : Quartus Pro 18.1
 -- Standard  : VHDL'93'
--- Version   : 0.7
+-- Version   : 2.0
 -------------------------------------------------------------------------------
 -- last changes
 -- <30/06/2020> change signal names and decrease buffer sizes
@@ -58,18 +58,18 @@ entity elink_mux is
 	packet_full_i : in std_logic;
 	-------------------------------------------------------------------
 	-- mid gbt elink data --						
-	gbt_data_i	  : in std_logic_vector(39 downto 0);		 
-	gbt_val_i	  : in std_logic;				
+	gbt_data_i    : in std_logic_vector(39 downto 0);		 
+	gbt_val_i     : in std_logic;				
 	-------------------------------------------------------------------	
-    -- e-link status  
+    	-- e-link status  
 	active_o      : out std_logic_vector(4 downto 0);
 	crateID_o     : out std_logic_vector(3 downto 0);
 	missing_cnt_o : out std_logic_vector(11 downto 0);
 	-------------------------------------------------------------------
 	-- muxtiplexer data info --
-	mux_val_o	  : out std_logic;
-	mux_stop_o	  : out std_logic;
-	mux_data_o	  : out std_logic_vector(7 downto 0)
+	mux_val_o     : out std_logic;
+	mux_stop_o    : out std_logic;
+	mux_data_o    : out std_logic_vector(7 downto 0)
 	------------------------------------------------------------------------
 	);  
 end elink_mux;
@@ -78,16 +78,20 @@ end elink_mux;
 --============================================================================
 architecture rtl of elink_mux is
 	-- ========================================================
-	-- SYMBOLIC ENCODED state machine: t_elink_mux_state
+	-- type declarations
 	-- ========================================================
+	-- --------------------------------------------------
+	-- SYMBOLIC ENCODED state machine: t_elink_mux_state
+	-- --------------------------------------------------
 	type t_elink_mux_state is (IDLE, 
                                    REG_READY, 
                                    DECODE_REG,
                                    LOC_READY, 
                                    MUX_LOC, 
-                                   DECODE_LOC); 
-										
+                                   DECODE_LOC); 					
 	signal state : t_elink_mux_state; 
+        --
+	type t_num_loc is range 0 to 3; -- number of local boards
 	-- ========================================================
 	-- constant declarations
 	-- ========================================================
@@ -103,11 +107,10 @@ architecture rtl of elink_mux is
 	signal s_locID          : integer range 0 to 3 := 0;	   -- local ID 
 	signal s_loc_select     : std_logic_vector(3 downto 0) := x"0"; -- local board select 
 	--
-	signal s_reg_rdreq	    : std_logic;                       -- regional read
+	signal s_reg_rdreq	    : std_logic;                   -- regional read
 	signal s_reg_tx_data    : std_logic_vector(47 downto 0);   -- regional tx data + crateID (additional byte as per new requirement)
 	signal s_reg_rx_val 	: std_logic;                       -- regional rx valid 
 	signal s_reg_rx_Data    : std_logic_vector(39 downto 0);   -- regional rx data
-	
 	--
 	signal s_active	        : std_logic_vector(4 downto 0);    -- active elinks
 	signal s_inactive       : std_logic_vector(4 downto 0);    -- inactive elinks
@@ -122,14 +125,15 @@ architecture rtl of elink_mux is
 	signal s_missing_cnt      : unsigned(11 downto 0) := (others => '0'); -- missing events counter 
 	-- 
 	signal s_mux_val        : std_logic;                       -- temporary mux valid
-	signal s_mux_data 	    : std_logic_vector(7 downto 0);    -- temporary mux data
+	signal s_mux_data       : std_logic_vector(7 downto 0);    -- temporary mux data
 	
 	-- data acquisittion 
 	signal s_daq_stop       : std_logic;                       -- stop daq 
 	signal s_daq_resume     : std_logic;                       -- resume daq 
 	signal s_daq_valid      : std_logic := '0';                -- valid daq 
 	--  
-	signal s_index	        : integer range 0 to 21 := 0;      -- index counter   	
+	signal s_index	        : integer range 0 to 21 := 0;      -- index counter  
+	
 --=============================================================================
 -- architecture begin
 --=============================================================================
@@ -139,35 +143,35 @@ begin
 	-- This statement generates the port mapping of 4 local boards
 	--=============================================================================
 	LOC_GEN : for i in 0 to 3 generate		 
-		--================--
-		-- LOCAL ELINKS 	--
-		--================--
+		--==============--
+		-- LOCAL ELINKS --
+		--==============--
 		local_elink_inst: local_elink 
 		generic map (g_NUM_HBFRAME_SYNC => g_NUM_HBFRAME_SYNC)
 		port map ( 
-		clk_240		   => clk_240,
+		clk_240	       => clk_240,
 		--
 		reset_i	       => reset_i,
 		--
 		daq_stop_i     => s_daq_stop,
 		daq_valid_i    => s_daq_valid,
-      	daq_resume_i   => s_daq_resume,
+      		daq_resume_i   => s_daq_resume,
 		--
 		orb_pause_o    => s_orb_pause(i),
-      	eox_pause_o    => s_eox_pause(i),
+      		eox_pause_o    => s_eox_pause(i),
 		--
 		gbt_data_i     => gbt_data_i(7+8*i downto 8*i),
 		gbt_val_i      => gbt_val_i,
 		--
 		ttc_mode_i     => ttc_mode_i,		
 		--
-		loc_rdreq_i	   => s_loc_rdreq(i),
+		loc_rdreq_i    => s_loc_rdreq(i),
 		--
-		loc_val_o	   => s_loc_rx_val(i),
-		loc_data_o	   => s_loc_rx_data(i),
+		loc_val_o      => s_loc_rx_val(i),
+		loc_data_o     => s_loc_rx_data(i),
 		loc_missing_o  => s_temp_missing_cnt(i),
 		loc_afull_o    => s_afull(i),
-		loc_empty_o	   => s_empty(i),
+		loc_empty_o    => s_empty(i),
 		loc_active_o   => s_active(i),
 		loc_inactive_o => s_inactive(i));
 		
@@ -178,23 +182,23 @@ begin
 	regional_elink_inst: regional_elink
 	generic map (g_REGIONAL_ID => g_REGIONAL_ID, g_NUM_HBFRAME_SYNC => g_NUM_HBFRAME_SYNC, g_LINK_ID => g_LINK_ID)
 	port map ( 
-	clk_240	         => clk_240,
+	clk_240	          => clk_240,
 	--
-	reset_i	         => reset_i,
+	reset_i	          => reset_i,
 	--
-	daq_stop_i       => s_daq_stop,
-	daq_valid_i      => s_daq_valid,
-	daq_resume_i     => s_daq_resume,
+	daq_stop_i        => s_daq_stop,
+	daq_valid_i       => s_daq_valid,
+	daq_resume_i      => s_daq_resume,
 	--
-	orb_pause_o      => s_orb_pause(4),
-	eox_pause_o      => s_eox_pause(4),
+	orb_pause_o       => s_orb_pause(4),
+	eox_pause_o       => s_eox_pause(4),
 	--
-	gbt_data_i       => gbt_data_i(39 downto 32),
-	gbt_val_i        => gbt_val_i,
+	gbt_data_i        => gbt_data_i(39 downto 32),
+	gbt_val_i         => gbt_val_i,
 	--
-	ttc_mode_i       => ttc_mode_i,
+	ttc_mode_i        => ttc_mode_i,
 	--
-	reg_rdreq_i      => s_reg_rdreq,
+	reg_rdreq_i       => s_reg_rdreq,
 	--
 	reg_val_o         => s_reg_rx_val,
 	reg_data_o        => s_reg_rx_data,
@@ -221,10 +225,10 @@ begin
 	  else 
 	   -- run has started
 	   if sox_pulse_i = '1' then 
-         s_daq_valid <= '1'; -- 
+            s_daq_valid <= '1'; -- 
 	   -- run is finished 
-       elsif s_daq_stop = '1' then 
-        s_daq_valid <= '0'; 
+           elsif s_daq_stop = '1' then 
+            s_daq_valid <= '0'; 
 	   end if;
 	  end if;
 	 end if;
@@ -242,10 +246,10 @@ begin
 	  
 	  -- valid DAQ 
 	  if s_daq_valid = '1' and s_empty = "11111" and state = IDLE then
-       if s_daq_resume /= '1' and s_daq_stop /= '1' then 
+           if s_daq_resume /= '1' and s_daq_stop /= '1' then 
 	    -- resume DAQ "timeframe frame completed"
 	    if s_active = s_orb_pause and s_orb_pause /= "00000" then 
-         s_daq_resume <= '1';
+             s_daq_resume <= '1';
 	    -- stop DAQ "run completed"
 	    elsif s_active = s_inactive and s_eox_pause /= "00000" then 
 	     s_daq_stop <= '1';
@@ -256,57 +260,52 @@ begin
 	end process p_end_daq;
 	--=============================================================================
 	-- Begin of p_locID
-	-- This process multiplexes diffrenet local ID 
+	-- This process assigns the local ID
 	--=============================================================================
 	p_locID: process(clk_240)
+         -- declare variable 
+         variable highest_locID : t_num_loc := 3;
 	begin
-     if rising_edge(clk_240) then
-      -- look ahead local ID
-      if state = MUX_LOC then 
-	   case s_afull(3 downto 0) is 
-	   -- priority encoder based on the empty signals
-	   -- provided by each fifo
-	   when x"0" =>  
-        -- empty 
-	    if s_empty(3) /= '1' then 
-		 s_locID <= 3;
-	    elsif s_empty(2) /= '1' then
-		 s_locID <= 2; 
-	    elsif s_empty(1) /= '1' then
-		  s_locID <= 1; 
-	    elsif s_empty(0) /= '1' then
-		  s_locID <= 0; 
-	    end if;
-	   -- priority encoder based on the afull signals
-	   -- provided by each fifo 
-	   when others => 
-	    -- afull 
-	    if s_afull(3) = '1' then 
-	     s_locID <= 3;
-	    elsif s_afull(2) = '1' then
-	     s_locID <= 2; 
-	    elsif s_afull(1) = '1' then
-	     s_locID <= 1; 
-	    elsif s_afull(0) = '1' then
-	     s_locID <= 0; 
-	    end if;
-	   end case;
-      end if;
-     end if;
-	end process p_locID;	
+         if rising_edge(clk_240) then
+          -- look ahead local ID
+          -- Notice that the variable is assigned multiple times. 
+          -- However as the loop is executed in increasing order, the last (highest) assignment wins.
+          -- This priority encoder is based on the status of empty and afull signals.
+
+          if state = MUX_LOC then 
+           if s_afull = x"0" then  
+            for i in t_num_loc loop 
+             if s_empty(i) /= '1' then
+              highest_locID := i;
+             end if;
+            end loop;
+           else 
+            for i in t_num_loc loop 
+             if s_sfull(i) = '1' then
+              highest_locID := i;
+             end if;
+            end loop;
+           end if;
+           s_locID <= highest_locID; -- store the highest_locID 
+          end if;
+         end if;
+        end process p_locID;	
 	--=============================================================================
 	-- Begin of p_read_loc
-	-- This process multiplexes diffrenet local ID 
+	-- This process assigns the local read request
 	--=============================================================================
-	p_read_loc: process(state, s_afull, s_empty)
-	begin
-     -- default 
-     s_loc_rdreq <= x"0";
 
-     if state = MUX_LOC then 
+	p_read_loc: process(state, s_afull, s_empty)
+         -- declare variable 
+         variable highest_locRead : t_num_loc := 3;
+	begin
+         -- default 
+         s_loc_rdreq <= x"0";
+
+         if state = MUX_LOC then 
 	  -- asynchronize read local
 	  case s_afull(3 downto 0) is 
-      -- priority encoder based on the empty signals
+          -- priority encoder based on the empty signals
 	  -- provided by each fifo
 	  when x"0" => 
 	   -- empty
@@ -321,7 +320,7 @@ begin
 	   end if;
 	  -- priority encoder based on the afull signals
 	  -- provided by each fifo
-      when others => 
+          when others => 
 	   -- afull
 	   if s_afull(3) = '1' then 
 		s_loc_rdreq <= x"8";
@@ -332,8 +331,8 @@ begin
 	   elsif s_afull(0) = '1' then
 		s_loc_rdreq <= x"1";
 	   end if;
-      end case;
-     end if;
+          end case;
+         end if;
 	end process p_read_loc;
 
 	-- Request regional data from fifo

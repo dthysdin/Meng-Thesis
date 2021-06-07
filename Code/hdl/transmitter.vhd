@@ -10,7 +10,7 @@
 -- Created   	: 2020-10-12
 -- Platform  	: Quartus Pro 18.1
 -- Standard 	: VHDL'93'
--- Version	: 0.7
+-- Version	: 2.0
 -------------------------------------------------------------------------------
 -- last changes 
 -- <04/12/2020> set the LINK ID to a fix value 
@@ -86,10 +86,10 @@ architecture rtl of transmitter is
 	-- ===================================================
 	type t_trans_state is (
 		                IDLE,
-			            PLOAD_RDY,
-			            PLOAD_VAL,
-			            PLOAD_ACCESS,
-			            PLOAD_SEND);
+			        PLOAD_RDY,
+			        PLOAD_VAL,
+			        PLOAD_ACCESS,
+			        PLOAD_SEND);
 						
 	signal state : t_trans_state := IDLE;
 
@@ -266,7 +266,7 @@ begin
 	    s_packet_rdreq <= "10";                                    -- request packets from upper part of the GBT link
 	   elsif s_total_cnt > x"0000" and s_loadB > x"0000" then
 	    s_packet_rdreq <= "01";                                    -- request packets from upper part of the GBT link
-       end if;
+           end if;
 	  end if;
 	 
 	 when PLOAD_SEND => 
@@ -276,7 +276,7 @@ begin
 	    s_packet_rdreq <= "10";                                   -- request packets from upper part of the GBT link
 	   else 
 	    s_packet_rdreq <= "01";                                   -- request packets from lower part of the GBT link
-       end if;
+           end if;
 	  end if;
 	 when others => null;
 	 end case;
@@ -284,11 +284,11 @@ begin
 
 	-- FSM status 
 	s_fsm_monit <= x"0" when state = IDLE         else -- 0000
-			       x"1" when state = PLOAD_RDY    else -- 0001
-			       x"2" when state = PLOAD_VAL    else -- 0010
-			       x"4" when state = PLOAD_ACCESS else -- 0100
-			       x"8" when state = PLOAD_SEND   else -- 1000
-				   x"F";                               -- 1111 -- error!!!!
+		       x"1" when state = PLOAD_RDY    else -- 0001
+		       x"2" when state = PLOAD_VAL    else -- 0010
+		       x"4" when state = PLOAD_ACCESS else -- 0100
+		       x"8" when state = PLOAD_SEND   else -- 1000
+		       x"F";                               -- 1111 -- error!!!!
 	
 	-- packet request
 	packet_rdreq_o(1) <= s_packet_rdreq(1) and packet_i(1).ready; -- read from upper part of the GBT link

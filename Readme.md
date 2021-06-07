@@ -2,16 +2,16 @@
 Master of Engineering: Electrical Engineering.
 ===================
 
-#TITLE: ALICE CRU USER LOGIC FIRMWARE FOR THE MID READOUT CHAIN
-===================
+# TITLE: ALICE CRU USER LOGIC FIRMWARE FOR THE MID READOUT CHAIN
+___
 
-# Abstract
-===================
+## Abstract
+___
 
 
 
-#Table of Contents
-===================
+## Table of Contents
+___
 1. [Introduction](#introduction)
 2. [Books](#Books)
 2. [Chapters](#Chapters)
@@ -20,8 +20,8 @@ Master of Engineering: Electrical Engineering.
 5. [Known issues](#known-issues)
 
 
-#Introduction
-===================
+## Introduction
+___
 The ReadoutCard module is a C++ library that provides a high-level interface for accessing and controlling 
 high-performance data acquisition PCIe cards.
 
@@ -470,244 +470,26 @@ states while the monitoring format is an int (0/1), in all other formats a strin
 To directly send metrics from `roc-status` to the Alice O2 Monitoring library, the argument `--monitoring` is necessary. The
 metric format for the CRORC and the CRU is different, as different parameters are relevant for each card type.
 
-##### CRORC
+##### Resource usage
 
-###### Metric: `"CRORC"`
+Fitter Status : Successful - Fri May  7 10:59:15 2021
+Quartus Prime Version : 18.1.0 Build 222 09/21/2018 SJ Pro Edition
+Revision Name : cru
+Top-level Entity Name : top
+Family : Arria 10
+Device : 10AX115S3F45E2SG
+Timing Models : Final
+Logic utilization (in ALMs) : 330,702 / 427,200 ( 77 % )
+Total registers : 381550
+Total pins : 369 / 960 ( 38 % )
+Total virtual pins : 0
+Total block memory bits : 22,536,168 / 55,562,240 ( 41 % )
+Total RAM Blocks : 2,050 / 2,713 ( 76 % )
+Total DSP Blocks : 0 / 1,518 ( 0 % )
+Total HSSI RX channels : 41 / 72 ( 57 % )
+Total HSSI TX channels : 41 / 72 ( 57 % )
+Total PLLs : 59 / 144 ( 41 % )
 
-| Value name             | Value                    | Type   |
-| ---------------------- | ------------------------ | ------ |
-| `"pciAddress"`         | -                        | string |
-| `"qsfp"`               | 0/1 (Disabled/Enabled)   | int    |
-| `"dynamicOffset"`      | 0/1 (Disabled/Enabled)   | int    |
-| `"timeFrameDetection"` | 0/1 (Disabled/Enabled)   | int    |
-| `"timeFrameLength"`    | -                        | int    |
-
-| Tag key               | Value                 |
-| --------------------- | --------------------- |
-| `tags::Key::SerialId` | Serial ID of the card |
-| `tags::Key::ID`       | ID of the card        | 
-| `tags::Key::Type`     | `tags::Value::CRORC`  |
-
-###### Metric: `"link"`
-
-| Value name       | Value              | Type   |
-| ---------------- | --------------     | ------ |
-| `"pciAddress"`   | -                  | string |
-| `"status"`       | 0/1 (DOWN/UP)      | int    |
-| `"opticalPower"` | -                  | double |
-
-| Tag key               | Value                 |
-| --------------------- | --------------------- |
-| `tags::Key::SerialId` | Serial ID of the card |
-| `tags::Key::CRORC`    | ID of the CRORC       |
-| `tags::Key::ID`       | ID of the link        |
-| `tags::Key::Type`     | `tags::Value::CRORC`  |
-
-##### CRU
-
-###### Metric: `"CRU"`
-
-| Value name                  | Value                   | Type   | 
-| --------------------------- | ----------------------- | ------ | 
-| `"pciAddress"`              | -                       | string |
-| `"CRU ID"`                  | Assigned CRU ID         | int    |
-| `"clock"`                   | "TTC" or "Local"        | string |
-| `"dynamicOffset"`           | 0/1 (Disabled/Enabled)  | int    |
-| `"userLogic"`               | 0/1 (Disabled/Enabled)  | int    |
-| `"runStats"`                | 0/1 (Disabled/Enabled)  | int    |
-| `"commonAndUserLogic"`      | 0/1 (Disabled/Enabled)  | int    |
-
-| Tag key               | Value                 |
-| --------------------- | --------------------- |
-| `tags::Key::SerialId` | Serial ID of the card |
-| `tags::Key::Endpoint` | Endpoint of the card  |
-| `tags::Key::ID`       | ID of the card        |
-| `tags::Key::Type`     | `tags::Value::CRU`    |
-
-###### Metric: `"onu"`
-
-| Value name         - | Value                       | Type   | 
-| ---------------------| --------------------------- | ------ | 
-| `"onuStickyStatus"`  | 0/1 (DOWN/UP)               | int    |
-| `"onuAddress"`       | ONU Address                 | string |
-| `"rx40Locked"`       | 0/1 (False/True)            | int    |
-| `"phaseGood"`        | 0/1 (False/True)            | int    |
-| `"rxLocked"`         | 0/1 (False/True)            | int    |
-| `"operational"`      | 0/1 (False/True)            | int    |
-| `"mgtTxReady"`       | 0/1 (False/True)            | int    |
-| `"mgtRxReady"`       | 0/1 (False/True)            | int    |
-| `"mgtTxPllLocked"`   | 0/1 (False/True)            | int    |
-| `"mgtRxPllLocked"`   | 0/1 (False/True)            | int    |
-| `"ponQualityStatus"` | 0/1 (Bad/Good)              | int    |
-
-| Tag key               | Value                 |
-| --------------------- | --------------------- |
-| `tags::Key::SerialId` | Serial ID of the card |
-| `tags::Key::Endpoint` | Endpoint of the card  |
-| `tags::Key::ID`       | ID of the card        |
-| `tags::Key::Type`     | `tags::Value::CRU`    |
-
-###### Metric: `"fec"`
-
-| Value name                   | Value                      | Type   | 
-| ---------------------------- | -------------------------- | ------ | 
-| `"clearFecCrcErrors"`        | 0/1 (Good/Bad)             | int    |
-| `"latchFecCrcErrors"`        | 0/1 (Good/Bad)             | int    |
-| `"slowControlFramingLocked"` | 0/1 (Good/Bad)             | int    |
-| `"fecSingleErrorCount"`      | 8-bit counter (0x0 = good) | int    |
-| `"fecDoubleErrorCount"`      | 8-bit counter (0x0 = good) | int    |
-| `"crcErrorCount"`            | 8-bit counter (0x0 = good) | int    |
-
-| Tag key               | Value                 |
-| --------------------- | --------------------- |
-| `tags::Key::SerialId` | Serial ID of the card |
-| `tags::Key::Endpoint` | Endpoint of the card  |
-| `tags::Key::ID`       | ID of the card        |
-| `tags::Key::Type`     | `tags::Value::CRU`    |
-
-
-###### Metric: `"link"`
-
-| Value name       | Value                                                             | Type   | 
-| ---------------- | ----------------------------------------------------------------- | ------ | 
-| `"pciAddress"`   | -                                                                 | string |
-| `"gbtMode"`      | "GBT/GBT" or "GBT/WB"                                             | string |
-| `"loopback"`     | 0/1 (Enabled/Disabled)                                            | int    |
-| `"gbtMux"`       | "DDG", "SWT", "TTC:CTP", "TTC:PATTERN", "TTC:MIDTRG", or "TTCUP"  | string |
-| `"datapathMode"` | "PACKET" or "STREAMING"                                           | string |
-| `"datapath"`     | 0/1 (Disabled/Enabled)                                            | int    |
-| `"rxFreq"`       | -                                                                 | double |
-| `"txFreq"`       | -                                                                 | double |
-| `"status"`       | 0/1/2 (DOWN/UP/UP was DOWN)                                       | int    |
-| `"opticalPower"` | -                                                                 | double |
-| `"systemId"`     | 8-bit hex                                                         | string |
-| `"feeId"`        | 12-bit hex                                                        | string |
-
-| Tag key               | Value                 |
-| --------------------- | --------------------- |
-| `tags::Key::SerialId` | Serial ID of the card |
-| `tags::Key::Endpoint` | Endpoint of the card  |
-| `tags::Key::CRU`      | ID of the CRU         |
-| `tags::Key::ID`       | ID of the link        |
-| `tags::Key::Type`     | `tags::Value::CRU`    |
-
-Exceptions
--------------------
-The module makes use of exceptions. Nearly all of these are derived from `boost::exception`.
-They are defined in the header 'ReadoutCard/Exception.h'. 
-These exceptions may contain extensive information about the cause of the issue in the form of `boost::error_info` 
-structs which can aid in debugging. 
-To generate a diagnostic report, you may use `boost::diagnostic_information(exception)`.      
-
-Python interface
--------------------
-If the library is compiled with Boost Python available, the shared object will be usable as a Python library.
-It is currently only able to read and write registers.
-Example usage:
-~~~
-import libReadoutCard
-# To open a BAR channel, we can use the card's PCI address or serial number
-# Here we open channel number 0
-bar = libReadoutCard.BarChannel("42:0.0", 0) # PCI address
-bar = libReadoutCard.BarChannel("12345", 0) # Serial number
-
-# Read register at index 0
-bar.register_read(0)
-# Write 123 to register at index 0
-bar.register_write(0, 123)
-# Modify bits 3-5 to at index 0 to 0x101
-bar.register_modify(0, 3, 3, 0x101)
-
-# Print doc strings for more information
-print bar.__init__.__doc__
-print bar.register_read.__doc__
-print bar.register_write.__doc__
-print bar.register_modify.__doc__
-~~~
-Note: depending on your environment, you may have to be in the same directory as the libReadoutCard.so file to import 
-it.
-You can also set the PYTHONPATH environment variable to the directory containing the libReadoutCard.so file.
-
-Installation
-===================
-Install the dependencies below and follow the instructions for building the FLP prototype.
-
-Alternatively, you can install the [FLP Suite](https://alice-o2-project.web.cern.ch/flp-suite) to completely set up the system.
-
-Dependencies
--------------------
-### Compatibility
-
-In order to use a CRU the package versions have to adhere to the following table.
-
-| ReadoutCard | CRU firmware   | CRORC firmware | PDA Driver  | PDA Library  |
-| ----------- | -------------  | -------------- | ----------- | ------------ |
-| v0.10.*     | v3.0.0/v3.1.0  | -              | v1.0.3+     | v12.0.0      |
-| v0.11.*     | v3.0.0/v3.1.0  | -              | v1.0.4+     | v12.0.0      | 
-| v0.12.*     | v3.2.0/v3.3.0  | -              | v1.0.4+     | v12.0.0      | 
-| v0.13.*     | v3.2.0/v3.3.0  | v2.4.0         | v1.0.4+     | v12.0.0      | 
-| v0.14.*     | v3.2.0/v3.3.0  | v2.4.0         | v1.0.4+     | v12.0.0      | 
-| v0.14.5     | v3.4.0         | v2.4.0         | v1.0.4+     | v12.0.0      |
-| v0.14.5     | v3.5.0         | v2.4.0         | v1.0.4+     | v12.0.0      |
-| v0.15.0     | v3.5.1         | v2.4.0         | v1.0.4+     | v12.0.0      |
-| v0.16.0     | v3.5.2         | v2.4.0         | v1.0.4+     | v12.0.0      |
-| v0.19.2     | v3.5.2         | v2.4.1         | v1.0.4+     | v12.0.0      |
-| v0.21.1     | v3.6.1         | v2.6.1         | v1.0.4+     | v12.0.0      |
-| v0.22.0     | v3.7.0/v3.8.0  | v2.6.1         | v1.0.4+     | v12.0.0      |
-| v0.24.0     | v3.7.0/v3.8.0  | v2.7.0         | v1.1.0+     | v12.0.0      |
-| v0.25.1     | v3.9.0/v3.9.1  | v2.7.0         | v1.1.0+     | v12.0.0      |
-| v0.26.0     | v3.9.1.        | v2.7.0         | v1.1.0+     | v12.0.0      |
-| v0.27.0     | v3.9.1/v3.10.0 | v2.7.0         | v1.1.0+     | v12.0.0      |
-
-The _PDA Driver_ entry refers to the `pda-kadapter-dkms-*.rpm` package which is availabe through the [o2-daq-yum](http://alice-daq-yum-o2.web.cern.ch/alice-daq-yum-o2/cc7_64/) repo as an RPM.
-
-The _PDA Library_ entry refers to the `alisw-PDA*.rpm` package which is pulled as a dependency of the ReadoutCard rpm.
-
-Both _PDA_ packages can also be installed from source as described on the next section.
-
-For the _CRU firmware_ see the [gitlab](https://gitlab.cern.ch/alice-cru/cru-fw) repo.
-
-### PDA
-The module depends on the PDA (Portable Driver Architecture) library and driver.
-If PDA is not detected on the system, only a dummy implementation of the interface will be compiled.
-
-1. Install dependency packages
-  ~~~
-  yum install kernel-devel pciutils-devel kmod-devel libtool
-  ~~~
-
-2. Download PDA
-  ~~~
-  git clone https://github.com/AliceO2Group/pda.git
-  cd pda
-  ~~~
-
-3. Compile
-  ~~~
-  ./configure --debug=false --numa=true --modprobe=true
-  make install #installs the pda library
-  cd patches/linux_uio
-  make install #installs the pda driver
-  ~~~
-  
-4. Optionally, insert kernel module. If the utilities are run as root, PDA will do this automatically.
-  ~~~
-  modprobe uio_pci_dma
-  ~~~
-
-
-
-### References
-
-chapter 1 
-
- picture of ALICE detector (https://cds.cern.ch/record/2263642).
- https://iopscience.iop.org/article/10.1088/1748-0221/3/08/S08002/pdf [alice muon trigger section]
- https://cds.cern.ch/record/2729171/files/fulltext1763969_2.pdf [ spectrometer]
- https://cds.cern.ch/record/1475243/files/0954-3899_41_8_087001.pdf [ letter of interest]
- https://www.researchgate.net/publication/3139390_Front-end_electronics_for_the_RPCs_of_the_ALICE_dimuon_trigger 
- https://iopscience.iop.org/article/10.1088/1742-6596/50/1/056/pdf [ muon trigger ]
- http://cds.cern.ch/record/2688945/files/CERN-THESIS-2019-114.pdf [ thesis ]
 
 ___
 Known issues

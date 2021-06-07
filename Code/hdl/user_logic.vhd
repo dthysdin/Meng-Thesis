@@ -10,7 +10,7 @@
 -- Created   : 2020-01-30
 -- Platform  : Quartus Pro 18.1
 -- Standard  : VHDL'93'02'
--- Version   : 0.7
+-- Version   : 2.0
 -------------------------------------------------------------------------------
 -- last changes:
 -- <09/06/2020> update the memory sizes
@@ -96,40 +96,40 @@ architecture rtl of user_logic is
 	-- ========================================================
 	-- constant declarations
 	-- ========================================================
-     constant c_NUM_GBT_USED     : integer := 16;  -- number of gbt links used for the MID readout chain (16 by default ) 
-	 constant c_NUM_HBFRAME      : integer := 256; -- number of HBFs collected during a single TF (256 HBF by default)  
-	 constant c_NUM_HBFRAME_SYNC : integer := 128; -- number of HBFs collected before synchronization of all gbt links (128 HBF by default)
+        constant c_NUM_GBT_USED     : integer := 16;  -- number of gbt links used for the MID readout chain (16 by default ) 
+	constant c_NUM_HBFRAME      : integer := 256; -- number of HBFs collected during a single TF (256 HBF by default)  
+	constant c_NUM_HBFRAME_SYNC : integer := 128; -- number of HBFs collected before synchronization of all gbt links (128 HBF by default)
 	-- ========================================================
 	-- signal declarations
 	-- ========================================================
 	-- timing & trigger control register 
 	signal s_ttc_data  : t_mid_ttc; 
-    signal s_ttc_pulse : t_mid_pulse;
+        signal s_ttc_pulse : t_mid_pulse;
 	signal s_ttc_mode  : t_mid_mode;
 
 	-- gbt data input bus
-	signal s_mid_rx_bus : t_mid_gbt_array(c_NUM_GBT_USED-1 downto 0);     -- 16 gbt links
+	signal s_mid_rx_bus : t_mid_gbt_array(c_NUM_GBT_USED-1 downto 0);    -- 16 gbt links
 
 	-- avalon monitor 
-	signal s_av_gbt_monit : Array64bit(c_NUM_GBT_USED-1 downto 0);        -- avalon registers from 16 gbt links 
-	signal s_av_dw_monit  : Array32bit(1 downto 0);                       -- avalon registers from 2 EPNs 
-	signal s_av_trg_monit : std_logic_vector(31 downto 0);                -- avalon register from TTC 
-	signal s_av_cruid_config : std_logic;                                 -- avalon register to config the cruid
+	signal s_av_gbt_monit : Array64bit(c_NUM_GBT_USED-1 downto 0);       -- avalon registers from 16 gbt links 
+	signal s_av_dw_monit  : Array32bit(1 downto 0);                      -- avalon registers from 2 EPNs 
+	signal s_av_trg_monit : std_logic_vector(31 downto 0);               -- avalon register from TTC 
+	signal s_av_cruid_config : std_logic;                                -- avalon register to config the cruid
 
 	-- reset 
-	signal s_av_reset      : std_logic := '0';                            -- avalon reset 
-	signal s_sync_reset    : std_logic := '0';                            -- self initialization reset 
-	signal s_reset         : std_logic := '0';                            -- avalon or init sync reset
+	signal s_av_reset     : std_logic := '0';                            -- avalon reset 
+	signal s_sync_reset   : std_logic := '0';                            -- self initialization reset 
+	signal s_reset        : std_logic := '0';                            -- avalon or init sync reset
 	
 	-- datapath access
-	signal s_dw_datapath : t_mid_dw_datapath_array(1 downto 0);           -- 2 CRU end-points
+	signal s_dw_datapath : t_mid_dw_datapath_array(1 downto 0);          -- 2 CRU end-points
 	
 	
 begin
 	--=============--
 	-- ttc_ulogic -- 
 	--=============--
-    ttc_ulogic_inst: ttc_ulogic
+        ttc_ulogic_inst: ttc_ulogic
 	generic map(g_NUM_HBFRAME      => c_NUM_HBFRAME,      -- number of HBFs collected during a single TF 
 	            g_NUM_HBFRAME_SYNC => c_NUM_HBFRAME_SYNC) -- number of HBFs collected before synchronization of all gbt links used for MID
 	port map (
@@ -137,19 +137,19 @@ begin
 	av_reset_i         => s_av_reset,
 	ttc_rxd_i          => ttc_rxd,
 	ttc_rxready_i      => ttc_rxready,
-    ttc_rxvalid_i      => ttc_rxvalid,
+        ttc_rxvalid_i      => ttc_rxvalid,
 	sync_reset_o       => s_sync_reset,    
 	ttc_data_o         => s_ttc_data,
 	ttc_mode_o         => s_ttc_mode,  
 	ttc_pulse_o        => s_ttc_pulse,  
-    av_trg_monit_o     => s_av_trg_monit
+        av_trg_monit_o     => s_av_trg_monit
        );  
 	--===================--
 	-- gbt_ulogic_select -- 
 	--===================--
 	gbt_ulogic_select_inst: gbt_ulogic_select
 	generic map (g_NUM_GBT_INPUT  => g_NUM_GBT_LINKS,     -- total number of cru gbt link ports available (24 links max)
-                 g_NUM_GBT_OUTPUT => c_NUM_GBT_USED)      -- total number of cru gbt link ports used for MID   
+                     g_NUM_GBT_OUTPUT => c_NUM_GBT_USED)      -- total number of cru gbt link ports used for MID   
 	port map (
 	gbt_rx_ready_i	=> gbt_rx_ready_i,
 	gbt_rx_bus_i	=> gbt_rx_bus_i,
@@ -160,40 +160,40 @@ begin
 	--================--
 	gbt_ulogic_mux_inst0: gbt_ulogic_mux
 	generic map(g_DWRAPPER_ID => 0,                        -- ID of the CRU end-point 
-                g_HALF_NUM_GBT_USED => c_NUM_GBT_USED/2,   -- half the number of cru gbt links used for MID (8 links max)
-				g_NUM_HBFRAME_SYNC  => c_NUM_HBFRAME_SYNC) -- number of HBFs collected before synchronization of all gbt links used for MID            
+                    g_HALF_NUM_GBT_USED => c_NUM_GBT_USED/2,   -- half the number of cru gbt links used for MID (8 links max)
+		    g_NUM_HBFRAME_SYNC  => c_NUM_HBFRAME_SYNC) -- number of HBFs collected before synchronization of all gbt links used for MID            
 	port map(
-	clk_240		   => ttc_rxclk,               
-	reset_i	       => s_reset,
-	afull_i 	   => afull0,		
-	ttc_data_i	   => s_ttc_data,
-	ttc_mode_i	   => s_ttc_mode,
-	ttc_pulse_i    => s_ttc_pulse,
-	mid_rx_bus_i   => s_mid_rx_bus(c_NUM_GBT_USED/2-1 downto 0),
+	clk_240		  => ttc_rxclk,               
+	reset_i	          => s_reset,
+	afull_i 	  => afull0,		
+	ttc_data_i	  => s_ttc_data,
+	ttc_mode_i	  => s_ttc_mode,
+	ttc_pulse_i       => s_ttc_pulse,
+	mid_rx_bus_i      => s_mid_rx_bus(c_NUM_GBT_USED/2-1 downto 0),
 	av_cruid_config_i => s_av_cruid_config,
-	av_gbt_monit_o => s_av_gbt_monit(c_NUM_GBT_USED/2-1 downto 0),
-	av_dw_monit_o  => s_av_dw_monit(0),
-	dw_datapath_o  => s_dw_datapath(0)
+	av_gbt_monit_o    => s_av_gbt_monit(c_NUM_GBT_USED/2-1 downto 0),
+	av_dw_monit_o     => s_av_dw_monit(0),
+	dw_datapath_o     => s_dw_datapath(0)
 			);  
 	--================--
 	-- gbt_ulogic_mux --
 	--================--
 	gbt_ulogic_mux_inst1: gbt_ulogic_mux
 	generic map(g_DWRAPPER_ID => 1,                        -- ID of the CRU end-point 
-                g_HALF_NUM_GBT_USED => c_NUM_GBT_USED/2,   -- half the number of cru gbt link used for MID (8 links max) 
-				g_NUM_HBFRAME_SYNC  => c_NUM_HBFRAME_SYNC) -- number of HBFs collected before synchronization of all gbt links used for MID 
+                    g_HALF_NUM_GBT_USED => c_NUM_GBT_USED/2,   -- half the number of cru gbt link used for MID (8 links max) 
+	            g_NUM_HBFRAME_SYNC  => c_NUM_HBFRAME_SYNC) -- number of HBFs collected before synchronization of all gbt links used for MID 
 	port map(
-	clk_240		   => ttc_rxclk,               
-	reset_i        => s_reset,
-	afull_i 	   => afull1,			
-	ttc_data_i	   => s_ttc_data,
-	ttc_mode_i	   => s_ttc_mode,
-	ttc_pulse_i    => s_ttc_pulse,
-	mid_rx_bus_i   => s_mid_rx_bus(c_NUM_GBT_USED-1 downto c_NUM_GBT_USED/2),
+	clk_240		  => ttc_rxclk,               
+	reset_i           => s_reset,
+	afull_i 	  => afull1,			
+	ttc_data_i	  => s_ttc_data,
+	ttc_mode_i	  => s_ttc_mode,
+	ttc_pulse_i       => s_ttc_pulse,
+	mid_rx_bus_i      => s_mid_rx_bus(c_NUM_GBT_USED-1 downto c_NUM_GBT_USED/2),
 	av_cruid_config_i => s_av_cruid_config,
-	av_gbt_monit_o => s_av_gbt_monit(c_NUM_GBT_USED-1 downto c_NUM_GBT_USED/2),
-	av_dw_monit_o  => s_av_dw_monit(1),
-	dw_datapath_o  => s_dw_datapath(1)
+	av_gbt_monit_o    => s_av_gbt_monit(c_NUM_GBT_USED-1 downto c_NUM_GBT_USED/2),
+	av_dw_monit_o     => s_av_dw_monit(1),
+	dw_datapath_o     => s_dw_datapath(1)
 			);  
 	--===============--
 	-- avalon_ulogic --
@@ -203,7 +203,7 @@ begin
 	port map (
 	mms_clk 	=> mms_clk,
 	mms_reset 	=> mms_reset,
-	mms_waitreq => mms_waitreq,
+	mms_waitreq     => mms_waitreq,
 	mms_addr	=> mms_addr,
 	mms_wr		=> mms_wr,
 	mms_wrdata	=> mms_wrdata,
@@ -212,11 +212,11 @@ begin
 	mms_rddata	=> mms_rddata,
 	-- reset
 	reset		=> s_av_reset,
-	cruid       => s_av_cruid_config,
+	cruid           => s_av_cruid_config,
 	-- monitors
-	trg_monit   => s_av_trg_monit,   
-    gbt_monit   => s_av_gbt_monit, 
-	dw_monit    => s_av_dw_monit
+	trg_monit       => s_av_trg_monit,   
+        gbt_monit       => s_av_gbt_monit, 
+	dw_monit        => s_av_dw_monit
 		);
 
 	-- define reset 

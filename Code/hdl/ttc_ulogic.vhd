@@ -10,7 +10,7 @@
 -- Created   : 2020-06-30
 -- Platform  : Quartus Pro 18.1
 -- Standard  : VHDL'93'
--- Version   : 0.7
+-- Version   : 2.0
 -------------------------------------------------------------------------------
 -- last changes 
 -- <21-02-2021> 
@@ -39,48 +39,47 @@ use work.pack_mid_ul.all;
 --=============================================================================
 entity ttc_ulogic is
     generic (g_NUM_HBFRAME: integer; g_NUM_HBFRAME_SYNC: integer);
-	port (
-	-------------------------------------------------------------------
-	-- 240 MHz clock --
-	clk_240	       : in std_logic;
-	-------------------------------------------------------------------
+    port (
+    -------------------------------------------------------------------
+    -- 240 MHz clock --
+    clk_240	   : in std_logic;
+    -------------------------------------------------------------------
 	-- avalon --  	
-	av_reset_i     : in std_logic; 
+    av_reset_i     : in std_logic; 
     av_trg_monit_o : out std_logic_vector(31 downto 0);
     -------------------------------------------------------------------
     -- sync reset -- 
     sync_reset_o   : out std_logic;   
     -------------------------------------------------------------------
-	-- ttc info -- 
-	ttc_rxd_i      : in std_logic_vector(199 downto 0);
+    -- ttc info -- 
+    ttc_rxd_i      : in std_logic_vector(199 downto 0);
     ttc_rxvalid_i  : in std_logic;   
     ttc_rxready_i  : in std_logic;  
-
-	ttc_data_o     : out t_mid_ttc;
+    ttc_data_o     : out t_mid_ttc;
     ttc_mode_o     : out t_mid_mode;
     ttc_pulse_o    : out t_mid_pulse 
-	------------------------------------------------------------------------
+    ------------------------------------------------------------------------
        );  
 end ttc_ulogic;
 --=============================================================================
 -- architecture declaration
 --============================================================================
 architecture rtl of ttc_ulogic is
-	-- ========================================================
-	-- signal declarations
-	-- ========================================================
+    -- ========================================================
+    -- signal declarations
+    -- ========================================================
     -- timing & trigger control info pipeline 
-	signal s_ttc_data : t_mid_ttc;
-    signal s_ttc_valid: std_logic;
+    signal s_ttc_data  : t_mid_ttc;
+    signal s_ttc_valid : std_logic;
     
     -- main trigger registers 
     signal s_is_sox : std_logic := '0';
     signal s_is_eox : std_logic := '0';
 
-	-- pulses 
-	signal s_pulse_init : std_logic;
-	signal s_pulse_hbt  : std_logic; 
-	signal s_pulse_sox  : std_logic;
+    -- pulses 
+    signal s_pulse_init : std_logic;
+    signal s_pulse_hbt  : std_logic; 
+    signal s_pulse_sox  : std_logic;
     signal s_pulse_eox  : std_logic;
     signal s_pulse_sel  : std_logic;
 
@@ -100,28 +99,27 @@ begin
      s_ttc_valid <= ttc_rxd_i(119) and ttc_rxvalid_i and ttc_rxready_i;
 
     --=============================================================================
-	-- Begin of p_ttc_data
+    -- Begin of p_ttc_data
     -- This process contains the trigger information register 
-	--=============================================================================
-	p_ttc_data: process(clk_240)
-	begin 
-	 if rising_edge(clk_240) then
-
+    --=============================================================================
+    p_ttc_data: process(clk_240)
+    begin 
+     if rising_edge(clk_240) then
       if s_ttc_valid = '1' then 
        -- timing and trigger info
        s_ttc_data.orbit <= ttc_rxd_i(79 downto 48);
        s_ttc_data.bcid  <= x"0" & ttc_rxd_i(43 downto 32);
        s_ttc_data.trg	<= ttc_rxd_i(31 downto 0); 
       end if;
-	 end if; 
-	end process p_ttc_data;
+     end if; 
+    end process p_ttc_data;
     --=============================================================================
-	-- Begin of p_ttc_pulse
+    -- Begin of p_ttc_pulse
     -- This process contains the trigger information register 
-	--=============================================================================
-	p_ttc_pulse: process(clk_240)
-	begin 
-	 if rising_edge(clk_240) then
+    --=============================================================================
+    p_ttc_pulse: process(clk_240)
+    begin 
+     if rising_edge(clk_240) then
       -- default 
       s_pulse_init <= '0';
       s_pulse_hbt  <= '0';
@@ -150,15 +148,15 @@ begin
         end if;
        end if;
       end if;
-	 end if; 
-	end process p_ttc_pulse;
+     end if; 
+    end process p_ttc_pulse;
     --=============================================================================
-	-- Begin of p_mode
-	-- This process 
-	--=============================================================================
-	p_mode: process(clk_240)
-	begin 
-	 if rising_edge(clk_240) then 
+    -- Begin of p_mode
+    -- This process 
+    --=============================================================================
+    p_mode: process(clk_240)
+    begin 
+     if rising_edge(clk_240) then 
       if av_reset_i = '1' then 
        s_continuous <= '0';
        s_triggered <= '0';
@@ -183,20 +181,18 @@ begin
         if ttc_rxd_i(4) = '1' and s_triggered = '1' then 
          s_triggered_data <= x"0" & ttc_rxd_i(43 downto 32);
         end if;
-
        end if;
       end if;
      end if;
-	end process p_mode;
+    end process p_mode;
     --=============================================================================
-	-- Begin of p_ttc_counters
+    -- Begin of p_ttc_counters
     -- This process contains avalon trigger counters to monitor the ttc information
-	--=============================================================================
-	p_ttc_counters: process(clk_240)
+    --=============================================================================
+    p_ttc_counters: process(clk_240)
      variable temp_cnt : unsigned(11 downto 0) := x"001";
-	begin 
-	 if rising_edge(clk_240) then
-
+    begin 
+     if rising_edge(clk_240) then
       -- default
       s_pulse_sel <= '0';
       s_pulse_sox <= '0';
@@ -206,8 +202,8 @@ begin
        temp_cnt      := (others => '0');
        s_hbframe_cnt <= (others => '0'); 
        s_tframe_cnt  <= (others => '0');
-      else 
 
+      else 
        -- initialization pulse
        if s_pulse_init = '1' then 
         temp_cnt      := x"001";
@@ -217,7 +213,6 @@ begin
 
        -- heartbeat trigger pulse  
        elsif s_pulse_hbt = '1' then 
-
         -- heartbeat counter 
         if s_hbframe_cnt = to_unsigned(g_NUM_HBFRAME_SYNC, s_hbframe_cnt'length) then  
          s_hbframe_cnt <= x"001";                  -- reinitialize HBF counter & automatically collect data                                                                         
@@ -236,20 +231,19 @@ begin
         else 
          temp_cnt := temp_cnt+1;                   -- increment temporary counter
         end if;
-
        end if;
       end if; 
-	 end if; 
-	end process p_ttc_counters;
+     end if; 
+    end process p_ttc_counters;
 
     -- avalon trigger info 
     av_trg_monit_o(31 downto 24) <= s_is_sox & "000000" & s_is_eox;  -- sox & eox received flags 
     av_trg_monit_o(23 downto 12) <= std_logic_vector(s_tframe_cnt);  -- number of timeframes received during the run 
     av_trg_monit_o(11 downto 0)  <= std_logic_vector(s_hbframe_cnt); -- number of heartbeat received during the timeframe
 
-	-- ttc pulses
-	ttc_pulse_o.sox <= s_pulse_sox;
-	ttc_pulse_o.hbt <= s_pulse_hbt;
+    -- ttc pulses
+    ttc_pulse_o.sox <= s_pulse_sox;
+    ttc_pulse_o.hbt <= s_pulse_hbt;
     ttc_pulse_o.sel <= s_pulse_sel;
     ttc_pulse_o.eox <= s_pulse_eox;
 

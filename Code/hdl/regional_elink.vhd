@@ -10,7 +10,7 @@
 -- Created   : 2020-06-24
 -- Platform  : Quartus Pro 18.1
 -- Standard  : VHDL'93'
--- Version   : 0.7
+-- Version   : 2.0
 -------------------------------------------------------------------------------
 -- last change
 -- <29-09-2020> remove unused libraries 
@@ -48,7 +48,7 @@ entity regional_elink is
 	-- avalon + auto reset --  
 	reset_i      : in std_logic;
 	-------------------------------------------------------------------
-    -- data acquisition info --
+        -- data acquisition info --
 	daq_stop_i   : in std_logic;
 	daq_valid_i  : in std_logic;	
 	daq_resume_i : in std_logic;
@@ -60,7 +60,7 @@ entity regional_elink is
 	gbt_data_i   : in std_logic_vector(7 downto 0);		
 	gbt_val_i    : in std_logic;									
 	-------------------------------------------------------------------
-    -- timing and trigger system mode -- 		 									 
+        -- timing and trigger system mode -- 		 									 
 	ttc_mode_i  : in t_mid_mode;
 	-------------------------------------------------------------------
 	-- regional card info --
@@ -103,7 +103,7 @@ architecture rtl of regional_elink is
 	signal s_reg_inactive : std_logic := '0';
 	signal s_reg_overflow : std_logic;
 	signal s_reg_missing  : std_logic_vector(11 downto 0);
-    -- regional crate ID and val 
+        -- regional crate ID and val 
 	signal s_reg_crateID     : std_logic_vector(3 downto 0);
 	signal s_reg_crateID_val : std_logic;
 	-- regional data 
@@ -120,7 +120,7 @@ begin
 	--==========================================--
 	-- continuous and triggered operation modes --
 	--==========================================--
-   -- DAQ valid input is valid between sox and eox triggers from the LTU
+        -- DAQ valid input is valid between sox and eox triggers from the LTU
 	-- MID e-link rx enable input is valid when the GBT link is connected and ready  
 	-- MID e-link rx valid input is valid during 1 out 6 (240MHz) clock cycles
 	s_reg_en <= daq_valid_i and gbt_val_i;
@@ -154,7 +154,7 @@ begin
 	--
 	orb_pause_o       => s_orb_pause,
 	eox_pause_o       => s_eox_pause, 
-    --
+        --
 	ttc_mode_i        => ttc_mode_i,	
 	--
 	reg_val_i         => s_reg_val,
@@ -237,14 +237,14 @@ begin
 
 	   -- self-reset
 	   if daq_resume_i = '1' then
-        ovf_inc := (others => '0'); 
-        usedw_inc := (others => '0');
+            ovf_inc := (others => '0'); 
+            usedw_inc := (others => '0');
 
 	   -- overflow stage 
 	   elsif s_reg_overflow = '1' then 
 	    read_wr := reg_rdreq_i & s_reg_rx_val; -- concatenate (read & write)  
 	    case read_wr is 
-        when "01" =>   
+            when "01" =>   
 	     -- write
 	     ovf_inc   := ovf_inc+1;            -- increment overflow counter
 	     usedw_inc := unsigned(s_usedw)+1;  -- fifo word increment ahead
@@ -260,8 +260,8 @@ begin
 
 	    -- compare 
 	    if ovf_inc = usedw_inc then 
-         s_stop_reading <= '1'; 
-        end if;
+             s_stop_reading <= '1'; 
+            end if;
 	   end if;
 	  end if;
 	 end if;
@@ -279,7 +279,7 @@ begin
 	orb_pause_o    <= s_reg_overflow or s_orb_pause;
 	eox_pause_o    <= s_eox_pause;
 
-	reg_crateID_o     <= s_reg_crateID;
+	reg_crateID_o  <= s_reg_crateID;
 	reg_crateID_val_o <= s_reg_crateID_val;
 	
 end rtl;
