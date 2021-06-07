@@ -2,7 +2,7 @@
 Master of Engineering: Electrical Engineering.
 ===================
 
-# TITLE: ALICE CRU USER LOGIC FIRMWARE FOR THE MID READOUT CHAIN
+## TITLE: ALICE CRU USER LOGIC FIRMWARE FOR THE MID READOUT CHAIN
 ___
 
 ## Abstract
@@ -34,7 +34,7 @@ feel free to skip ahead to the section "Python interface" for the most convenien
 The library currently supports the C-RORC and CRU cards.
 
 
-#Usage
+## Usage
 ===================
 For a simple usage example, see the program in `src/Example.cxx`.
 For high-performance readout, the benchmark program `src/CommandLineUtilities/ProgramDmaBench.cxx` may be more
