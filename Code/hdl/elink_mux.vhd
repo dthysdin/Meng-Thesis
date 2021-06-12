@@ -269,7 +269,7 @@ begin
          if rising_edge(clk_240) then
           -- look ahead local ID
           -- Notice that the variable is assigned multiple times. 
-          -- However as the loop is executed in increasing order, the last (highest) assignment wins.
+          -- However as the loop is executed in increasing order (0 to 3), the last (highest) assignment wins.
           -- This priority encoder is based on the status of empty and afull signals.
 
           if state = MUX_LOC then 
