@@ -104,27 +104,29 @@ architecture rtl of user_logic is
 	-- ========================================================
 	-- timing & trigger control register 
 	signal s_ttc_data  : t_mid_ttc; 
-        signal s_ttc_pulse : t_mid_pulse;
+    signal s_ttc_pulse : t_mid_pulse;
 	signal s_ttc_mode  : t_mid_mode;
 
 	-- gbt data input bus
-	signal s_mid_rx_bus : t_mid_gbt_array(c_NUM_GBT_USED-1 downto 0);    -- 16 gbt links
+	signal s_mid_rx_bus : t_mid_gbt_array(c_NUM_GBT_USED-1 downto 0);    
 
-	-- avalon monitor 
-	signal s_av_gbt_monit : Array64bit(c_NUM_GBT_USED-1 downto 0);       -- avalon registers from 16 gbt links 
-	signal s_av_dw_monit  : Array32bit(1 downto 0);                      -- avalon registers from 2 EPNs 
-	signal s_av_trg_monit : std_logic_vector(31 downto 0);               -- avalon register from TTC 
-	signal s_av_cruid_config : std_logic;                                -- avalon register to config the cruid
+	-- avalon monitoring signals
+	signal s_av_gbt_monit : Array64bit(c_NUM_GBT_USED-1 downto 0);           -- monitor gbt links 
+	signal s_av_dw_monit  : Array32bit(1 downto 0);                          -- monitor d-wrappers
+	signal s_av_trg_monit : std_logic_vector(31 downto 0);                   -- monitor triggers
 
-	-- reset 
-	signal s_av_reset     : std_logic := '0';                            -- avalon reset 
-	signal hard_reset     : std_logic := '0';                            -- hard reset 
-	signal soft_reset     : std_logic := '0';                            -- soft reset
-	signal s_reset        : std_logic := '0';                            -- (hard reset OR soft reset)
+	-- avalon configuration signals
+	signal s_av_cruid_config : std_logic;                                    -- configure cruid
+	signal s_av_reset_config : std_logic;                                    -- external reset
+    signal s_av_fiber_config : std_logic_vector(2*c_NUM_GBT_USED-1 downto 0);-- configure fiber select 
+
+	-- resets 
+	signal hard_reset     : std_logic := '0';                                -- internal hard reset 
+	signal soft_reset     : std_logic := '0';                                -- internal soft reset
+	signal s_reset        : std_logic := '0';                                -- internal all resets
 	
 	-- datapath access
-	signal s_dw_datapath : t_mid_dw_datapath_array(1 downto 0);          -- 2 CRU end-points
-	
+	signal s_dw_datapath : t_mid_dw_datapath_array(1 downto 0);              -- 2 CRU end-points
 	
 begin
 	--=============================================================================
@@ -134,7 +136,7 @@ begin
     p_hard_reset: process(s_av_reset, clk_240)
 	 variable ff : std_logic := '0';
     begin 
-	 if s_av_reset = '1' then 
+	 if s_av_reset_config = '1' then 
        ff := '1';
 	   hard_reset <= '1';
       elsif rising_edge(clk_240) then 
@@ -142,10 +144,6 @@ begin
 	   ff := '0';
      end if; 
     end process p_hard_reset;
-
-	-- hard reset OR soft reset 
-	s_reset <= hard_reset or soft_reset;
-
 	--=============--
 	-- ttc_ulogic -- 
 	--=============--
@@ -171,6 +169,8 @@ begin
 	generic map (g_NUM_GBT_INPUT  => g_NUM_GBT_LINKS,     -- total number of cru gbt link ports available (24 links max)
                      g_NUM_GBT_OUTPUT => c_NUM_GBT_USED)      -- total number of cru gbt link ports used for MID   
 	port map (
+	clk_240	        => ttc_rxclk,  
+	fiber_select_i  => s_av_fiber_config, 
 	gbt_rx_ready_i	=> gbt_rx_ready_i,
 	gbt_rx_bus_i	=> gbt_rx_bus_i,
 	mid_rx_bus_o	=> s_mid_rx_bus
@@ -230,14 +230,18 @@ begin
 	mms_rd		=> mms_rd,
 	mms_rdval	=> mms_rdval,
 	mms_rddata	=> mms_rddata,
-	-- reset
-	reset		=> s_av_reset,
-	cruid           => s_av_cruid_config,
+	-- configuration 
+	reset_config => s_av_reset_config,
+	cruid_config => s_av_cruid_config,
+	fiber_config => s_av_fiber_config,
 	-- monitors
-	trg_monit       => s_av_trg_monit,   
-    gbt_monit       => s_av_gbt_monit, 
-	dw_monit        => s_av_dw_monit
+	trg_monit    => s_av_trg_monit,   
+    gbt_monit    => s_av_gbt_monit, 
+	dw_monit     => s_av_dw_monit
 		);
+
+	-- all resets
+	s_reset <= hard_reset or soft_reset;
 
 	-- define leds
 	BlueGreenRed_LED_1 <=not("100"); -- blue (active low)

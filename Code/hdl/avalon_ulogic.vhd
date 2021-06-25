@@ -49,8 +49,9 @@ entity avalon_ulogic is
 	mms_rdval	: out std_logic;
 	mms_rddata	: out std_logic_vector(31 downto 0);
 	--
-	reset		: out std_logic;
-        cruid           : out std_logic;
+	reset_config    : out std_logic;
+        cruid_config    : out std_logic;
+        fiber_connfig   : out std_logic_vector(2*g_NUM_GBT_USED-1 downto 0);
         --  
         trg_monit       : in std_logic_vector(31 downto 0);          -- triggers monitor 
         dw_monit        : in Array32bit(1 downto 0);                  -- d-wrappers monitor 
@@ -89,9 +90,12 @@ architecture rtl of avalon_ulogic is
 
 	-- Avalon registers
 	signal dirty_idcode : std_logic_vector(31 downto 0);
-        signal s_mid_reset  : std_logic;
-        signal s_toggle     : std_logic_vector(31 downto 0) := (others => '0');
-        signal s_cruid      : std_logic_vector(31 downto 0) := (others => '0');
+
+        -- Configuration signals
+        signal s_toggle_config: std_logic_vector(31 downto 0) := (others => '0');
+        signal s_cruid_config : std_logic_vector(31 downto 0) := (others => '0');
+        signal s_fiber_config : std_logic_vector(2*g_NUM_GBT_USED-1 downto 0) := (others => '0');
+        signal s_reset_config : std_logic;
 begin	
 
 	--========================================================================---
@@ -125,14 +129,13 @@ begin
         s_rddata                 => sx_rddata
                 );
 	-----------------------------------------------------------------------------
-	-- avalon memory mapped slave: local ID and status registers (0)
 	-- ALL DETECTOR USER logic should reserve the same area with the same INFORMATION
 	-- See COMMON for more help on avalon slaves
         -- ## remove (4 for sim)
 	-----------------------------------------------------------------------------
 	id_comp : avalon_mm_slave
         generic map (
-        MODE_LG => 4, --c_MODE_LGR, 
+        MODE_LG => c_MODE_LGR, 
         AWIDTH  => 8,
         MODE    => (0 to 3  => x"1", -- input 
                     others  => x"4") -- disabled 
@@ -165,8 +168,8 @@ begin
         MODE_LG => c_MODE_LGR,
         AWIDTH  => 8,
         MODE    => (0        => x"0", -- output
-                    1 to 2   => x"2", -- output + input
-                    3 to 12  => x"4", -- disabled for the moment
+                    1 to 3   => x"2", -- output + input
+                    4 to 12  => x"4", -- disabled for the moment
                     13 to 31 => x"1", -- input 
                     others   => x"4") -- disabled
         )
@@ -183,7 +186,7 @@ begin
         --
         ALTCLK  => '0',
         --
-        USERWR  => s_av_wr, -- vector of 0..2
+        USERWR  => s_av_wr, -- vector of 0..3
         USERRD  => s_av_rd,
         --
         qout => s_av_o,
@@ -196,12 +199,12 @@ begin
 	p_mid_reset_in : process(MMS_CLK)
 	begin
          if rising_edge(MMS_CLK) then
-          if s_mid_reset = '0' then 
+          if s_reset_config = '0' then 
            if s_av_wr(0) = '1' then
-            s_mid_reset <= '1';
+            s_reset_config <= '1';
            end if;
           else 
-           s_mid_reset <= '0';
+           s_reset_config <= '0';
           end if;
          end if;
 	end process;
@@ -212,7 +215,7 @@ begin
 	begin
          if rising_edge(MMS_CLK) then
           if s_av_wr(1) = '1' then
-           s_cruid <= s_av_o(1);
+           s_cruid_config <= s_av_o(1);
           end if;
          end if;
 	end process;
@@ -223,28 +226,41 @@ begin
 	begin
          if rising_edge(MMS_CLK) then
           if s_av_wr(2) = '1' then
-           s_toggle <= s_av_o(2);
+           s_toggle_config <= s_av_o(2);
+          end if;
+         end if;
+	end process;
+        -----------------------------------------------------------------------------
+	-- Get the fiber select signal from avalon port
+	-----------------------------------------------------------------------------
+	p_fiber_select : process(MMS_CLK)
+	begin
+         if rising_edge(MMS_CLK) then
+          if s_av_wr(3) = '1' then
+           s_fiber_config <= s_av_o(3);
           end if;
          end if;
 	end process;
          
-	-- send the cruid value 
-        s_av_i(1) <= s_cruid;
-        -- send toogle value back 
-        s_av_i(2) <= s_toggle;
-        -- send triggers monitor to avalon port 
+	-- feedback configuration signals 
+        s_av_i(1) <= s_cruid_config;
+        s_av_i(2) <= s_toggle_config;
+        s_av_i(3) <= s_fiber_config;
+
+        -- triggers monitor 
         s_av_i(13) <= trg_monit;
-        -- send packets monitor to avalon port 
+        -- d-wrapper monitor 
         s_av_i(14) <= dw_monit(0);
         s_av_i(15) <= dw_monit(1);
-	-- send gbt ulogic monitor to avalon port 
+	-- gbt link monitor 
         gen_status_monit : for i in 0 to g_NUM_GBT_USED-1 generate
-         s_av_i(16+i) <= gbt_monit(i)(31 downto 0) when s_toggle /= c_null else gbt_monit(i)(63 downto 32);
+         s_av_i(16+i) <= gbt_monit(i)(31 downto 0) when s_toggle_config /= c_null else gbt_monit(i)(63 downto 32);
         end generate;
-        -- reset 
-	reset <= s_mid_reset;
-        -- cruid 
-        cruid <= '1' when s_cruid /= c_null else '0';
+
+        -- configuation output signals
+	reset_config <= s_reset_config;
+        cruid_config <= '1' when s_cruid_config /= c_null else '0';
+        fiber_config <= s_fiber_config;
 
 end architecture rtl;
 --=============================================================================

@@ -36,6 +36,8 @@ entity gbt_ulogic_select is
 	generic ( g_NUM_GBT_INPUT: integer := 24; g_NUM_GBT_OUTPUT : natural := 16); 
 	port (
 	-------------------------------------------------------------------
+	clk_240	        : in std_logic;
+	fiber_select_i  : in std_logic_vector(2*g_NUM_GBT_OUTPUT-1 downto 0);  
 	gbt_rx_ready_i	: in std_logic_vector(g_NUM_GBT_INPUT-1 downto 0);
 	gbt_rx_bus_i	: in t_cru_gbt_array(g_NUM_GBT_INPUT-1 downto 0);
 	mid_rx_bus_o	: out t_mid_gbt_array(g_NUM_GBT_OUTPUT-1 downto 0)
@@ -94,24 +96,60 @@ begin
 	--=============================================================================
 	-- Begin of p_link_slct
 	-- This process contains the gbt link signals used in this project.
+	-- select active fibers: either default mapping (above), or "spare" fibre (8,9,10)
 	--=============================================================================
-	p_link_slct:process (gbt_rx_bus_i,gbt_rx_ready_i)
-	begin 
-
-	 -- EPN#0 
-	 for i in 0 to g_NUM_GBT_OUTPUT/2-1 loop
-	  mid_rx_bus_o(i).en    <= gbt_rx_bus_i(i).is_data_sel and gbt_rx_ready_i(i);
-	  mid_rx_bus_o(i).valid <= gbt_rx_bus_i(i).data_valid;
-	  mid_rx_bus_o(i).data  <= gbt_rx_bus_i(i).data(79 downto 0);
-     end loop;
-
-     -- EPN#1
-	 for i in g_NUM_GBT_OUTPUT/2 to g_NUM_GBT_OUTPUT-1 loop
-	  mid_rx_bus_o(i).en    <= gbt_rx_bus_i(i+4).is_data_sel and gbt_rx_ready_i(i+4);
-	  mid_rx_bus_o(i).valid <= gbt_rx_bus_i(i+4).data_valid;
-	  mid_rx_bus_o(i).data  <= gbt_rx_bus_i(i+4).data(79 downto 0);
-	 end loop;
-	end process;
+	p_fiber_slct:process (clk_240)
+	 begin
+	   if rising_edge(clk_240) then 
+		 -- EPN#0 
+		 for i in 0 to g_NUM_GBT_OUTPUT/2-1 loop
+		   -- output i <= choose input among i,8,9,10
+		   case fiber_select_i(2*i+1 downto 2*i) is
+			 when "00" => 
+			   mid_rx_bus_o(i).en    <= gbt_rx_bus_i(i).is_data_sel and gbt_rx_ready_i(i);
+			   mid_rx_bus_o(i).valid <= gbt_rx_bus_i(i).data_valid;
+			   mid_rx_bus_o(i).data  <= gbt_rx_bus_i(i).data(79 downto 0);
+			 when "01" =>
+			   mid_rx_bus_o(i).en    <= gbt_rx_bus_i(8).is_data_sel and gbt_rx_ready_i(8);
+			   mid_rx_bus_o(i).valid <= gbt_rx_bus_i(8).data_valid;
+			   mid_rx_bus_o(i).data  <= gbt_rx_bus_i(8).data(79 downto 0);
+			 when "10" =>
+			   mid_rx_bus_o(i).en    <= gbt_rx_bus_i(9).is_data_sel and gbt_rx_ready_i(9);
+			   mid_rx_bus_o(i).valid <= gbt_rx_bus_i(9).data_valid;
+			   mid_rx_bus_o(i).data  <= gbt_rx_bus_i(9).data(79 downto 0);
+			 when "11" =>
+			   mid_rx_bus_o(i).en    <= gbt_rx_bus_i(10).is_data_sel and gbt_rx_ready_i(10);
+			   mid_rx_bus_o(i).valid <= gbt_rx_bus_i(10).data_valid;
+			   mid_rx_bus_o(i).data  <= gbt_rx_bus_i(10).data(79 downto 0);
+			 when others => null;        
+		   end case;       
+		 end loop;
+   
+		 -- EPN#1
+		 for i in 0 to g_NUM_GBT_OUTPUT/2-1 loop
+		   -- output g_NUM_GBT_OUTPUT/2 + i <= choose input among g_NUM_GBT_INPUT/2+i,+8,+9,+10
+		   case fiber_select_i(g_NUM_GBT_OUTPUT/2+2*i+1 downto g_NUM_GBT_OUTPUT/2+2*i) is
+			 when "00" => 
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).en    <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+i).is_data_sel and gbt_rx_ready_i(g_NUM_GBT_INPUT/2+i);
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).valid <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+i).data_valid;
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).data  <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+i).data(79 downto 0);
+			 when "01" =>
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).en    <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+8).is_data_sel and gbt_rx_ready_i(g_NUM_GBT_INPUT/2+8);
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).valid <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+8).data_valid;
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).data  <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+8).data(79 downto 0);
+			 when "10" =>
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).en    <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+9).is_data_sel and gbt_rx_ready_i(g_NUM_GBT_INPUT/2+9);
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).valid <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+9).data_valid;
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).data  <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+9).data(79 downto 0);
+			 when "11" =>
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).en    <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+10).is_data_sel and gbt_rx_ready_i(g_NUM_GBT_INPUT/2+10);
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).valid <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+10).data_valid;
+			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).data  <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+10).data(79 downto 0);
+			 when others => null;
+		   end case;
+		 end loop;
+	   end if;
+	end process p_fiber_slct;   
 end rtl;
 --=============================================================================
 -- architecture end

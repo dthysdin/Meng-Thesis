@@ -442,6 +442,8 @@ package pack_mid_ul is
 	generic ( g_NUM_GBT_INPUT: integer; g_NUM_GBT_OUTPUT : natural); 
 	port (
 	-------------------------------------------------------------------
+	clk_240	        : in std_logic;
+	fiber_select_i  : in std_logic_vector(2*g_NUM_GBT_OUTPUT-1 downto 0);  
 	gbt_rx_ready_i	: in std_logic_vector(g_NUM_GBT_INPUT-1 downto 0);
 	gbt_rx_bus_i	: in t_cru_gbt_array(g_NUM_GBT_INPUT-1 downto 0);
 	mid_rx_bus_o	: out t_mid_gbt_array(g_NUM_GBT_OUTPUT-1 downto 0)
@@ -463,8 +465,9 @@ package pack_mid_ul is
 	mms_rdval	: out std_logic;
 	mms_rddata	: out std_logic_vector(31 downto 0);
 	--
-	reset		: out std_logic;
-	cruid       : out std_logic;
+	reset_config: out std_logic;
+    cruid_config: out std_logic;
+    fiber_connfig: out std_logic_vector(2*g_NUM_GBT_USED-1 downto 0);
     --    
     trg_monit   : in std_logic_vector(31 downto 0);   
     dw_monit    : in Array32bit(1 downto 0);     

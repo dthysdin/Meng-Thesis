@@ -271,7 +271,6 @@ begin
           -- Notice that the variable is assigned multiple times. 
           -- However as the loop is executed in increasing order (0 to 3), the last (highest) assignment wins.
           -- This priority encoder is based on the status of empty and afull signals.
-
           if state = MUX_LOC then 
            if s_afull = x"0" then  
             for i in t_num_loc loop 
