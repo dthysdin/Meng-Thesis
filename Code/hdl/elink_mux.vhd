@@ -296,8 +296,6 @@ begin
 	--=============================================================================
 
 	p_read_loc: process(state, s_afull, s_empty)
-         -- declare variable 
-         variable highest_locRead : t_num_loc := 3;
 	begin
          -- default 
          s_loc_rdreq <= x"0";

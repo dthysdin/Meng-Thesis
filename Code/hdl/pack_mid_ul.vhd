@@ -479,7 +479,9 @@ package pack_mid_ul is
 	-----------------------------------------------------------------------
 	clk_240	       : in std_logic;
 	-- 	
-	av_reset_i     : in std_logic; 
+    hard_reset     : in std_logic; 
+	soft_reset     : out std_logic; 
+	--
     av_trg_monit_o : out std_logic_vector(31 downto 0); 
     -- 	
 	ttc_rxd_i      : in std_logic_vector(199 downto 0);
@@ -488,9 +490,7 @@ package pack_mid_ul is
 	--
 	ttc_data_o     : out t_mid_ttc;
     ttc_mode_o     : out t_mid_mode;
-    ttc_pulse_o    : out t_mid_pulse; 
-    --
-	sync_reset_o   : out std_logic      
+    ttc_pulse_o    : out t_mid_pulse 
 	------------------------------------------------------------------------
 					);  
 	end component ttc_ulogic;
