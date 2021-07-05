@@ -90,8 +90,6 @@ architecture rtl of elink_mux is
                                    MUX_LOC, 
                                    DECODE_LOC); 					
 	signal state : t_elink_mux_state; 
-        --
-	type t_num_loc is range 0 to 3; -- number of local boards
 	-- ========================================================
 	-- constant declarations
 	-- ========================================================
@@ -264,7 +262,7 @@ begin
 	--=============================================================================
 	p_locID: process(clk_240)
          -- declare variable 
-         variable highest_locID : t_num_loc := 3;
+         variable highest_locID : natural range 0 to 3 := 0;
 	begin
          if rising_edge(clk_240) then
           -- look ahead local ID
@@ -272,15 +270,15 @@ begin
           -- However as the loop is executed in increasing order (0 to 3), the last (highest) assignment wins.
           -- This priority encoder is based on the status of empty and afull signals.
           if state = MUX_LOC then 
-           if s_afull = x"0" then  
-            for i in t_num_loc loop 
+           if s_afull(3 downto 0) = x"0" then  
+            for i in 0 to 3 loop 
              if s_empty(i) /= '1' then
               highest_locID := i;
              end if;
             end loop;
            else 
-            for i in t_num_loc loop 
-             if s_sfull(i) = '1' then
+            for i  in 0 to 3 loop 
+             if s_afull(i) = '1' then
               highest_locID := i;
              end if;
             end loop;

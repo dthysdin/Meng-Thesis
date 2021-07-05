@@ -45,8 +45,8 @@ entity ttc_ulogic is
     clk_240	   : in std_logic;
     -------------------------------------------------------------------
 	-- resets --  	
-    hard_reset   : in std_logic; 
-    soft_reset   : out std_logic;  
+    reset_i    : in std_logic; 
+    init_o     : out std_logic;  
     -------------------------------------------------------------------
     -- trigger monitor register  -- 
     av_trg_monit_o : out std_logic_vector(31 downto 0);
@@ -125,7 +125,7 @@ begin
       s_pulse_hbt  <= '0';
       s_pulse_eox  <= '0';
 
-      if hard_reset = '1' then 
+      if reset_i = '1' then 
        s_is_sox <= '0';
        s_is_eox <= '0';
       else
@@ -157,7 +157,7 @@ begin
     p_mode: process(clk_240)
     begin 
      if rising_edge(clk_240) then 
-      if hard_reset = '1' then 
+      if reset_i = '1' then 
        s_continuous <= '0';
        s_triggered <= '0';
        s_triggered_data <= (others => '0');
@@ -197,7 +197,7 @@ begin
       s_pulse_sel <= '0';
       s_pulse_sox <= '0';
 
-      if hard_reset = '1' then
+      if reset_i = '1' then
        -- hard reset 
        temp_cnt      := (others => '0');
        s_hbframe_cnt <= (others => '0'); 
@@ -257,8 +257,8 @@ begin
     ttc_data_o.bcid  <= s_ttc_data.bcid;
     ttc_data_o.trg   <= s_ttc_data.trg;
 
-    -- pulse initialization 
-    soft_reset <= s_pulse_init;
+    -- pulse init 
+    init_o <= s_pulse_init;
     
 end rtl;
 --=============================================================================

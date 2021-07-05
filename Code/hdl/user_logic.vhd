@@ -96,7 +96,7 @@ architecture rtl of user_logic is
 	-- ========================================================
 	-- constant declarations
 	-- ========================================================
-        constant c_NUM_GBT_USED     : integer := 16;  -- number of gbt links used for the MID readout chain (16 by default ) 
+	constant c_NUM_GBT_USED     : integer := 16;  -- number of gbt links used for the MID readout chain (16 by default ) 
 	constant c_NUM_HBFRAME      : integer := 256; -- number of HBFs collected during a single TF (256 HBF by default)  
 	constant c_NUM_HBFRAME_SYNC : integer := 128; -- number of HBFs collected before synchronization of all gbt frames (128 HBF by default)
 	-- ========================================================
@@ -121,29 +121,13 @@ architecture rtl of user_logic is
     signal s_av_fiber_config : std_logic_vector(2*c_NUM_GBT_USED-1 downto 0);-- configure fiber select 
 
 	-- resets 
-	signal hard_reset     : std_logic := '0';                                -- internal hard reset 
-	signal soft_reset     : std_logic := '0';                                -- internal soft reset
-	signal s_reset        : std_logic := '0';                                -- internal all resets
+	signal s_AllReset     : std_logic;                                       -- internal all resets
+	signal s_init         : std_Logic;                              
 	
 	-- datapath access
 	signal s_dw_datapath : t_mid_dw_datapath_array(1 downto 0);              -- 2 CRU end-points
 	
 begin
-	--=============================================================================
-    -- Begin of p_hard_reset
-    -- This process creates synchrounous trailing edge hard reset
-    --=============================================================================
-    p_hard_reset: process(s_av_reset, clk_240)
-	 variable ff : std_logic := '0';
-    begin 
-	 if s_av_reset_config = '1' then 
-       ff := '1';
-	   hard_reset <= '1';
-      elsif rising_edge(clk_240) then 
-       hard_reset <= ff;
-	   ff := '0';
-     end if; 
-    end process p_hard_reset;
 	--=============--
 	-- ttc_ulogic -- 
 	--=============--
@@ -152,8 +136,8 @@ begin
 	            g_NUM_HBFRAME_SYNC => c_NUM_HBFRAME_SYNC) -- number of HBFs collected before synchronization of all gbt links used for MID
 	port map (
 	clk_240	           => ttc_rxclk, 
-	hard_reset         => hard_reset,
-	soft_reset         => soft_reset, 
+	reset_i            => s_av_reset_config,
+	init_o             => s_init, 
 	ttc_rxd_i          => ttc_rxd,
 	ttc_rxready_i      => ttc_rxready,
     ttc_rxvalid_i      => ttc_rxvalid,   
@@ -184,7 +168,7 @@ begin
 		    g_NUM_HBFRAME_SYNC  => c_NUM_HBFRAME_SYNC) -- number of HBFs collected before synchronization of all gbt links used for MID            
 	port map(
 	clk_240		  => ttc_rxclk,               
-	reset_i	          => s_reset,
+	reset_i	          => s_AllReset,
 	afull_i 	  => afull0,		
 	ttc_data_i	  => s_ttc_data,
 	ttc_mode_i	  => s_ttc_mode,
@@ -204,7 +188,7 @@ begin
 	            g_NUM_HBFRAME_SYNC  => c_NUM_HBFRAME_SYNC) -- number of HBFs collected before synchronization of all gbt links used for MID 
 	port map(
 	clk_240		  => ttc_rxclk,               
-	reset_i           => s_reset,
+	reset_i           => s_AllReset,
 	afull_i 	  => afull1,			
 	ttc_data_i	  => s_ttc_data,
 	ttc_mode_i	  => s_ttc_mode,
@@ -240,8 +224,8 @@ begin
 	dw_monit     => s_av_dw_monit
 		);
 
-	-- all resets
-	s_reset <= hard_reset or soft_reset;
+	-- all reset 
+	s_AllReset <= s_init or s_av_reset_config;
 
 	-- define leds
 	BlueGreenRed_LED_1 <=not("100"); -- blue (active low)

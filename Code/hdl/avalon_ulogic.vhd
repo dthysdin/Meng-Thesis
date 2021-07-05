@@ -51,7 +51,7 @@ entity avalon_ulogic is
 	--
 	reset_config    : out std_logic;
         cruid_config    : out std_logic;
-        fiber_connfig   : out std_logic_vector(2*g_NUM_GBT_USED-1 downto 0);
+        fiber_config   : out std_logic_vector(2*g_NUM_GBT_USED-1 downto 0);
         --  
         trg_monit       : in std_logic_vector(31 downto 0);          -- triggers monitor 
         dw_monit        : in Array32bit(1 downto 0);                  -- d-wrappers monitor 

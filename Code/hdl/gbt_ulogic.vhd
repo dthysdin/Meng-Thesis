@@ -130,6 +130,7 @@ begin
 	  end if;
 	 end if;
 	end process p_enable_gbt;	
+
 	--============--
 	-- PACKETIZER --
 	--============--

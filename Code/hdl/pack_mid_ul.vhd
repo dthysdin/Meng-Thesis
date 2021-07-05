@@ -467,7 +467,7 @@ package pack_mid_ul is
 	--
 	reset_config: out std_logic;
     cruid_config: out std_logic;
-    fiber_connfig: out std_logic_vector(2*g_NUM_GBT_USED-1 downto 0);
+    fiber_config: out std_logic_vector(2*g_NUM_GBT_USED-1 downto 0);
     --    
     trg_monit   : in std_logic_vector(31 downto 0);   
     dw_monit    : in Array32bit(1 downto 0);     
@@ -482,8 +482,8 @@ package pack_mid_ul is
 	-----------------------------------------------------------------------
 	clk_240	       : in std_logic;
 	-- 	
-    hard_reset     : in std_logic; 
-	soft_reset     : out std_logic; 
+    reset_i        : in std_logic; 
+	init_o         : out std_logic; 
 	--
     av_trg_monit_o : out std_logic_vector(31 downto 0); 
     -- 	

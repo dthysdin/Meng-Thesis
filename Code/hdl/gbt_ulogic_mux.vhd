@@ -349,7 +349,7 @@ begin
 		 s_dw_datapath.eop <= '1';	 
 	     state <= PUSH_GAP;
 
-		-- no more data 
+		-- no more data coming
 		elsif s_gbt_datapath(s_indexID).done = '1' then 
 		 if s_dw_total_cnt = x"0000" then
 		  s_dw_datapath.eop <= '1';	  

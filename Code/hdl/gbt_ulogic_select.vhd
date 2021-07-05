@@ -51,6 +51,7 @@ architecture rtl of gbt_ulogic_select is
 --=============================================================================
 -- architecture begin
 --=============================================================================
+
 begin 
 	-- EPN#0
 	-- Input  = gbt_rx_bus_i(11 downto 0)
@@ -92,19 +93,22 @@ begin
 	-- 11        GBT/GBT          None       TTC:MIDTRG     Streaming       Disabled   198.44         240.47         DOWN     0.0                 0x0         0x0    
 	--=================================================================================================================================================================
 
-
 	--=============================================================================
 	-- Begin of p_link_slct
 	-- This process contains the gbt link signals used in this project.
 	-- select active fibers: either default mapping (above), or "spare" fibre (8,9,10)
 	--=============================================================================
 	p_fiber_slct:process (clk_240)
+	 variable epn0 : Array2bit(g_NUM_GBT_OUTPUT/2-1 downto 0) := (others => (others =>'0')); -- default 
+	 variable epn1 : Array2bit(g_NUM_GBT_OUTPUT/2-1 downto 0) := (others => (others =>'0')); -- default
 	 begin
 	   if rising_edge(clk_240) then 
 		 -- EPN#0 
 		 for i in 0 to g_NUM_GBT_OUTPUT/2-1 loop
 		   -- output i <= choose input among i,8,9,10
-		   case fiber_select_i(2*i+1 downto 2*i) is
+		   epn0(i) := fiber_select_i(2*i+1 downto 2*i);
+
+		   case epn0(i) is
 			 when "00" => 
 			   mid_rx_bus_o(i).en    <= gbt_rx_bus_i(i).is_data_sel and gbt_rx_ready_i(i);
 			   mid_rx_bus_o(i).valid <= gbt_rx_bus_i(i).data_valid;
@@ -128,7 +132,9 @@ begin
 		 -- EPN#1
 		 for i in 0 to g_NUM_GBT_OUTPUT/2-1 loop
 		   -- output g_NUM_GBT_OUTPUT/2 + i <= choose input among g_NUM_GBT_INPUT/2+i,+8,+9,+10
-		   case fiber_select_i(g_NUM_GBT_OUTPUT/2+2*i+1 downto g_NUM_GBT_OUTPUT/2+2*i) is
+		   epn1(i) := fiber_select_i(g_NUM_GBT_OUTPUT/2+2*i+1 downto g_NUM_GBT_OUTPUT/2+2*i);
+
+		   case epn1(i) is
 			 when "00" => 
 			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).en    <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+i).is_data_sel and gbt_rx_ready_i(g_NUM_GBT_INPUT/2+i);
 			   mid_rx_bus_o(g_NUM_GBT_OUTPUT/2+i).valid <= gbt_rx_bus_i(g_NUM_GBT_INPUT/2+i).data_valid;
