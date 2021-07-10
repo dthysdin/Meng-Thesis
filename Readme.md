@@ -2,8 +2,7 @@
 Master of Engineering: Electrical Engineering.
 ===================
 
-## TITLE: ALICE CRU USER LOGIC FIRMWARE FOR THE MID READOUT CHAIN
-___
+## ALICE CRU USER LOGIC 
 
 ## Abstract
 ___
