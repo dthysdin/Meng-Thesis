@@ -1,9 +1,0 @@
-{signal: [
-  {name: 'clk_240', wave: 'p.....',ration:1, node: 'ab..', period: 2, phase:0},
-  {name: 'clk_100', wave: 'p...',ration:1, node: 'cd..',period:3, phase:0},
-  {name: 'clk_40',  wave: 'p',ration:1, node: 'ef..', period: 12, phase:0}, ],
- 
- edge: [ 'a<->b 4.16 ns', 'c<->d 10 ns','e<->f 25 ns'],
-
-   
-}
