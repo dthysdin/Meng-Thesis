@@ -8,9 +8,8 @@ The design is validated using **QUARTUS Prime 18.1 Pro** and **Intel-ModelSim**
 ### Design component 
 
 The block diagram shows the user-logic component. 
-___
+
 ![user-logic overview](ul.png)
-__
 
 Each module is connected to the avalon slave.
 - The GBT wrappers transmit data through the GBT mapping. They are not symetrical as one side of the FPGA is fully used for GBT,
