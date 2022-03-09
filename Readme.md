@@ -3,7 +3,7 @@
 
 ### Prerequisite 
 
-The design is validated using **QUARTUS Prime 18.1 Pro** and **Intel-ModelSim**
+The design is validated using **QUARTUS Prime** and **ModelSim**
 
 ### Design component 
 
