@@ -20,6 +20,7 @@
 -- <05/12/2020> reset the module for every sox trigger
 -- <11/12/2020> synchronize the heartbeat frames 
 -- <13/02/2021> add active output port 
+-- <27/08/2021> add monitoring
 -------------------------------------------------------------------------------
 -- TODO:  <completed>
 -------------------------------------------------------------------------------
@@ -40,7 +41,7 @@ use work.pack_mid_ul.all;
 --Entity declaration for elink_mux
 --=============================================================================
 entity elink_mux is
-	generic (g_REGIONAL_ID : integer := 0; g_NUM_HBFRAME_SYNC: integer := 256; g_LINK_ID : integer := 0);
+	generic (g_LINK_ID : integer; g_REGIONAL_ID : integer);
 	port (
 	-------------------------------------------------------------------
 	-- 240 MHz clock --
@@ -49,22 +50,25 @@ entity elink_mux is
 	-- reset --  
 	reset_i       : in std_logic;
 	-------------------------------------------------------------------
-	-- ttc pulse 
+	-- ttc pulse
 	sox_pulse_i   : in std_logic;	
-	-- ttc mode
+	eox_pulse_i   : in std_logic;
+	sel_pulse_i   : in std_logic;
+	tfm_pulse_i   : in std_logic;
 	ttc_mode_i    : in t_mid_mode;	
 	-------------------------------------------------------------------
 	-- packetizer info --
 	packet_full_i : in std_logic;
 	-------------------------------------------------------------------
-	-- mid gbt elink data --						
-	gbt_data_i    : in std_logic_vector(39 downto 0);		 
-	gbt_val_i     : in std_logic;				
+	-- mid sync --
+	mid_sync_i    : in std_logic_vector(11 downto 0);
+	-------------------------------------------------------------------
+	-- mid gbt elink data --								 	
+	gbt_val_i     : in std_logic;
+	gbt_data_i    : in std_logic_vector(39 downto 0);			
 	-------------------------------------------------------------------	
-    	-- e-link status  
-	active_o      : out std_logic_vector(4 downto 0);
-	crateID_o     : out std_logic_vector(3 downto 0);
-	missing_cnt_o : out std_logic_vector(11 downto 0);
+    -- monitoring info --
+	elink_monitor_o : out t_mid_elink_monit;
 	-------------------------------------------------------------------
 	-- muxtiplexer data info --
 	mux_val_o     : out std_logic;
@@ -84,11 +88,12 @@ architecture rtl of elink_mux is
 	-- SYMBOLIC ENCODED state machine: t_elink_mux_state
 	-- --------------------------------------------------
 	type t_elink_mux_state is (IDLE, 
-                                   REG_READY, 
-                                   DECODE_REG,
-                                   LOC_READY, 
-                                   MUX_LOC, 
-                                   DECODE_LOC); 					
+                               REG_READY, 
+                               DECODE_REG,
+                               LOC_READY, 
+                               MUX_LOC, 
+                               DECODE_LOC); 
+
 	signal state : t_elink_mux_state; 
 	-- ========================================================
 	-- constant declarations
@@ -98,40 +103,43 @@ architecture rtl of elink_mux is
 	-- ========================================================
 	-- signal declarations
 	-- ========================================================
-	signal s_loc_tx_data    : std_logic_vector(175 downto 0);  -- local tx data + crateID (additional byte as per new requirement)
-	signal s_loc_rx_data    : t_mid_loc_array(3 downto 0);	   -- local rx data
-	signal s_loc_rx_val 	: std_logic_vector(3 downto 0);    -- local rx valid 
-	signal s_loc_rdreq      : std_logic_vector(3 downto 0);    -- local request 
-	signal s_locID          : integer range 0 to 3 := 0;	   -- local ID 
-	signal s_loc_select     : std_logic_vector(3 downto 0) := x"0"; -- local board select 
+	signal s_loc_tx_data    : std_logic_vector(175 downto 0);             -- local tx data + crateID (additional byte as per Diego's requirement)
+	signal s_loc_rx_data    : t_mid_Array168bit(3 downto 0);	          -- local rx data
+	signal s_loc_rx_val 	: std_logic_vector(3 downto 0);               -- local rx valid 
+	signal s_loc_rdreq      : std_logic_vector(3 downto 0);               -- local request 
+	signal s_locID          : integer range 0 to 3 := 0;	              -- local ID 
+	signal s_loc_select     : std_logic_vector(3 downto 0) := x"0";       -- local board select 
 	--
-	signal s_reg_rdreq	    : std_logic;                   -- regional read
-	signal s_reg_tx_data    : std_logic_vector(47 downto 0);   -- regional tx data + crateID (additional byte as per new requirement)
-	signal s_reg_rx_val 	: std_logic;                       -- regional rx valid 
-	signal s_reg_rx_Data    : std_logic_vector(39 downto 0);   -- regional rx data
+	signal s_reg_rdreq	    : std_logic;                                  -- regional read
+	signal s_reg_tx_data    : std_logic_vector(47 downto 0);              -- regional tx data + crateID (additional byte as per Diego's requirement)
+	signal s_reg_rx_val 	: std_logic;                                  -- regional rx valid 
+	signal s_reg_rx_data    : std_logic_vector(39 downto 0);              -- regional rx data
 	--
-	signal s_active	        : std_logic_vector(4 downto 0);    -- active elinks
-	signal s_inactive       : std_logic_vector(4 downto 0);    -- inactive elinks
-	signal s_empty          : std_logic_vector(4 downto 0);    -- empty elink memories
-	signal s_afull          : std_logic_vector(4 downto 0);    -- afull elink memories
-	signal s_orb_pause      : std_logic_vector(4 downto 0);    -- orbit event pause
-	signal s_eox_pause      : std_logic_vector(4 downto 0);    -- eox event pause
-	signal s_crateID        : std_logic_vector(3 downto 0);    -- crate ID  
-	signal s_crateID_val    : std_logic;                       -- crate ID valid 
+
+	signal s_active_sox     : std_logic_vector(4 downto 0);               -- active sox elinks 
+	signal s_inactive_eox   : std_logic_vector(4 downto 0);               -- inactive elinks
+	signal s_empty          : std_logic_vector(4 downto 0);               -- empty elink based on active_sox 
+	signal s_afull          : std_logic_vector(4 downto 0);               -- afull elink based on active_sox 
+	signal s_crateID        : std_logic_vector(3 downto 0);               -- crate ID   
+	signal s_crateID_val    : std_logic;                                  -- crate ID valid
 	--
-	signal s_temp_missing_cnt : t_mid_missing_cnt_array(4 downto 0);      -- temporary missing events counter 
-	signal s_missing_cnt      : unsigned(11 downto 0) := (others => '0'); -- missing events counter 
+	signal s_temp_missing_event_cnt : t_mid_Array12bit(4 downto 0);       -- temporary missing events counter 
+	signal s_missing_event_cnt: unsigned(11 downto 0) := (others => '0'); -- missing events counter 
 	-- 
-	signal s_mux_val        : std_logic;                       -- temporary mux valid
-	signal s_mux_data       : std_logic_vector(7 downto 0);    -- temporary mux data
+	signal s_mux_val        : std_logic;                                  -- temporary mux valid
+	signal s_mux_data       : std_logic_vector(7 downto 0);               -- temporary mux data
 	
 	-- data acquisittion 
-	signal s_daq_stop       : std_logic;                       -- stop daq 
-	signal s_daq_resume     : std_logic;                       -- resume daq 
-	signal s_daq_valid      : std_logic := '0';                -- valid daq 
-	--  
-	signal s_index	        : integer range 0 to 21 := 0;      -- index counter  
-	
+	signal s_daq_enable     : std_logic := '0';                           -- daq enable 
+	signal s_daq_pause      : t_mid_daq_handshake_array(4 downto 0);      -- daq pause 
+	signal s_daq_resume     : t_mid_daq_handshake;                        -- daq resume  
+	signal s_resuming       : t_mid_daq_handshake;                        -- daq is resuming  
+	signal s_waiting        : std_logic;
+	signal s_index	        : integer range 0 to 21 := 0;                 -- index counter  
+
+	signal s_daq_resume_orb : std_logic;
+	signal s_daq_resume_orb_delay : std_logic_vector(4 downto 0) := "00000";
+
 --=============================================================================
 -- architecture begin
 --=============================================================================
@@ -144,214 +152,311 @@ begin
 		--==============--
 		-- LOCAL ELINKS --
 		--==============--
-		local_elink_inst: local_elink 
-		generic map (g_NUM_HBFRAME_SYNC => g_NUM_HBFRAME_SYNC)
+		local_elink_inst: local_elink
+		generic map (g_LINK_ID => g_LINK_ID, g_REGIONAL_ID => g_REGIONAL_ID, g_LOCAL_ID => i)
 		port map ( 
-		clk_240	       => clk_240,
+		clk_240	           => clk_240,
 		--
-		reset_i	       => reset_i,
+		reset_i	           => reset_i,
 		--
-		daq_stop_i     => s_daq_stop,
-		daq_valid_i    => s_daq_valid,
-      		daq_resume_i   => s_daq_resume,
+		daq_enable_i       => s_daq_enable, 
+		daq_resume_i       => s_daq_resume, 
+		daq_pause_o        => s_daq_pause(i),
 		--
-		orb_pause_o    => s_orb_pause(i),
-      		eox_pause_o    => s_eox_pause(i),
+		gbt_val_i          => gbt_val_i,
+		gbt_data_i         => gbt_data_i(7+8*i downto 8*i),
 		--
-		gbt_data_i     => gbt_data_i(7+8*i downto 8*i),
-		gbt_val_i      => gbt_val_i,
+		mid_sync_i         => mid_sync_i,
 		--
-		ttc_mode_i     => ttc_mode_i,		
+		ttc_mode_i         => ttc_mode_i,		
 		--
-		loc_rdreq_i    => s_loc_rdreq(i),
+		loc_rdreq_i        => s_loc_rdreq(i),
 		--
-		loc_val_o      => s_loc_rx_val(i),
-		loc_data_o     => s_loc_rx_data(i),
-		loc_missing_o  => s_temp_missing_cnt(i),
-		loc_afull_o    => s_afull(i),
-		loc_empty_o    => s_empty(i),
-		loc_active_o   => s_active(i),
-		loc_inactive_o => s_inactive(i));
+		loc_val_o          => s_loc_rx_val(i),
+		loc_data_o         => s_loc_rx_data(i),
+		loc_afull_o        => s_afull(i),
+		loc_empty_o        => s_empty(i),
+		loc_active_o       => s_active_sox(i),
+		loc_inactive_o     => s_inactive_eox(i),
+		loc_missing_o      => s_temp_missing_event_cnt(i));
 		
 	end generate LOC_GEN;
 	--=====================--
 	-- REGIONAL ELINKS 	--
 	--=====================--
 	regional_elink_inst: regional_elink
-	generic map (g_REGIONAL_ID => g_REGIONAL_ID, g_NUM_HBFRAME_SYNC => g_NUM_HBFRAME_SYNC, g_LINK_ID => g_LINK_ID)
+	generic map ( g_LINK_ID => g_LINK_ID, g_REGIONAL_ID => g_REGIONAL_ID)
 	port map ( 
-	clk_240	          => clk_240,
+	clk_240	           => clk_240,
 	--
-	reset_i	          => reset_i,
+	reset_i	           => reset_i,
 	--
-	daq_stop_i        => s_daq_stop,
-	daq_valid_i       => s_daq_valid,
-	daq_resume_i      => s_daq_resume,
+	daq_enable_i       => s_daq_enable, 
+	daq_resume_i       => s_daq_resume, 
+	daq_pause_o        => s_daq_pause(4),
 	--
-	orb_pause_o       => s_orb_pause(4),
-	eox_pause_o       => s_eox_pause(4),
+	gbt_val_i          => gbt_val_i,
+	gbt_data_i         => gbt_data_i(39 downto 32),
 	--
-	gbt_data_i        => gbt_data_i(39 downto 32),
-	gbt_val_i         => gbt_val_i,
+	ttc_mode_i         => ttc_mode_i,
 	--
-	ttc_mode_i        => ttc_mode_i,
+	mid_sync_i         => mid_sync_i,
 	--
-	reg_rdreq_i       => s_reg_rdreq,
+	reg_rdreq_i        => s_reg_rdreq,
 	--
-	reg_val_o         => s_reg_rx_val,
-	reg_data_o        => s_reg_rx_data,
-	reg_afull_o       => s_afull(4),
-	reg_empty_o       => s_empty(4),
-	reg_active_o      => s_active(4),
-	reg_inactive_o    => s_inactive(4),
-	reg_missing_o     => s_temp_missing_cnt(4),
-	reg_crateID_o     => s_crateID,
-	reg_crateID_val_o => s_crateID_val);
+	reg_val_o          => s_reg_rx_val,
+	reg_data_o         => s_reg_rx_data,
+	reg_afull_o        => s_afull(4),
+	reg_empty_o        => s_empty(4),
+	reg_active_o       => s_active_sox(4),
+	reg_inactive_o     => s_inactive_eox(4),
+	reg_missing_o      => s_temp_missing_event_cnt(4),
+	reg_crateID_o      => s_crateID,
+	reg_crateID_val_o  => s_crateID_val);
 	
 	--=============================================================================
-	-- Begin of p_valid_daq
+	-- Begin of p_daq_enable
 	-- This process enables and disables the daq valid signal.
 	-- This signal enables the collection of data from various e-links 
 	-- This signal is "ON" after receiving the sox pulse from the TTC and "OFF"
 	-- after receiving the the eox trigger from all 
 	--=============================================================================
-	p_valid_daq: process(clk_240)
+	p_daq_enable: process(clk_240)
 	begin
 	 if rising_edge(clk_240) then
 	  if reset_i = '1' then
-	   s_daq_valid <= '0'; -- initial
+	   s_daq_enable <= '0'; 
 	  else 
-	   -- run has started
+	   -- sox pulse (run is starting)
 	   if sox_pulse_i = '1' then 
-            s_daq_valid <= '1'; -- 
-	   -- run is finished 
-           elsif s_daq_stop = '1' then 
-            s_daq_valid <= '0'; 
+        s_daq_enable <= '1'; 
+       -- daq is close (run is ending)
+       elsif s_daq_resume.close = '1' then 
+        s_daq_enable <= '0'; 
 	   end if;
 	  end if;
 	 end if;
-	end process p_valid_daq;	
+	end process p_daq_enable;	
 	--=============================================================================
-	-- Begin of p_end_daq
-	-- This process resumes and ends the DAQ.
+	-- Begin of p_daq_orb
+	-- This process resumes the data acquisition process.
 	--=============================================================================
-	p_end_daq: process(clk_240)
+	p_daq_orb: process(clk_240)
+	 variable v_pause_orb   : std_logic_vector(4 downto 0);
+
 	begin
+
 	 if rising_edge(clk_240) then
-          -- default 
-	  s_daq_resume <= '0';
-	  s_daq_stop <= '0';
-	  
-	  -- valid DAQ 
-	  if s_daq_valid = '1' and s_empty = "11111" and state = IDLE then
-           if s_daq_resume /= '1' and s_daq_stop /= '1' then 
-	    -- resume DAQ "timeframe frame completed"
-	    if s_active = s_orb_pause and s_orb_pause /= "00000" then 
-             s_daq_resume <= '1';
-	    -- stop DAQ "run completed"
-	    elsif s_active = s_inactive and s_eox_pause /= "00000" then 
-	     s_daq_stop <= '1';
-	    end if;
+      -- default 
+	  s_daq_resume_orb <= '0';
+
+	  if reset_i = '1' then
+       s_resuming.orb   <= '0';
+	   v_pause_orb := (others => '0');
+	  else 
+
+	   -- pause encoder
+	   for i in 0 to 4 loop 
+	    v_pause_orb(i)   := s_daq_pause(i).orb;  
+	   end loop;
+
+       -- ### timeframe -- 
+	   if tfm_pulse_i = '1'  then 
+        s_resuming.orb <= '1';
+	   -- sel pulse --
+	   elsif sel_pulse_i = '1' then 
+	    -- urgent release
+	    if s_resuming.orb = '1' then 
+		 s_daq_resume_orb <= '1';
+		 s_resuming.orb <= '0';
+		end if;
+       -- wait for cards to resume 
+       elsif s_resuming.orb = '1' then 
+        if s_waiting = '1' and v_pause_orb = s_active_sox then
+		  s_daq_resume_orb <= '1';
+		  s_resuming.orb <= '0';  
+		end if;
 	   end if;
 	  end if;
 	 end if;
-	end process p_end_daq;
+	end process p_daq_orb;
+
+	-- waiting data state 
+	s_waiting <= '1' when state = IDLE and s_daq_enable = '1' and s_empty = "11111" else '0';
+	--=============================================================================
+	-- Begin of p_shift_register
+	-- This process 
+	--=============================================================================
+	p_shift_register: process(clk_240)
+   begin 
+	if rising_edge(clk_240) then
+	 -- shift register <<<<
+	 s_daq_resume_orb_delay <= s_daq_resume_orb_delay(3 downto 0) & s_daq_resume_orb; 
+	 s_daq_resume.orb <= s_daq_resume_orb_delay(4);                       
+	end if;
+   end process p_shift_register;
+    --=============================================================================
+	-- Begin of p_daq_eox
+	-- This process resumes the data acquisition process.
+	--=============================================================================
+	p_daq_eox: process(clk_240)
+	 variable v_pause_eox   : std_logic_vector(4 downto 0);
+	 variable v_pause_close : std_logic_vector(4 downto 0);
+
+   begin
+
+	if rising_edge(clk_240) then
+	 -- default 
+	 s_daq_resume.eox   <= '0';
+	 s_daq_resume.close <= '0';
+
+	 if reset_i = '1' then
+	  s_resuming.eox   <= '0';
+	  s_resuming.close <= '0';
+	 else 
+
+	  -- pause encoder
+	  for i in 0 to 4 loop  
+	   v_pause_eox(i)   := s_daq_pause(i).eox;
+	   v_pause_close(i) := s_daq_pause(i).close;
+	  end loop;
+
+	  -- eox pulse -- 
+	  if eox_pulse_i = '1' then 
+	   s_resuming.eox <= '1';
+	  -- wait for cards to resume 
+	  elsif s_resuming.eox = '1' then 
+	   if s_waiting = '1' and v_pause_eox = s_active_sox then 
+		s_daq_resume.eox <= '1';
+		s_resuming.eox <= '0';
+		s_resuming.close <= '1';
+	   end if;
+	  -- wait for cards to close 
+	  elsif s_resuming.close = '1' then
+	   if s_waiting = '1' and v_pause_close = s_active_sox then 
+		s_daq_resume.close <= '1';
+		s_resuming.close <= '0';
+	   end if;
+	  end if;
+	 end if;
+	end if;
+   end process p_daq_eox;
 	--=============================================================================
 	-- Begin of p_locID
 	-- This process assigns the local ID
 	--=============================================================================
 	p_locID: process(clk_240)
-         -- declare variable 
-         variable highest_locID : natural range 0 to 3 := 0;
 	begin
-         if rising_edge(clk_240) then
+        if rising_edge(clk_240) then
           -- look ahead local ID
-          -- Notice that the variable is assigned multiple times. 
-          -- However as the loop is executed in increasing order (0 to 3), the last (highest) assignment wins.
-          -- This priority encoder is based on the status of empty and afull signals.
           if state = MUX_LOC then 
-           if s_afull(3 downto 0) = x"0" then  
-            for i in 0 to 3 loop 
-             if s_empty(i) /= '1' then
-              highest_locID := i;
-             end if;
-            end loop;
-           else 
-            for i  in 0 to 3 loop 
-             if s_afull(i) = '1' then
-              highest_locID := i;
-             end if;
-            end loop;
-           end if;
-           s_locID <= highest_locID; -- store the highest_locID 
+		   if packet_full_i /= '1' then
+            case s_afull(3 downto 0) is 
+		     when x"0" => 
+			  -- local buffer empty
+			  if s_empty(3) /= '1' then 
+			   s_locID <= 3;
+			  elsif s_empty(2) /= '1' then
+			   s_locID <= 2;
+			  elsif s_empty(1) /= '1' then
+			   s_locID <= 1; 
+			  elsif s_empty(0) /= '1' then
+			   s_locID <= 0;
+			  end if;
+
+			 when others => 
+			  -- local buffers full
+			  if s_afull(3) = '1' then 
+			   s_locID <= 3;
+			  elsif s_afull(2) = '1' then
+			   s_locID <= 2;
+			  elsif s_afull(1) = '1' then
+			   s_locID <= 1; 
+			  elsif s_afull(0) = '1' then
+			   s_locID <= 0;
+			  end if;
+             end case;
+			end if;
           end if;
-         end if;
-        end process p_locID;	
+        end if;
+    end process p_locID;	
 	--=============================================================================
 	-- Begin of p_read_loc
 	-- This process assigns the local read request
 	--=============================================================================
 
-	p_read_loc: process(state, s_afull, s_empty)
+	p_read_loc: process(state, s_afull, s_empty, packet_full_i)
 	begin
-         -- default 
-         s_loc_rdreq <= x"0";
+     -- default 
+     s_loc_rdreq <= x"0";
 
-         if state = MUX_LOC then 
-	  -- asynchronize read local
-	  case s_afull(3 downto 0) is 
-          -- priority encoder based on the empty signals
-	  -- provided by each fifo
-	  when x"0" => 
-	   -- empty
-	   if s_empty(3) /= '1' then 
-	    s_loc_rdreq <= x"8";
-	   elsif s_empty(2) /= '1' then
-	    s_loc_rdreq <= x"4";
-	   elsif s_empty(1) /= '1' then
-	    s_loc_rdreq <= x"2"; 
-	   elsif s_empty(0) /= '1' then
-	    s_loc_rdreq <= x"1";
-	   end if;
-	  -- priority encoder based on the afull signals
-	  -- provided by each fifo
-          when others => 
-	   -- afull
-	   if s_afull(3) = '1' then 
-		s_loc_rdreq <= x"8";
-	   elsif s_afull(2) = '1' then
-		s_loc_rdreq <= x"4";
-	   elsif s_afull(1) = '1' then
-		s_loc_rdreq <= x"2"; 
-	   elsif s_afull(0) = '1' then
-		s_loc_rdreq <= x"1";
-	   end if;
-          end case;
-         end if;
+     if state = MUX_LOC then 
+	  if packet_full_i /= '1' then
+	   case s_afull(3 downto 0) is 
+       -- priority encoder based on the empty signals
+	   -- provided by each fifo
+	   when x"0" => 
+	    -- empty
+	    if s_empty(3) /= '1' then 
+	     s_loc_rdreq <= x"8";
+	    elsif s_empty(2) /= '1' then
+	     s_loc_rdreq <= x"4";
+	    elsif s_empty(1) /= '1' then
+	     s_loc_rdreq <= x"2"; 
+	    elsif s_empty(0) /= '1' then
+	     s_loc_rdreq <= x"1";
+	    end if;
+	   -- priority encoder based on the afull signals
+	   -- provided by each fifo
+       when others => 
+	    -- afull
+	    if s_afull(3) = '1' then 
+		 s_loc_rdreq <= x"8";
+	    elsif s_afull(2) = '1' then
+		 s_loc_rdreq <= x"4";
+	    elsif s_afull(1) = '1' then
+		 s_loc_rdreq <= x"2"; 
+	    elsif s_afull(0) = '1' then
+		 s_loc_rdreq <= x"1";
+	    end if;
+       end case;
+	  end if;
+     end if;
 	end process p_read_loc;
 
 	-- Request regional data from fifo
-	s_reg_rdreq <=  '1' when state = IDLE and packet_full_i /= '1' and s_empty(4) /= '1' and s_daq_valid = '1' and s_crateID_val = '1' else '0';
+	s_reg_rdreq <=  '1' when state = IDLE and packet_full_i /= '1'  and s_daq_enable = '1' and s_crateID_val = '1' and s_empty(4) /= '1' else '0';
 	--=============================================================================
-	-- Begin of p_missing_cnt
+	-- Begin of p_missing_event_cnt
 	-- This process adds the number of events rejected from 4 elinks during the daq
 	--=============================================================================
-	p_missing_cnt: process(clk_240)
+	p_missing_event_cnt: process(clk_240)
+	 variable sum_out : unsigned(11 downto 0);
 	begin 
 	 if rising_edge(clk_240) then
 	  if reset_i = '1' then 
-	   s_missing_cnt <= (others => '0');
+	   -- initial condition
+	   s_missing_event_cnt <= (others => '0');
 	  else 
-	   if s_missing_cnt /= x"FFF" then 
-	    s_missing_cnt <= sum_Array12bit(s_temp_missing_cnt); -- call function <sum_Array12bit>
+	   -- maximum counter
+	   if s_missing_event_cnt /= x"FFF" then 
+	    -- default 
+	    sum_out := (others => '0');
+	    -- add counters
+        for i in s_temp_missing_event_cnt'reverse_range loop
+         sum_out := sum_out + unsigned(s_temp_missing_event_cnt(i));
+	    end loop;
+	    -- result
+	    s_missing_event_cnt <= sum_out;
 	   end if;
 	  end if;
      end if;
-	end process p_missing_cnt;
+	end process p_missing_event_cnt;
 	--=============================================================================
 	-- Begin of p_state
 	-- This process contains a sequential state machine
 	--=============================================================================
+    -- state fsm
 	p_state: process(clk_240)
 	begin 
 	 if rising_edge(clk_240) then 
@@ -366,10 +471,10 @@ begin
 	   --========
 	   when IDLE =>
 	    -- valid DAQ
-	    if packet_full_i /= '1' and  s_daq_valid = '1'then 
-		 if s_crateID_val = '1' then 
+	    if s_daq_enable = '1' then 
+		 if packet_full_i /= '1' and s_crateID_val = '1' then 
 	      if s_empty(4) /= '1' then
-	       state <= REG_READY;	                 -- regional 
+	       state <= REG_READY;	                -- regional 
 	      elsif s_empty(3 downto 0) /= x"F" then
 	       state <= MUX_LOC;                     -- local 
 	      end if;
@@ -401,11 +506,15 @@ begin
 	   --===================
 	   -- state "MUX_LOC"	
 	   when MUX_LOC  =>
-	    if s_empty(3 downto 0) /= x"F" then 
-	     state <= LOC_READY;
-	    else
-	     state <= IDLE;
-	    end if;
+	    if packet_full_i /= '1' then
+		 if s_empty(3 downto 0) /= x"F" then 
+	      state <= LOC_READY;
+		 else 
+		  state <= IDLE;
+		 end if;
+		else 
+		 state <= IDLE;
+		end if;
 	   --==============
 	   -- LOCAL READY --
 	   --==============
@@ -489,7 +598,10 @@ begin
 	      state <= MUX_LOC;
 	     end if;	
          when others => null;
-         end case;			
+         end case;	
+		-----------------
+	    -- errors --
+        ----------------		
         when others =>
 	    -- all the other states (not defined)
 	    -- jump to save state (ERROR?!)
@@ -564,7 +676,7 @@ begin
 	  s_mux_data	<= (others => '0');	
 	  s_mux_val   <= '0';		
 	  
-	  -- mux 
+	  -- multiplexer 
 	  case state is 
 	  when DECODE_REG  =>
 	   -- read byte fragments of the regional 
@@ -580,16 +692,25 @@ begin
 	 end if;
 	end process p_state_out;
 
-	-- output
-	mux_val_o    <= s_mux_val;                      -- fee data byte valid 
-	mux_data_o   <= s_mux_data;                     -- fee data byte 
-	mux_stop_o   <= s_daq_resume or s_daq_stop;     -- update during timeframe transition or during the end of run
-	 
-
-	active_o     <= s_active;                       -- active cards 
-	crateID_o    <= s_crateID;                      -- crate ID where data originated 
-	missing_cnt_o <= std_logic_vector(s_missing_cnt);-- total number of event missing
+	-- output 
+	mux_val_o    <= s_mux_val;
+	mux_data_o   <= s_mux_data;                           -- fee data byte 
+	mux_stop_o   <= s_daq_resume.eox or s_daq_resume.orb; -- update  during the end of run
 	
+	elink_monitor_o.inactive_cards    <= s_inactive_eox;                           -- inactive cards (eox acknowledge)
+	elink_monitor_o.active_cards      <= s_active_sox;                             -- active cards (sox acknowledge)
+	elink_monitor_o.missing_event_cnt <= std_logic_vector(s_missing_event_cnt);    -- total number of event missing 
+	elink_monitor_o.crateID           <= s_crateID;                                -- crate ID where the data originated  
+	elink_monitor_o.pending_cards     <= '1' when s_empty /= "11111" else '0';     -- data pending in one of the card  buffers
+	elink_monitor_o.daq_enable        <= s_daq_enable;         
+	elink_monitor_o.fsm               <= x"0" when state = IDLE       else
+	                                     x"1" when state = REG_READY  else 
+								         x"2" when state = DECODE_REG else  
+								         x"3" when state = LOC_READY  else 
+								         x"4" when state = MUX_LOC    else 
+								         x"5" when state = DECODE_LOC else 
+								         x"f"; --  state corrumpted 
+
 
 end rtl;
 --=============================================================================

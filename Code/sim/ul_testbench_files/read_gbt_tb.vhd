@@ -28,7 +28,7 @@ use ieee.std_logic_textio.all;
 --=============================================================================
 entity read_gbt_sim is
 	generic (
-   g_FILE_NAME    : string(26 downto 1) := "file_in/sim_gbt_dataX0.txt"
+   g_FILE_NAME    : string(33 downto 1) := "ul_input_files/sim_gbt_dataX0.txt"
     );
 	port (
 	---------------------------------------------------------------------------
@@ -48,7 +48,7 @@ end entity read_gbt_sim;
 architecture sim of read_gbt_sim is
 begin 
 	p_read_gbt: process
-		constant my_filename: string(26 downto 1) := g_FILE_NAME; 
+		constant my_filename: string(33 downto 1) := g_FILE_NAME; 
       file my_file : text;
       variable my_content: std_logic_vector(79 downto 0) := (others => '0');
       variable my_line: line; 

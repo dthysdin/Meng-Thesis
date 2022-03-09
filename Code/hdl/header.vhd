@@ -51,11 +51,7 @@ entity header is
 	-------------------------------------------------------------------
 	-- timing and trigger system --
 	ttc_data_i     : in t_mid_ttc;
-	-------------------------------------------------------------------
-	-- trigger pulses --
-	sox_pulse_i    : in std_logic;
-	hbt_pulse_i    : in std_logic;
-	eox_pulse_i    : in std_logic;
+	ttc_pulse_i    : in t_mid_pulse;
 	-------------------------------------------------------------------
 	-- header info --
 	header_rdreq_i : in std_logic;
@@ -80,19 +76,17 @@ architecture rtl of header is
 	-- ========================================================
 	-- header fifo  --
 	signal s_data, s_rx_data : std_logic_vector(63 downto 0);
-	signal s_data_val      : std_logic;
-	signal s_full          : std_logic;
-	signal s_empty         : std_logic;
-	signal s_usedw         : std_logic_vector(2 downto 0);
-    
+	signal s_usedw           : std_logic_vector(2 downto 0);
+	signal s_data_val        : std_logic;
+	signal s_full            : std_logic;
+	signal s_empty           : std_logic;
 	-- bunch crossing ID 
-	signal s_bcid          : std_logic_vector(15 downto 0);
-
+	signal s_bcid            : std_logic_vector(15 downto 0);
 	-- pipeline tx  
-	signal s_tx_data     : std_logic_vector(63 downto 0) := (others => '0');
-	signal s_tx_predata  : std_logic_vector(63 downto 0) := (others => '0');
-	signal s_tx_val      : std_logic;
-	signal s_tx_preval   : std_logic := '0';
+	signal s_tx_data         : std_logic_vector(63 downto 0) := (others => '0');
+	signal s_tx_predata      : std_logic_vector(63 downto 0) := (others => '0');
+	signal s_tx_val          : std_logic;
+	signal s_tx_preval       : std_logic := '0';
  
 begin  
     --=============================================================================
@@ -118,14 +112,15 @@ begin
 	   when IDLE => 
 	    if s_full /= '1' then
 	     -- sox 
-	     if sox_pulse_i = '1' then  
+	     if ttc_pulse_i.sox = '1' then  
 	      state <= REFRESH;
-		 -- eox or heartbeat
-		 elsif hbt_pulse_i = '1' or eox_pulse_i = '1' then 
+		 -- eox 
+		 elsif ttc_pulse_i.eox = '1' then 
+		  state <= UPDATE;
+		 -- heartbeat between sox and eox 
+		 elsif ttc_pulse_i.hbt = '1' then 
 		  state <= UPDATE;
 	     end if;
-	    else
-	     state <= IDLE;
 	    end  if;
        --=========--
        -- REFRESH --
@@ -172,7 +167,6 @@ begin
 	full	  => s_full,
 	empty	  => s_empty
 	);
-
 	--===========================================================================
 	-- Begin of p_txpipeline
 	-- pipeline to overcome the latency of the fifo (2 clk cycles)
@@ -182,6 +176,7 @@ begin
      if rising_edge(clk_240) then
 	  if reset_i = '1' then 
 	   s_tx_data <= (others => '0');
+	   s_tx_val <= '0';
 	  else 
 	   s_tx_preval <= header_rdreq_i;  -- 1st stage
        s_tx_val <= s_tx_preval;   -- 2nd stage 

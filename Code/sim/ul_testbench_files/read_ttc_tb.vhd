@@ -22,7 +22,7 @@ use ieee.std_logic_textio.all;
 --=============================================================================
 entity read_ttc_tb is
 	generic (
-   g_FILE_NAME    : string(23 downto 1) := "file_in/sim_ttc_pon.txt" -- continous or trigggered
+   g_FILE_NAME    : string(30 downto 1) := "ul_input_files/sim_ttc_pon.txt" -- continous or trigggered
     );
 	port (
 	---------------------------------------------------------------------------
@@ -40,7 +40,7 @@ end entity read_ttc_tb;
 architecture sim of read_ttc_tb is
 begin 
 	p_read_ttc: process
-		constant my_filename: string(23 downto 1) := g_FILE_NAME; 
+		constant my_filename: string(30 downto 1) := g_FILE_NAME; 
       file my_file : text;
       variable my_content: std_logic_vector(199 downto 0) := (others => '0');
       variable my_line: line; 

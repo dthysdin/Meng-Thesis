@@ -24,7 +24,7 @@
 -------------------------------------------------------------------------------
 -- Description: This module instantiates the regional_decoder and the regional_ctrl  
 -- modules. It stores the regional data in a buffer and performs pipelining to solve the
--- failling paths errors 
+-- timing errors 
 -------------------------------------------------------------------------------
 -- Copyright (c) 2018
 -------------------------------------------------------------------------------
@@ -33,13 +33,15 @@ library ieee;
 -- Standard packages
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use std.textio.all;
+use ieee.std_logic_textio.all;
 -- Specific package 
 use work.pack_mid_ul.all;
 --=============================================================================
 --Entity declaration for regional_elink
 --=============================================================================
 entity regional_elink is
-	generic ( g_REGIONAL_ID: integer; g_NUM_HBFRAME_SYNC: integer; g_LINK_ID : integer);
+	generic ( g_REGIONAL_ID: integer; g_LINK_ID : integer);
 	port (
 	-------------------------------------------------------------------
 	-- 240 MHz clock --
@@ -48,20 +50,20 @@ entity regional_elink is
 	-- avalon + auto reset --  
 	reset_i      : in std_logic;
 	-------------------------------------------------------------------
-        -- data acquisition info --
-	daq_stop_i   : in std_logic;
-	daq_valid_i  : in std_logic;	
-	daq_resume_i : in std_logic;
-	-- 
-	orb_pause_o  : out std_logic;
-	eox_pause_o  : out std_logic;
+    -- data acquisition info --
+	daq_enable_i : in std_logic;	
+	daq_resume_i : in t_mid_daq_handshake;
+	daq_pause_o  : out t_mid_daq_handshake;
 	-------------------------------------------------------------------
-	-- mid gbt elink data --									
-	gbt_data_i   : in std_logic_vector(7 downto 0);		
-	gbt_val_i    : in std_logic;									
+	-- mid gbt elink data --											
+	gbt_val_i    : in std_logic;
+	gbt_data_i   : in std_logic_vector(7 downto 0);									
 	-------------------------------------------------------------------
-        -- timing and trigger system mode -- 		 									 
+    -- timing and trigger system mode -- 		 									 
 	ttc_mode_i  : in t_mid_mode;
+	-------------------------------------------------------------------
+	-- mid sync
+	mid_sync_i: in std_logic_vector(11 downto 0);
 	-------------------------------------------------------------------
 	-- regional card info --
 	--< in 
@@ -86,8 +88,6 @@ architecture rtl of regional_elink is
 	-- ========================================================
 	-- signal declarations
 	-- ========================================================
-	-- regional decoder enable
-	signal s_reg_en       : std_logic;
 	-- regional fifo 40x168
 	signal s_full         : std_logic;
 	signal s_empty        : std_logic;
@@ -96,14 +96,13 @@ architecture rtl of regional_elink is
 	signal s_reg_tx_val   : std_logic;
 	signal s_reg_tx_preval: std_logic;
 	-- regional pause
-	signal s_orb_pause    : std_logic; 
-	signal s_eox_pause    : std_logic;
+	signal s_daq_pause    : t_mid_daq_handshake;
 	-- regional status
 	signal s_reg_active   : std_logic;
 	signal s_reg_inactive : std_logic := '0';
 	signal s_reg_overflow : std_logic;
 	signal s_reg_missing  : std_logic_vector(11 downto 0);
-        -- regional crate ID and val 
+    -- regional crate ID 
 	signal s_reg_crateID     : std_logic_vector(3 downto 0);
 	signal s_reg_crateID_val : std_logic;
 	-- regional data 
@@ -120,10 +119,9 @@ begin
 	--==========================================--
 	-- continuous and triggered operation modes --
 	--==========================================--
-        -- DAQ valid input is valid between sox and eox triggers from the LTU
+    -- DAQ is enabled between sox trigger from the LTU and the eox trigger from all active e-links
 	-- MID e-link rx enable input is valid when the GBT link is connected and ready  
 	-- MID e-link rx valid input is valid during 1 out 6 (240MHz) clock cycles
-	s_reg_en <= daq_valid_i and gbt_val_i;
 	--======================--
 	-- REGIONAL DECODER	--
 	--======================--
@@ -133,7 +131,8 @@ begin
 	--
 	reset_i        => reset_i,
 	--
-	reg_en_i       => s_reg_en,
+	reg_en_i       => daq_enable_i,
+	reg_val_i      => gbt_val_i,
 	reg_data_i     => gbt_data_i,
 	--
 	reg_val_o      => s_reg_val,
@@ -142,20 +141,19 @@ begin
 	-- REGIONAL CONTROL 	--
 	--======================--
 	regional_control_inst: regional_control
-	generic map ( g_REGIONAL_ID => g_REGIONAL_ID, g_NUM_HBFRAME_SYNC => g_NUM_HBFRAME_SYNC, g_LINK_ID => g_LINK_ID)
+	generic map ( g_REGIONAL_ID => g_REGIONAL_ID, g_LINK_ID => g_LINK_ID)
 	port map (
 	clk_240           => clk_240,
 	--
 	reset_i           => reset_i,
 	--
-	daq_stop_i        => daq_stop_i,
-	daq_valid_i       => daq_valid_i,
+	daq_enable_i      => daq_enable_i,
 	daq_resume_i      => daq_resume_i,
+	daq_pause_o       => s_daq_pause, 
+    --
+	ttc_mode_i        => ttc_mode_i,
 	--
-	orb_pause_o       => s_orb_pause,
-	eox_pause_o       => s_eox_pause, 
-        --
-	ttc_mode_i        => ttc_mode_i,	
+	mid_sync_i        => mid_sync_i,	
 	--
 	reg_val_i         => s_reg_val,
 	reg_data_i        => s_reg_data,
@@ -189,7 +187,7 @@ begin
 	--===========================================================================
 	p_reg_pipe: process(clk_240)
 	begin 
-         if rising_edge(clk_240) then 
+	 if rising_edge(clk_240) then 
 	  -- pipeline 
 	  s_reg_tx_preval <= reg_rdreq_i;   -- 1st stage 
 	  s_reg_tx_val <= s_reg_tx_preval;  -- 2nd stage
@@ -204,7 +202,7 @@ begin
 	begin 
 	 if rising_edge(clk_240) then 
 	  if reset_i = '1' then 
-	   s_reg_inactive <= '0';   -- off
+	   s_reg_inactive <= '0';   
 	  else 
 	   -- eox event  
 	   if s_reg_tx_val = '1' and s_reg_tx_data(30) = '1' then 
@@ -231,56 +229,83 @@ begin
 	  s_stop_reading <= '0';
 
 	  if reset_i = '1' then
-	   ovf_inc := (others => '0');
-	   usedw_inc := (others => '0'); 
+	   ovf_inc   := (others => '0');            -- reset overflow counter 
+	   usedw_inc := (others => '0');            -- reset used word counter 
 	  else
+       
+	   -- daq resume orbit 
+	   if daq_resume_i.orb = '1' then
+        ovf_inc   := (others => '0');           -- initial condition 
+        usedw_inc := (others => '0');           -- initial condition
 
-	   -- self-reset
-	   if daq_resume_i = '1' then
-            ovf_inc := (others => '0'); 
-            usedw_inc := (others => '0');
-
-	   -- overflow stage 
-	   elsif s_reg_overflow = '1' then 
-	    read_wr := reg_rdreq_i & s_reg_rx_val; -- concatenate (read & write)  
+	   -- overflow  
+	   elsif s_reg_overflow = '1' then
+	    -- concatenate (read & write)
+	    read_wr := reg_rdreq_i & s_reg_rx_val; 
 	    case read_wr is 
-            when "01" =>   
-	     -- write
-	     ovf_inc   := ovf_inc+1;            -- increment overflow counter
-	     usedw_inc := unsigned(s_usedw)+1;  -- fifo word increment ahead
-	    when "10" => 
-	     -- read 
-	     usedw_inc := unsigned(s_usedw)-1;  -- fifo word decrement ahead
-	    when "11" => 
-	     -- read and write
-	     ovf_inc   := ovf_inc+1;            -- increment overflow counter 
-	     usedw_inc := unsigned(s_usedw);    -- copy fifo word counter 
-	    when others => null;
+         when "01" =>                          -- write
+	      ovf_inc   := ovf_inc+1;              -- increment overflow counter
+	      usedw_inc := unsigned(s_usedw)+1;    -- fifo word increment ahead
+	     when "10" =>                          -- read 
+	      usedw_inc := unsigned(s_usedw)-1;    -- fifo word decrement ahead
+	     when "11" =>                          -- read and write
+	      ovf_inc   := ovf_inc+1;              -- increment overflow counter 
+	      usedw_inc := unsigned(s_usedw);      -- copy fifo word counter 
+	     when others => null;
 	    end case;
 
-	    -- compare 
+	    -- compare overflow cnt & used word counter
 	    if ovf_inc = usedw_inc then 
-             s_stop_reading <= '1'; 
-            end if;
+         s_stop_reading <= '1';                -- stop reading data from fifo
+        end if;
 	   end if;
 	  end if;
 	 end if;
 	end process p_cnt_ovf; 
 
-	-- output data 
+	-- output data  
+	daq_pause_o.orb   <= s_daq_pause.orb or s_reg_overflow;
+	daq_pause_o.eox   <= s_daq_pause.eox;
+	daq_pause_o.close <= s_daq_pause.close;
+
+
 	reg_data_o     <= s_reg_tx_data;
 	reg_val_o      <= s_reg_tx_val;
-	reg_missing_o  <= s_reg_missing;
 	reg_empty_o    <= s_stop_reading or s_empty;
 	reg_afull_o    <= s_usedw(6) and not(s_empty);
 	reg_active_o   <= s_reg_active;
 	reg_inactive_o <= s_reg_inactive;
-
-	orb_pause_o    <= s_reg_overflow or s_orb_pause;
-	eox_pause_o    <= s_eox_pause;
-
+	reg_missing_o  <= s_reg_missing;
 	reg_crateID_o  <= s_reg_crateID;
-	reg_crateID_val_o <= s_reg_crateID_val;
+	reg_crateID_val_o  <= s_reg_crateID_val;
+	
+	
+	p_write_cnt : process
+	file my_file : text open write_mode is "ul_input_files/sim_reg_tx.txt";
+	variable my_line  : line;
+	variable my_count : integer := 0;
+	variable my_select: std_logic_vector(1 downto 0) := "00";
+    begin
+
+	my_select := s_reg_rx_val &  reg_rdreq_i;
+	
+	wait until rising_edge(clk_240);
+
+	 case my_select is 
+	 when "01" =>
+	 	my_count := my_count -1;
+		write(my_line, my_count);
+		writeline(my_file, my_line);
+	 when "10" => 
+	 	my_count := my_count +1;
+	 	write(my_line, my_count);
+		writeline(my_file, my_line);
+	 when others => my_count := my_count;
+	 end case;
+
+	end process p_write_cnt;
+
+
 	
 end rtl;
 --===========================================================================--

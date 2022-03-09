@@ -32,13 +32,15 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_misc.all;
 use ieee.numeric_std.all;
+use std.textio.all;
+use ieee.std_logic_textio.all;
 -- Specific package 
 use work.pack_mid_ul.all;
 --=============================================================================
 --Entity declaration for local_control
 --=============================================================================
 entity local_control is
-	generic (g_NUM_HBFRAME_SYNC: integer);
+	generic (g_LOCAL_ID : integer);
 	port (
 	-------------------------------------------------------------------
 	-- 240 MHz clock --
@@ -48,15 +50,17 @@ entity local_control is
 	reset_i        : in std_logic;
 	-------------------------------------------------------------------
 	-- data acquisition info --
-	daq_valid_i    : in std_logic; 
-	daq_resume_i   : in std_logic;
-	daq_stop_i     : in std_logic;
-	--
-	orb_pause_o    : out std_logic;
-	eox_pause_o    : out std_logic;
+	daq_enable_i   : in std_logic; 
+	daq_resume_i   : in t_mid_daq_handshake;
+	daq_pause_o    : out t_mid_daq_handshake;
 	-------------------------------------------------------------------
 	-- timing and trigger control mode --			 								
-	ttc_mode_i  : in t_mid_mode;
+	ttc_mode_i     : in t_mid_mode;
+	-------------------------------------------------------------------
+	-- mid sync --	
+	mid_sync_i     : in std_logic_vector(11 downto 0);
+	-------------------------------------------------------------------
+	-- timeframe config
 	-------------------------------------------------------------------
 	-- local card info --
 	--< in 
@@ -95,8 +99,7 @@ architecture rtl of local_control is
 	-- ========================================================
 	-- signal declarations
 	-- ========================================================
-	-- local fifo 
-	signal s_loc_rd	       : std_logic;	
+	-- local fifo 	
 	signal s_loc_rdreq     : std_logic;
 	signal s_loc_wrreq     : std_logic;
 	signal s_loc_full      : std_logic;			
@@ -113,9 +116,8 @@ architecture rtl of local_control is
 	-- bcid 
 	signal s_bcid_filter : std_logic;
 	
-	-- pause register 
-	signal s_orb_pause  : std_logic;
-	signal s_eox_pause  : std_logic;
+	-- pause register '
+	signal s_daq_pause   : t_mid_daq_handshake;
 	
 	-- temporary local register 
 	signal s_temp_data  : std_logic_vector(167 downto 0);
@@ -149,10 +151,7 @@ begin
 	-- MLAB memory type (look ahead read mode)
 	-- rdreq is used as read acknoledge 
 	--=================================================--
-	s_loc_wrreq <= loc_val_i and(not s_loc_full);                          -- valid data when fifo not busy
-	s_loc_rdreq <= s_loc_rd and (not s_loc_empty);                         -- ack data when fifo not empty 
-	s_loc_rd <= '1' when state = START_RUN and loc_full_i /= '1' else '0'; -- extract data from fifo 
-
+	s_loc_wrreq <= loc_val_i and(not s_loc_full);                                       -- valid data when fifo not busy
 	fifo_168x64_inst:fifo_168x64
 	port map (
 	data		=> loc_data_i,
@@ -185,29 +184,44 @@ begin
 	-- Begin of p_loc_pipe
 	-- pipeline to overcome the latency of the fifo (3 clk cycles)
 	--===========================================================================
+	-- extract the local word from the fifo
+	s_loc_rdreq <= '1' when state = START_RUN and loc_full_i /= '1' and s_loc_empty /= '1' else '0'; 
+
 	p_loc_pipe: process(clk_240)
 	begin 
 	 if rising_edge(clk_240) then
-	  -- pipeline 
-	  s_loc_tx_preval <= s_loc_rdreq; 	  -- 1st stage
-	  s_loc_tx_val    <= s_loc_tx_preval; -- 2nd stage 
-      s_loc_tx_ready  <= s_loc_tx_val;    -- 3rd stage 
-
-	  if reset_i = '1' then 
-	   s_loc_tx_data <= (others => '0');
-	  elsif s_loc_rdreq = '1' then 
-	   s_loc_tx_predata <= s_loc_rx_data; -- copy fifo data 
-	  elsif s_loc_tx_val = '1' then 
-	   s_loc_tx_data <= s_loc_tx_predata; -- copy pipelined fifo data 
-	  end if;
+      -- 3 stage pipeline 
+      s_loc_tx_preval <= s_loc_rdreq;     -- 1st stage (local read_request becomes local preval)
+      s_loc_tx_val    <= s_loc_tx_preval; -- 2nd stage (local preval beconmes local valid)
+	  s_loc_tx_ready  <= s_loc_tx_val;    -- 3rd stage (local valid becomes local ready)
 	 end if;
 	end process p_loc_pipe;
+	--===========================================================================
+	-- Begin of p_loc_pipe_data
+	-- pipeline data transfer to overcome the latency of the fifo (3 clk cycles)
+	--===========================================================================
+	p_loc_pipe_data: process(clk_240)
+	begin 
+	 if rising_edge(clk_240) then
+	  if reset_i = '1' then 
+	   s_loc_tx_data <= (others => '0');
+	  else 
+	   -- local read_request
+	   if s_loc_rdreq = '1' then 
+	    s_loc_tx_predata <= s_loc_rx_data; -- fifo data 
+	   -- local valid
+	   elsif s_loc_tx_val = '1' then 
+	    s_loc_tx_data <= s_loc_tx_predata; -- pipelined fifo data 
+	   end if;
+	  end if;
+	 end if;
+	end process p_loc_pipe_data;
 	
 	-- concatenate sox, orbit and eox 
 	s_fee_select <= a_fee_sox & a_fee_orbit & a_fee_eox;
 						  					
 	-- bunch crossing ID filter 
-	s_bcid_filter <= '1' when (unsigned(a_fee_bc) = unsigned(ttc_mode_i.triggered_data)) and state /= IDLE else 
+	s_bcid_filter <= '1' when (unsigned(a_fee_bc) = unsigned(ttc_mode_i.triggered_data)) and  state /= IDLE else 
                      '1' when (unsigned(a_fee_bc)+1 = unsigned(ttc_mode_i.triggered_data)) and state /= IDLE else
                      '1' when (unsigned(a_fee_bc)-1 = unsigned(ttc_mode_i.triggered_data)) and state /= IDLE else '0';					
 	--=============================================================================
@@ -220,9 +234,10 @@ begin
 	  if reset_i = '1' then 
 	   s_is_fee_eox <= '0';
 	  else 
-	   -- fee "eox"
+	   -- fee eox event 
 	   if a_fee_eox = '1' then
 	    s_is_fee_eox <= '1'; 
+	   -- fee sox event 
        elsif a_fee_sox = '1' then
 	    s_is_fee_eox <= '0';
 	   end if;
@@ -240,19 +255,20 @@ begin
 	   s_trg_mode <= '0';
 	   s_cont_mode <= '0';
 	  else 
-       -- Trigger mode --	 
-	   if ttc_mode_i.triggered = '1' and a_fee_sox = '1' then 
-	    s_trg_mode <= '1'; 			-- active 	
-	   elsif s_trg_mode = '1' and s_is_fee_eox = '1' then	
-	    s_trg_mode <= '0'; 			-- desactive  
-	   end if;
-			
+
 	   -- Continuous mode -- 
 	   if ttc_mode_i.continuous = '1' and a_fee_sox = '1' then 
 	    s_cont_mode <= '1'; 		       -- active 	
 	   elsif s_cont_mode = '1' and s_is_fee_eox = '1' then 
 	    s_cont_mode <= '0'; 		       -- desactive  
+		
+       -- Trigger mode --	 
+	   elsif ttc_mode_i.triggered = '1' and a_fee_sox = '1' then 
+	    s_trg_mode <= '1'; 			-- active 	
+	   elsif s_trg_mode = '1' and s_is_fee_eox = '1' then	
+	    s_trg_mode <= '0'; 			-- desactive  
 	   end if;
+
 	  end if;	
 	 end if;
 	end process p_readout_mode;
@@ -265,14 +281,14 @@ begin
 	 if rising_edge(clk_240) then
 	  if reset_i = '1' then
 	   state <= IDLE;             -- initial state 
-	   s_fee_orbit_cnt <= x"001"; -- initial orbit counter value
 	  else
 	   -- default 
 	   s_temp_val <= '0';
 	   s_temp_data <= (others => '0');
-		
-       s_orb_pause <= '0';
-       s_eox_pause <= '0';
+
+	   s_daq_pause.orb   <= '0';
+       s_daq_pause.eox   <= '0';
+	   s_daq_pause.close <= '0';
 	 
 	   -- case begin  --
 	   case state is 
@@ -280,8 +296,9 @@ begin
 	   --  IDLE  --
 	   --========--
 	   -- state"IDLE"
-	   when IDLE => 	
-	    if daq_valid_i = '1' then
+	   when IDLE => 
+	    -- daq enable 	
+	    if daq_enable_i = '1' then
 	     state <= START_RUN; 
 	    end if;		
 	   --===========--
@@ -289,17 +306,19 @@ begin
 	   --===========--
 	   -- state"START_RUN"
 	   when START_RUN => 
-        -- fee data available 
-	    if s_loc_empty = '0' and loc_full_i = '0' then 
-	     state <= READY;
+	    -- data available 
+		if loc_full_i /= '1' then 
+		 if s_loc_empty /= '1' then 
+	      state <= READY;
+		 end if;
 	    end if;
 	   --=======--
 	   -- READY --
 	   --=======--
 	   -- state"READY"
 	   when READY =>
-	    -- fee data ready 		
-	    if s_loc_tx_ready = '1' then
+	    -- data ready 		
+	    if s_loc_tx_ready = '1' then -- 3 clock cycles later after state: "start_run"
 	     state <= READOUT_MODE;
 	    end if;
 	   --================--
@@ -349,7 +368,6 @@ begin
 	   --======--
 	   -- state "SEND"
 	   when SEND =>
-        -- mux 	
 	    case s_fee_select is
 	    when "001"|"011" => -- eox   
 	     state <= SEND_EOX; 
@@ -366,20 +384,21 @@ begin
 	   --============--
 	   -- state "SEND_ORBIT"
 	   when SEND_ORBIT =>
-		if s_fee_orbit_cnt = to_unsigned(g_NUM_HBFRAME_SYNC, s_fee_orbit_cnt'length) then  -- default (256 orbit)
-		 -- resume daq or full
-         if daq_resume_i = '1' or s_loc_full = '1' then
+	    -- timeframe has been reached 
+		if s_fee_orbit_cnt = unsigned(mid_sync_i) then  
+		 -- daq resume orbit / fifo full
+         if daq_resume_i.orb = '1' or s_loc_full = '1' then
+		  -- send data (orbit event)
 		  s_temp_val <= '1';                               -- temp valid 
           s_temp_data <= s_loc_tx_data;                    -- temp data 
-		  s_fee_orbit_cnt <= x"001";                       -- initial coundition 
 		  state <= START_RUN;
 		 else 
-		  s_orb_pause <= '1';                              -- request daq 
+		  s_daq_pause.orb <= '1';
 		 end if;
-
+        
+		-- timeframe limit has nor been reached yet
 		else 
-         -- send data 
-		 s_fee_orbit_cnt <= s_fee_orbit_cnt+1;            -- increment fee orbit counter 
+		 -- send data (orbit event) 
 		 s_temp_val <= '1';
          s_temp_data <= s_loc_tx_data;
 		 state <= START_RUN;
@@ -388,27 +407,27 @@ begin
 	   -- SEND_EOX --
 	   --==========--
 	   -- state "SEND_EOX"
-	   when SEND_EOX => 
-	    if daq_resume_i = '1' and s_overflow /= '1' then
-	     -- send data 
+	   when SEND_EOX =>
+	    -- daq resume eox 
+		if daq_resume_i.eox = '1' then
+		 -- send data (eox event) 
          s_temp_val <= '1';
          s_temp_data <= s_loc_tx_data;	 
 	     state <= FINISH_RUN;
-	    else 
-	     -- request daq_resume 
-	     s_orb_pause <= '1';
-	    end if;
+		else 
+		 s_daq_pause.eox <= '1';                           -- request daq resume eox 
+		end if;
 	   --============--
 	   -- FINISH_RUN --
 	   --============--
 	   -- state "FINISH_RUN"
 	   when FINISH_RUN => 
-	    -- stop daq	
-	    if daq_stop_i = '1' then 
+	    -- daq resume close (eox event has reached the 256x256 fifo)
+	    if daq_resume_i.close = '1' then 
 	     state <= IDLE;
+		-- inactive cards (eox event has left the local_elink fifo)
 	    elsif loc_inactive_i = '1' then 
-	     -- request daq_stop
-	     s_eox_pause <= '1';
+		 s_daq_pause.close <= '1';                         -- request daq resume eox
 	    end if;
 	   --========--
 	   -- OTHERS --
@@ -419,7 +438,29 @@ begin
 	   end case;
 	  end if;
 	 end if;
-	end process p_state;	
+	end process p_state;
+	--=============================================================================
+	-- Begin of p_fee_orbit_cnt
+	-- This process enables and disables the overflow 
+	--==============================================================================
+	p_fee_orbit_cnt: process(clk_240)
+	begin 
+	 if rising_edge(clk_240) then
+	  if reset_i = '1' then  
+	   s_fee_orbit_cnt <= x"001"; 
+	  else 
+	   -- daq resume orbit 
+       if daq_resume_i.orb = '1' then 
+	    s_fee_orbit_cnt <= x"001"; 
+       elsif state = SEND_ORBIT then
+	    -- timeframe limit  
+	    if s_fee_orbit_cnt /= unsigned(mid_sync_i) then
+		 s_fee_orbit_cnt <= s_fee_orbit_cnt+1;              
+		end if;
+       end if;
+	  end if;
+	 end if;
+	end process p_fee_orbit_cnt;		
 	--=============================================================================
 	-- Begin of p_overflow
 	-- This process enables and disables the overflow 
@@ -430,12 +471,15 @@ begin
 	  if reset_i = '1' then  
 	   s_overflow <= '0'; 
 	  else 
-       if daq_resume_i = '1' then 
-        s_overflow <= '0';  
-       elsif state = SEND_ORBIT  and s_fee_orbit_cnt = to_unsigned(g_NUM_HBFRAME_SYNC, s_fee_orbit_cnt'length) then
-		-- timeframe bondary and memory full 
-		if s_loc_full = '1' then 
-         s_overflow <= '1'; 
+	   -- daq resume orbit 
+       if daq_resume_i.orb = '1' then 
+        s_overflow <= '0'; 
+       elsif state = SEND_ORBIT then
+	    -- timeframe reached 
+	    if s_fee_orbit_cnt = unsigned(mid_sync_i) then
+		 if s_loc_full = '1' then 
+          s_overflow <= '1'; 
+		 end if;
 		end if;
        end if;
 	  end if;
@@ -445,7 +489,7 @@ begin
 	-- Begin of p_active 
 	-- This process enables and disables the active signal 
 	-- The active signal is enabled after receiving the FEE sox trigger and disabled after 
-	-- receiving the daq stop signal 
+	-- receiving the daq_resume.close signal 
 	--==============================================================================
 	p_active: process(clk_240)
 	begin 
@@ -453,24 +497,53 @@ begin
 	  if reset_i = '1' then  
 	   s_active <= '0';
 	  else
+	   -- fee sox event 
 	   if a_fee_sox = '1' then 
-	    s_active <= '1';  
-	   elsif daq_stop_i = '1' then 
-	    s_active <= '0'; 
+	    s_active <= '1'; -- enable active flag 
+	   -- daq resume close  
+	   elsif daq_resume_i.close = '1' then 
+	    s_active <= '0'; -- disable active flag 
 	   end if;
 	  end if;
 	 end if;
 	end process p_active;
 	
 	-- output 
-	orb_pause_o    <= s_orb_pause;
-	eox_pause_o    <= s_eox_pause; 
+	daq_pause_o.orb   <= s_daq_pause.orb;
+	daq_pause_o.eox   <= s_daq_pause.eox;
+	daq_pause_o.close <= s_daq_pause.close;
 
 	loc_val_o      <= s_temp_val;
 	loc_data_o     <= s_temp_data;
 	loc_missing_o  <= std_logic_vector(s_missing_cnt);
 	loc_active_o   <= s_active;
     loc_overflow_o <= s_overflow;
+	
+
+	p_write_cnt : process
+	file my_file : text open write_mode is "ul_input_files/sim_loc_rx.txt";
+	variable my_line  : line;
+	variable my_count : integer := 0;
+	variable my_select: std_logic_vector(1 downto 0) := "00";
+    begin
+
+	my_select := s_loc_wrreq &  s_loc_rdreq;
+	
+	wait until rising_edge(clk_240);
+
+	 case my_select is 
+	 when "01" =>
+	 	my_count := my_count -1;
+		write(my_line, my_count);
+		writeline(my_file, my_line);
+	 when "10" => 
+	 	my_count := my_count +1;
+	 	write(my_line, my_count);
+		writeline(my_file, my_line);
+	 when others => my_count := my_count;
+	 end case;
+
+end process p_write_cnt;
 
 end rtl;
 --=============================================================================

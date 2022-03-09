@@ -12,7 +12,8 @@
 -- Standard 	: VHDL'93'
 -- Version	: 2.0
 -------------------------------------------------------------------------------
--- last changes: <13/02/2021> 
+-- last changes: <23/01/2022>
+-- enabled more avalon registers 
 -------------------------------------------------------------------------------
 -- TODO:  <completed>
 -------------------------------------------------------------------------------
@@ -36,7 +37,6 @@ use work.pack_mid_ul.all;
 --Entity declaration for avalon_ulogic
 --============================================================================
 entity avalon_ulogic is
-        generic (g_NUM_GBT_USED : integer);
 	port (
 	-----------------------------------------------------------------------
 	mms_clk 	: in  std_logic;
@@ -49,14 +49,10 @@ entity avalon_ulogic is
 	mms_rdval	: out std_logic;
 	mms_rddata	: out std_logic_vector(31 downto 0);
 	--
-	reset_config    : out std_logic;
-        cruid_config    : out std_logic;
-        fiber_config   : out std_logic_vector(2*g_NUM_GBT_USED-1 downto 0);
-        --  
-        trg_monit       : in std_logic_vector(31 downto 0);          -- triggers monitor 
-        dw_monit        : in Array32bit(1 downto 0);                  -- d-wrappers monitor 
-        gbt_monit       : in Array64bit(g_NUM_GBT_USED-1 downto 0)   -- gbt ulogic monitor 
-				);  
+        monitor : in t_mid_monitor;
+        config  : out t_mid_config
+
+	        );  
 end avalon_ulogic;
 --=============================================================================
 -- architecture declaration
@@ -72,7 +68,7 @@ architecture rtl of avalon_ulogic is
 	-- ========================================================
 	-- signal declarations
 	-- ========================================================
-	-- avalon
+	-- avalon sx 
 	signal sx_wr        : std_logic_vector(1 downto 0);
 	signal sx_rd        : std_logic_vector(1 downto 0);
 	signal sx_addr      : Array32bit(0 to 1);
@@ -87,15 +83,15 @@ architecture rtl of avalon_ulogic is
 	signal s_av_reg     : std_logic;
 	signal s_av_wr      : std_logic_vector((c_MODE_LGR - 1) downto 0);
 	signal s_av_rd      : std_logic_vector((c_MODE_LGR - 1) downto 0);
-
-	-- Avalon registers
 	signal dirty_idcode : std_logic_vector(31 downto 0);
 
-        -- Configuration signals
-        signal s_toggle_config: std_logic_vector(31 downto 0) := (others => '0');
-        signal s_cruid_config : std_logic_vector(31 downto 0) := (others => '0');
-        signal s_fiber_config : std_logic_vector(2*g_NUM_GBT_USED-1 downto 0) := (others => '0');
-        signal s_reset_config : std_logic;
+        -- config
+        signal s_config  : t_mid_config := (mid_rst     => '0',              -- default MID reset is 0          
+                                            mid_cruid   => x"0",             -- default MID CRUID is 0         
+                                            mid_switch  => x"0",             -- default MID switch is 0
+                                            mid_mapping => (others => '0'),  -- default MID GBT mapping is 0 (32-bit per EPN)
+                                            mid_sync    => x"080"); -- x"080");          -- default MID sync  x"080" (synchronization every 128 HBF) 
+
 begin	
 
 	--========================================================================---
@@ -131,11 +127,13 @@ begin
 	-----------------------------------------------------------------------------
 	-- ALL DETECTOR USER logic should reserve the same area with the same INFORMATION
 	-- See COMMON for more help on avalon slaves
-        -- ## remove (4 for sim)
+        -- ##Personal notes:
+        -- ## MODE_LG = 4  (for simulation)
+        -- ## MODE_LG = c_MODE_LGR (for final compilation)
 	-----------------------------------------------------------------------------
 	id_comp : avalon_mm_slave
         generic map (
-        MODE_LG => c_MODE_LGR, 
+        MODE_LG => 4, --c_MODE_LGR, 
         AWIDTH  => 8,
         MODE    => (0 to 3  => x"1", -- input 
                     others  => x"4") -- disabled 
@@ -168,8 +166,8 @@ begin
         MODE_LG => c_MODE_LGR,
         AWIDTH  => 8,
         MODE    => (0        => x"0", -- output
-                    1 to 3   => x"2", -- output + input
-                    4 to 12  => x"4", -- disabled for the moment
+                    1 to 5   => x"2", -- output + input
+                    6 to 12  => x"4", -- disabled for the moment (not used by MID)
                     13 to 31 => x"1", -- input 
                     others   => x"4") -- disabled
         )
@@ -186,83 +184,182 @@ begin
         --
         ALTCLK  => '0',
         --
-        USERWR  => s_av_wr, -- vector of 0..3
+        USERWR  => s_av_wr, -- vector of 0..4
         USERRD  => s_av_rd,
         --
         qout => s_av_o,
         --
         din  => s_av_i
         );
-	-----------------------------------------------------------------------------
-	-- Get the MID reset signal from avalon port
-	-----------------------------------------------------------------------------
-	p_mid_reset_in : process(MMS_CLK)
+        --=============================================================================
+	-- Begin of p_mid_reset
+	-- This process allows the MID UL to generate a reset pulse using avalon register
+        -- as a catalyst
+	--=============================================================================
+	p_mid_reset : process(MMS_CLK)
 	begin
          if rising_edge(MMS_CLK) then
-          if s_reset_config = '0' then 
+          if s_config.mid_rst = '0' then 
            if s_av_wr(0) = '1' then
-            s_reset_config <= '1';
+            s_config.mid_rst <= '1';
            end if;
           else 
-           s_reset_config <= '0';
+           s_config.mid_rst <= '0';
           end if;
          end if;
 	end process;
-        -----------------------------------------------------------------------------
-	-- Get the MID cru ID signal from avalon port
-	-----------------------------------------------------------------------------
-	p_mid_cruid_in : process(MMS_CLK)
+        --=============================================================================
+	-- Begin of p_mid_CRUID
+	-- This process collects the CRUID from avalon port
+	--=============================================================================
+	p_mid_CRUID : process(MMS_CLK)
 	begin
          if rising_edge(MMS_CLK) then
           if s_av_wr(1) = '1' then
-           s_cruid_config <= s_av_o(1);
+           s_config.mid_cruid <= s_av_o(1)(3 downto 0);
           end if;
          end if;
 	end process;
-        -----------------------------------------------------------------------------
-	-- Get the MID toggle signal from avalon port
-	-----------------------------------------------------------------------------
-	p_mid_toggle : process(MMS_CLK)
+        --=============================================================================
+	-- Begin of _timeframe_length 
+	-- This process collects the timeframe length from avalon port
+	--=============================================================================
+	p_timeframe_length : process(MMS_CLK)
 	begin
          if rising_edge(MMS_CLK) then
           if s_av_wr(2) = '1' then
-           s_toggle_config <= s_av_o(2);
+           s_config.mid_sync <= s_av_o(2)(11 downto 0);
           end if;
          end if;
 	end process;
-        -----------------------------------------------------------------------------
-	-- Get the fiber select signal from avalon port
-	-----------------------------------------------------------------------------
-	p_fiber_select : process(MMS_CLK)
+        --=============================================================================
+	-- Begin of p_gbt_mapping
+	-- This process collects the fiber mapping from avalon port
+	--=============================================================================
+	p_gbt_mapping : process(MMS_CLK)
 	begin
          if rising_edge(MMS_CLK) then
+          -- EPN#0
           if s_av_wr(3) = '1' then
-           s_fiber_config <= s_av_o(3);
+           ---s_config.mid_mapping(2*c_NUM_GBT_USED-1 downto 0) <= s_av_o(3)(2*c_NUM_GBT_USED-1 downto 0);
+          end if;
+          -- EPN#1
+          if s_av_wr(4) = '1' then
+           --s_config.mid_mapping(4*c_NUM_GBT_USED-1 downto 2*c_NUM_GBT_USED) <= s_av_o(4)(4*c_NUM_GBT_USED-1 downto 2*c_NUM_GBT_USED);
+          end if; 
+         end if;
+	end process;
+        --=============================================================================
+	-- Begin of p_mid_gbt_switch
+	-- This process collects the gbt config word from avalon port
+	--=============================================================================
+	p_mid_gbt_switch : process(MMS_CLK)
+	begin
+         if rising_edge(MMS_CLK) then
+          if s_av_wr(5) = '1' then
+           s_config.mid_switch <= s_av_o(5)(3 downto 0);
           end if;
          end if;
 	end process;
-         
-	-- feedback configuration signals 
-        s_av_i(1) <= s_cruid_config;
-        s_av_i(2) <= s_toggle_config;
-        s_av_i(3) <= s_fiber_config;
 
-        -- triggers monitor 
-        s_av_i(13) <= trg_monit;
-        -- d-wrapper monitor 
-        s_av_i(14) <= dw_monit(0);
-        s_av_i(15) <= dw_monit(1);
-	-- gbt link monitor 
-        gen_status_monit : for i in 0 to g_NUM_GBT_USED-1 generate
-         s_av_i(16+i) <= gbt_monit(i)(31 downto 0) when s_toggle_config /= c_null else gbt_monit(i)(63 downto 32);
+	-- feedback configuration signals 
+        s_av_i(0)  <= x"0000000" & "000" & s_config.mid_rst;
+        s_av_i(1)  <= x"0000000" & s_config.mid_cruid;
+        s_av_i(2)  <= x"00000" & s_config.mid_sync; 
+        s_av_i(3)  <= (others => '0'); -- s_av_i(3)(2*c_NUM_GBT_USED-1 downto 0) <= s_config.mid_mapping(2*c_NUM_GBT_USED-1 downto 0);
+        s_av_i(4)  <= (others => '0'); -- s_av_i(4)(4*c_NUM_GBT_USED-1 downto 2*c_NUM_GBT_USED) <= s_config.mid_mapping(4*c_NUM_GBT_USED-1 downto 2*c_NUM_GBT_USED);
+        s_av_i(5)  <= x"0000000" & s_config.mid_switch;
+
+        s_av_i(13) <= monitor.trg;
+        s_av_i(14) <= monitor.dw(0);
+        s_av_i(15) <= monitor.dw(1);
+        gen_status_monit : for i in 0 to c_NUM_GBT_USED-1 generate
+         s_av_i(16+i) <= monitor.gbt(i);
         end generate;
 
-        -- configuation output signals
-	reset_config <= s_reset_config;
-        cruid_config <= '1' when s_cruid_config /= c_null else '0';
-        fiber_config <= s_fiber_config;
+        -- output 
+        config.mid_rst     <= s_config.mid_rst;
+	config.mid_switch  <= s_config.mid_switch;
+        config.mid_cruid   <= s_config.mid_cruid;
+        config.mid_mapping <= s_config.mid_mapping;
+        config.mid_sync    <= s_config.mid_sync;
+ 
+        --=============================================================================
+        --      READ/WRITE AVALON REGISTERS 
+        --=============================================================================
+        -- #Read all avalon registers under (module load)
+        -- roc-reg-read-range --i=#0 --ch=2 --add=0xc80004 --range=31                 # Read all registers 
+        -- ---------------------------------------------------------------------------------------------------------
+        -- #Write MID Reset
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80000 --val=0x00000001                # MID Reset (100 MHz clk cycle)
+        -- ---------------------------------------------------------------------------------------------------------
+        -- #Read/Write MID CRUID register              
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80004 --val=0x00000001                # Write MID CRUID = 1
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80004 --val=0x00000000                # Write MID CRUID = 0 -- default   
+        -- roc-reg-read-range --i=#0 --ch=2 --add=0xc80004 --range=1                  # Read MID CRUID register
+        --------------------------------------------------------------------------------------------------------- 
+        -- #Read/Write MID synchronization  
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80008 --val=0x00000080                # Write MID sync  = 128 HBF -- default      
+        -- roc-reg-read-range --i=#0 --ch=2 --add=0xc80008 --range=1                  # Read  MID sync value 
+        ---------------------------------------------------------------------------------------------------------
+        -- #Read/Write GBT Mapping 
+      
+        -- ## EPN#0 
+        -- ### Initial Mapping 
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc8000C --val=0x00000000                # Write MID mapping  default (0-7) 
 
+        -- ### SPARE LINK 8,9,10,11
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc8000C --val=0x00000001                # Write MID mapping link 0 is taking data from link(8)  
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc8000C --val=0x00000002                # Write MID mapping link 0 is taking data from link(9)  
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc8000C --val=0x00000003                # Write MID mapping link 0 is taking data from link(10)
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc8000C --val=0x00000004                # Write MID mapping link 0 is taking data from link(11)
+        -- .....                                                                      # .....
+        -- .....                                                                      # .....
+        -- .....                                                                      # .....
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc8000C --val=0x10000000                # Write MID mapping link 7 is taking data from link(8)  
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc8000C --val=0x20000000                # Write MID mapping link 7 is taking data from link(9)  
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc8000C --val=0x30000000                # Write MID mapping link 7 is taking data from link(10)
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc8000C --val=0x40000000                # Write MID mapping link 7 is taking data from link(11)
+
+        -- ## EPN#1
+        -- ### Initial Mapping 
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80010 --val=0x00000000                # Write MID mapping  default (0-7) 
+
+        -- ### SPARE LINK 8,9,10,11
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80010 --val=0x00000001                # Write MID mapping link 0 is taking data from link(8)  
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80010 --val=0x00000002                # Write MID mapping link 0 is taking data from link(9)  
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80010 --val=0x00000003                # Write MID mapping link 0 is taking data from link(10)
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80010 --val=0x00000004                # Write MID mapping link 0 is taking data from link(11)
+        -- .....                                                                      # .....                           
+        -- .....                                                                      # .....
+        -- .....                                                                      # .....
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80010 --val=0x10000000                # Write MID mapping link 7 is taking data from link(8)  
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80010 --val=0x20000000                # Write MID mapping link 7 is taking data from link(9)  
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80010 --val=0x30000000                # Write MID mapping link 7 is taking data from link(10)
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80010 --val=0x40000000                # Write MID mapping link 7 is taking data from link(11)
+
+        --------------------------------------------------------------------------------------------------------- 
+        -- #Read/Write MID switch register content
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80014 --val=0x00000000                # Write MID switch (0)          
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80014 --val=0x00000001                # Write MID switch (1)  
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80014 --val=0x00000002                # Write MID switch (2)
+        -- roc-reg-write --i=#0 --ch=2 --add=0xc80014 --val=0x00000003                # Write MID switch (3)  
+        -- roc-reg-read-range --i=#0 --ch=2 --add=0xc80014 --range=1                  # Read  MID switch 
+        ---------------------------------------------------------------------------------------------------------
+        -- #Monitor trigger register
+        -- roc-reg-read-range --i=#0 --ch=2 --add=0xc80034 --range=1                  # read trigger monitoring register 
+        ---------------------------------------------------------------------------------------------------------
+        -- #Monitor DWrapper registers 
+        -- roc-reg-read-range --i=#0 --ch=2 --add=0xc80038 --range=1                  # read DWrapper#0 register 
+        -- roc-reg-read-range --i=#0 --ch=2 --add=0xc8003C --range=1                  # read DWrapper#1 register 
+        -- roc-reg-read-range --i=#0 --ch=2 --add=0xc80038 --range=2                  # read all DWrapper registers 
+        ---------------------------------------------------------------------------------------------------------
+        -- #Monitor gbt registers  
+        -- roc-reg-read-range --i=#0 --ch=2 --add=0xc80040 --range=2                  # read from GBT#0 to GBT#1 registers (SA FLP)
+        -- roc-reg-read-range --i=#0 --ch=2 --add=0xc80040 --range=16                 # read from GBT#0 to GBT#15 registers (CERN FLP)
+---------------------------------------------------------------------------------------------------------       
 end architecture rtl;
 --=============================================================================
 -- architecture end
 --=============================================================================
+

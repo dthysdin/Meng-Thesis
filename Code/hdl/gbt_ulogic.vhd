@@ -37,7 +37,7 @@ use work.pack_cru_core.all;
 --Entity declaration for gbt_ulogic top level 
 --=============================================================================
 entity gbt_ulogic is
-	generic (g_LINK_ID : integer := 0; g_NUM_HBFRAME_SYNC: integer := 1);
+	generic (g_LINK_ID : integer := 1);
 	port (
 	-------------------------------------------------------------------
 	-- 240 MHz clock --
@@ -49,27 +49,31 @@ entity gbt_ulogic is
 	-- timing and trigger control info --					 
 	ttc_mode_i          : in t_mid_mode;
     ttc_sox_pulse_i     : in std_logic;
-	ttc_sel_pulse_i     : in std_logic;
+	ttc_eox_pulse_i     : in std_logic;
+	ttc_sel_pulse_i     : in std_logic;	
+	ttc_tfm_pulse_i     : in std_logic;
 	-------------------------------------------------------------------
-	-- mid gbt data --
-	mid_rx_bus_i        : in t_mid_gbt;		
+	-- mid rx bus --
+	gbt_val_i           : in std_logic;
+	gbt_data_i          : in std_logic_vector(79 downto 0);
 	-------------------------------------------------------------------
-	--  header 
-	header_rdreq_i      : in std_logic;
+	-- dw limited counter --
+	dw_limited_cnt_i    : in std_logic_vector(15 downto 0);  
 	-------------------------------------------------------------------
-	-- avalon 
-	av_gbt_monit_o      : out std_logic_vector(63 downto 0);
+	-- mid config --
+	mid_switch_i        : in std_logic_vector(3 downto 0);
+	mid_sync_i          : in std_logic_vector(11 downto 0);
+	-- mid monitor
+	gbt_monitor_o       : out std_logic_vector(31 downto 0);
 	-------------------------------------------------------------------
 	-- gbt access --
+	gbt_access_val_i    : in  std_logic;
 	gbt_access_ack_i    : in  std_logic;		
-	gbt_access_req_o    : out std_logic;		
-	-------------------------------------------------------------------
-	-- dw packet info --
-	dw_packet_cnt_i    : in std_logic_vector(15 downto 0);
-	-------------------------------------------------------------------
+	gbt_access_req_o    : out std_logic;
+	-------------------------------------------------------------------		
 	-- gbt datapath info --
-	gbt_datapath_o     : out t_mid_gbt_datapath; 
-	gbt_datapath_cnt_o : out std_logic_vector(15 downto 0)
+	gbt_datapath_o      : out t_mid_gbt_datapath; 
+	gbt_datapath_cnt_o  : out std_logic_vector(15 downto 0)
 	--------------------------------------------------------------------
 				);  
 end gbt_ulogic;
@@ -80,83 +84,51 @@ architecture rtl of gbt_ulogic is
 	-- ========================================================
 	-- signal declarations
 	-- ========================================================
-	-- ttc mode 
-	signal s_ttc_mode : t_mid_mode := (continuous => '0', 
-	                                   triggered  => '0', 
-									   triggered_data => (others => '0'));
 	-- payloads 
-	signal s_payload        : t_mid_pload; 
-	signal s_payloadID	    : std_logic_vector(3 downto 0);   
+	signal s_payload        : t_mid_pload;    
 	signal s_payload_empty	: std_logic_vector(1 downto 0);                 
-	signal s_payload_rdreq	: std_logic_vector(1 downto 0);   
-
+	signal s_payload_rdreq	: std_logic_vector(1 downto 0); 
+	signal s_payload_monitor: t_mid_pload_monit;  
 	-- packets
 	signal s_packet         : t_mid_pkt_array(1 downto 0);
-	signal s_packet_rdreq 	: std_logic_vector(1 downto 0); 
-	signal s_packet_active 	: std_logic_vector(9 downto 0);  
-
-	-- e-links 
-	signal s_missing_event_cnt : std_logic_vector(11 downto 0); 
-
-	-- pulses 
-	signal s_sox_pulse	: std_logic := '0';
-	signal s_sel_pulse	: std_logic := '0'; 
-
+	signal s_packet_rdreq 	: std_logic_vector(1 downto 0);   
+	signal s_packet_monitor : t_mid_elink_monit_array(1 downto 0);	
 	-- gbt access  
 	signal s_gbt_access_req : std_logic;
-	
 	-- gbt datapath
 	signal s_gbt_datapath     : t_mid_gbt_datapath;
 	signal s_gbt_datapath_cnt : std_logic_vector(15 downto 0);
-	
-	-- avalon gbt monitor 
-	signal s_cnt_monit    : unsigned(15 downto 0) := (others => '0');
-	signal s_fsm_monit    : std_logic_vector(3 downto 0);
+	signal s_gbt_monitor_word : Array32bit(3 downto 0);
+	signal s_trans_monitor    : t_mid_trans_monit;
 
-begin
-	--=============================================================================
-	-- Begin of p_enable_gbt
-	-- This process enables and disables the transfer of trigger information to the 
-	-- rest of the GBT user logic. No information is sent if the GBT link is down 
-	-- That means : no RDH and no packets will be transmitted to the DWrappers
-	--=============================================================================
-	p_enable_gbt: process(clk_240)
-	begin
-	 if rising_edge(clk_240) then
-	  if mid_rx_bus_i.en = '1' then 
-	   s_sox_pulse <= ttc_sox_pulse_i;  -- ttc sox trigger pulse
-	   s_sel_pulse <= ttc_sel_pulse_i;  -- ttc heartbeat frame sel
-	   s_ttc_mode  <= ttc_mode_i;       -- ttc readout mode selection
-	  end if;
-	 end if;
-	end process p_enable_gbt;	
-
+begin	
 	--============--
 	-- PACKETIZER --
 	--============--
 	packetizer_inst: packetizer
-	generic map (g_NUM_HBFRAME_SYNC => g_NUM_HBFRAME_SYNC, g_LINK_ID => g_LINK_ID)
+	generic map (g_LINK_ID => g_LINK_ID)
 	port map  (
 	clk_240            => clk_240,	
 	--	
 	reset_i            => reset_i,	
 	--
-	sox_pulse_i        => s_sox_pulse,
-	sel_pulse_i        => s_sel_pulse,
+	sox_pulse_i        => ttc_sox_pulse_i,
+	eox_pulse_i        => ttc_eox_pulse_i,
+	sel_pulse_i        => ttc_sel_pulse_i,	
+	tfm_pulse_i        => ttc_tfm_pulse_i,
+	ttc_mode_i         => ttc_mode_i,
 	--
-	ttc_mode_i         => s_ttc_mode,
+	gbt_val_i          => gbt_val_i,	
+	gbt_data_i         => gbt_data_i,
 	--
-	gbt_data_i         => mid_rx_bus_i.data,	
-	gbt_val_i          => mid_rx_bus_i.valid,	
-	--
-	missing_event_cnt_o=> s_missing_event_cnt,								
+	mid_sync_i         => mid_sync_i,							
 	--
 	packet_o           => s_packet,													
 	packet_rdreq_i     => s_packet_rdreq,
-	packet_active_o    => s_packet_active,
+	packet_monitor_o   => s_packet_monitor,
 	-- 
 	payload_o          => s_payload,
-	payloadID_o        => s_payloadID,
+	payload_monitor_o  => s_payload_monitor,
 	payload_empty_o    => s_payload_empty,
 	payload_rdreq_i    => s_payload_rdreq);
 	
@@ -173,43 +145,44 @@ begin
 	packet_rdreq_o      => s_packet_rdreq,
 	--
 	payload_i           => s_payload,
+	payload_empty_i     => s_payload_empty,
 	payload_rdreq_o     => s_payload_rdreq,
 	--
-	dw_packet_cnt_i     => dw_packet_cnt_i,
+	dw_limited_cnt_i    => dw_limited_cnt_i, 
 	--
-	header_rdreq_i      => header_rdreq_i,
-	--
+	gbt_access_val_i    => gbt_access_val_i,
 	gbt_access_ack_i    => gbt_access_ack_i,
 	gbt_access_req_o    => s_gbt_access_req,
 	--
 	gbt_datapath_o      => s_gbt_datapath,
 	gbt_datapath_cnt_o  => s_gbt_datapath_cnt,
 	--
-	fsm_monit_o         => s_fsm_monit);  
+	trans_monitor_o     => s_trans_monitor);  
     
-	--=============================================================================
-	-- Begin of p_cnt_monit
-	-- This process is used to count the number of packet transmitted to the dwrapper
-	--=============================================================================
-	p_av_monit_cnt: process(clk_240)
-	begin 
-	 if rising_edge(clk_240) then
-	  if reset_i = '1' then 
-	   s_cnt_monit <= (others => '0');
-	  else
-	   if s_cnt_monit = x"FFFF" then            
-		s_cnt_monit <= (others => '0');      -- reset
-	   elsif s_gbt_datapath.valid = '1' then
-		s_cnt_monit <= s_cnt_monit+1;        -- increment
-	   end if;
-	  end if;
-	 end if;
-	end process p_av_monit_cnt;
-   
-    -- outputs 
-	av_gbt_monit_o(31 downto 0)  <= std_logic_vector(s_cnt_monit) & s_missing_event_cnt & s_fsm_monit;  -- 16+12+4 = 32
-	av_gbt_monit_o(63 downto 32) <= s_payloadID & std_logic_vector(to_unsigned(g_LINK_ID mod 2,4)) & "00" & s_packet_active & "000" & s_payload_empty(1) & "000" & s_payload_empty(0) & x"0"; -- 4+4+2+10+2+2+8 = 32
- 
+	-- monitoring 
+	s_gbt_monitor_word(0)(31 downto 28) <= s_packet_monitor(1).crateID or s_packet_monitor(0).crateID;    
+	s_gbt_monitor_word(0)(27 downto 24) <= std_logic_vector(to_unsigned(g_LINK_ID mod 2,4));            
+	s_gbt_monitor_word(0)(23 downto 14) <= s_packet_monitor(1).active_cards & s_packet_monitor(0).active_cards;     
+	s_gbt_monitor_word(0)(13 downto 4)  <= s_packet_monitor(1).inactive_cards & s_packet_monitor(0).inactive_cards;  
+	s_gbt_monitor_word(0)(3 downto 0)   <= s_packet_monitor(1).daq_enable & s_packet_monitor(0).daq_enable & s_packet_monitor(1).pending_cards & s_packet_monitor(0).pending_cards; -- 4-bit
+
+	s_gbt_monitor_word(1)(31 downto 16) <= s_packet_monitor(1).fsm & s_packet_monitor(1).missing_event_cnt;  
+	s_gbt_monitor_word(1)(15 downto 0)  <= s_packet_monitor(0).fsm & s_packet_monitor(0).missing_event_cnt;  
+
+	s_gbt_monitor_word(2)(31 downto 16) <= s_payload_monitor.missing_load_cnt(1);  
+	s_gbt_monitor_word(2)(15 downto 0)  <= s_payload_monitor.missing_load_cnt(0);  
+
+	s_gbt_monitor_word(3)(31 downto 16) <= s_trans_monitor.pushed_cnt;
+	s_gbt_monitor_word(3)(15 downto 12) <= s_trans_monitor.fsm;
+	s_gbt_monitor_word(3)(11 downto 8)  <= s_packet(1).ready & s_packet(0).ready & (not s_payload_empty);
+	s_gbt_monitor_word(3)(7 downto 0)   <= (others => '0'); -- full signals
+    
+	-- output
+    gbt_monitor_o <= s_gbt_monitor_word(1) when mid_switch_i  = x"1" else 
+				     s_gbt_monitor_word(2) when mid_switch_i  = x"2" else 
+				     s_gbt_monitor_word(3) when mid_switch_i  = x"3" else
+				     s_gbt_monitor_word(0);
+
 	gbt_access_req_o    <= s_gbt_access_req;   -- gbt access request
 	gbt_datapath_o	    <= s_gbt_datapath;     -- gbt datapath
 	gbt_datapath_cnt_o  <= s_gbt_datapath_cnt; -- gbt datapath counter

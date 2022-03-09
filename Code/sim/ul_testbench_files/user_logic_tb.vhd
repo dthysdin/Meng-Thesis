@@ -47,8 +47,8 @@ architecture sim of user_logic_tb is
 	-- ========================================================
 	constant g_NUM_GBT_INPUT: integer := 24;
 	constant g_NUM_GBT_USED	: integer := 16;
-	constant g_FILE_EPN1 : string(19 downto 1) := "user_logic_enp1.txt";
-	constant g_FILE_EPN0 : string(19 downto 1) := "user_logic_epn0.txt";
+	constant g_FILE_EPN1 : string(35 downto 1) := "ul_output_files/user_logic_enp1.txt";
+	constant g_FILE_EPN0 : string(35 downto 1) := "ul_output_files/user_logic_epn0.txt";
 	-- ========================================================
 	-- signal declarations of the design under test
 	-- ========================================================
@@ -129,7 +129,7 @@ architecture sim of user_logic_tb is
 	end component clk_gen;
 	
 	component read_ttc_tb is
-	generic (g_FILE_NAME    : string(23 downto 1) := "file_in/sim_ttc_pon.txt");
+	generic (g_FILE_NAME    : string(30 downto 1) := "ul_input_files/sim_ttc_pon.txt");
 	port (
 	-------------------------------------------------------------------
 	activate_sim : in std_logic;
@@ -141,7 +141,7 @@ architecture sim of user_logic_tb is
 	end component read_ttc_tb;	
 	
 	component read_gbt_sim is
-	generic (g_FILE_NAME    : string(26 downto 1) := "file_in/sim_gbt_dataX0.txt");
+	generic (g_FILE_NAME    : string(33 downto 1) := "ul_input_files/sim_gbt_dataX0.txt");
 	port (
 	-------------------------------------------------------------------
     activate_sim : in std_logic;
@@ -234,7 +234,7 @@ begin
 	    -- read GBT data 
 	    --============================================================	 
 		 read_gbt: read_gbt_sim
-		 generic map (g_FILE_NAME => "file_in/sim_gbt_dataX0.txt")
+		 generic map (g_FILE_NAME => "ul_input_files/sim_gbt_dataX0.txt")
 		 port map (
 		 activate_sim	=> activate_sim, 		--: in std_logic;
 		 activate_gbt	=> activate_gbt, 		--: in std_logic; 
@@ -256,7 +256,7 @@ begin
 	-- read TTC data 
 	--============================================================
 	read_ttc: read_ttc_tb 
-	generic map (g_FILE_NAME  => "file_in/sim_ttc_pon.txt")
+	generic map (g_FILE_NAME  => "ul_input_files/sim_ttc_pon.txt")
 	port map (
 	activate_sim 	=> activate_sim,			--: in std_logic;
 	activate_ttc  	=> activate_ttc,			--: in std_logic;

@@ -1,23 +1,24 @@
 ------------------------------------------------------------------------------
 --  Cape Peninsula Universty of Technology --
 ------------------------------------------------------------------------------
--- Project	: Muon Identifier User Logic 
+-- Project	    : Muon Identifier User Logic 
 -------------------------------------------------------------------------------
--- File		: gbt_ulogic_mux.vhd
--- Author	: Orcel Thys <dieuveil.orcel.thys-dingou@cern.ch>
+-- File		    : gbt_ulogic_mux.vhd
+-- Author	    : Orcel Thys <dieuveil.orcel.thys-dingou@cern.ch>
 -- Student No	: 214349721
--- Company	: NRF iThemba LABS
+-- Company	    : NRF iThemba LABS
 -- Created   	: 2020-06-27
 -- Platform  	: Quartus Pro 18.1
 -- Standard 	: VHDL'93'
--- Version	: 0.7
+-- Version	    : 0.7
 -------------------------------------------------------------------------------
 -- last changes
 -- <13/10/2020> The module name changed from zs_link to zs_mux 
---		Change combitional FSM to sequential 
---		Change the name of some signals
---		Change generic g_HALF_NUM_GBT_OUTPUT to g_HALF_NUM_GBT_USED
+--	            Change combitional FSM to sequential 
+--		        Change the name of some signals
+--		        Change generic g_HALF_NUM_GBT_OUTPUT to g_HALF_NUM_GBT_USED
 -- <21/02/2021> The module name changed from zs_mux to gbt_logic_mux
+-- <23/01/2022> Datapath counter is now based on the dw_close signal  
 -------------------------------------------------------------------------------
 -- TODO:  <completed>
 -------------------------------------------------------------------------------
@@ -38,6 +39,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_misc.all;
 use ieee.numeric_std.all;
+use std.textio.all;
+use ieee.std_logic_textio.all;
 -- Specific package 
 use work.pack_cru_core.all;
 use work.pack_mid_ul.all;
@@ -45,7 +48,7 @@ use work.pack_mid_ul.all;
 --Entity declaration for gbt_ulogic_mux
 --=============================================================================
 entity gbt_ulogic_mux is
-	generic (g_DWRAPPER_ID : integer := 0; g_HALF_NUM_GBT_USED : integer := 1; g_NUM_HBFRAME_SYNC: integer := 1);
+	generic (g_DWRAPPER_ID : integer := 0; g_HALF_NUM_GBT_USED : integer := 8);
 	port (
 	-------------------------------------------------------------------
 	-- 240 MHz clock --
@@ -65,10 +68,13 @@ entity gbt_ulogic_mux is
 	-- mid gbt raw data --	
 	mid_rx_bus_i   : in t_mid_gbt_array(g_HALF_NUM_GBT_USED-1 downto 0);
 	-------------------------------------------------------------------
-	-- avalon
-	av_cruid_config_i : in std_logic;	
-	av_gbt_monit_o : out Array64bit(g_HALF_NUM_GBT_USED-1 downto 0);	
-	av_dw_monit_o  : out std_logic_vector(31 downto 0);		
+	-- mid configuration
+	mid_cruid_i  : in std_logic_vector(3 downto 0);
+	mid_switch_i : in std_logic_vector(3 downto 0);
+	mid_sync_i   : in std_logic_vector(11 downto 0);
+	-- mid  monitor 
+	dw_monitor_o   : out std_logic_vector(31 downto 0);		
+	gbt_monitor_o  : out Array32bit(g_HALF_NUM_GBT_USED-1 downto 0);
 	-------------------------------------------------------------------
 	-- d-wrapper datapath info --
 	dw_datapath_o  : out t_mid_dw_datapath													 
@@ -104,9 +110,16 @@ architecture rtl of gbt_ulogic_mux is
 	-- ========================================================
 	-- signal declarations
 	-- ========================================================
-	signal RDH : Array128bit (0 to 3); 	-- Raw data header
-	
-	-- rdh fields --												
+	-- reset registers 
+    signal s_reset : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0) := (others => '0');
+	-- ttc info registers 
+    signal s_ttc_sox_pulse  : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0) := (others => '0');
+	signal s_ttc_eox_pulse  : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0) := (others => '0');
+	signal s_ttc_sel_pulse  : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0) := (others => '0');
+	signal s_ttc_tfm_pulse  : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0) := (others => '0');
+	signal s_ttc_mode       : t_mid_mode_array(g_HALF_NUM_GBT_USED-1 downto 0) := (others => (continuous => '0', triggered => '0', triggered_data => (others => '0')));
+	-- rdh fields --
+	signal RDH : Array128bit (0 to 3); 	                -- Raw data header												
 	signal MEMORY_SIZE: std_logic_vector(15 downto 0);	-- memory size of the payload 
 	signal OFFSET: std_logic_vector(15 downto 0);		-- offset of the payload 
 	signal FEEID : std_logic_vector(15 downto 0);
@@ -114,61 +127,29 @@ architecture rtl of gbt_ulogic_mux is
 	signal s_header       : t_mid_hdr;
 	signal s_header_rdreq : std_logic;
 	-- gbt access  
-	signal s_gbt_access_req : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0); 
-	signal s_gbt_access_ack : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0); 
-    signal s_gbt_access_ena : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0); 
-	signal s_gbt_access_rdy : std_logic;
+	signal s_gbt_access_rdy  : std_logic;
+	signal s_gbt_access_en   : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0);
+	signal s_gbt_access_req  : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0); 
+	signal s_gbt_access_ack  : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0);  
+	signal s_gbt_access_val  : std_logic_vector(g_HALF_NUM_GBT_USED-1 downto 0); 
 	-- gbt datapath  
 	signal s_gbt_datapath_cnt : Array16bit(g_HALF_NUM_GBT_USED-1 downto 0);
 	signal s_gbt_datapath     : t_mid_gbt_datapath_array(g_HALF_NUM_GBT_USED-1 downto 0);
-
     -- index ID
     signal s_indexID : integer range 0 to g_HALF_NUM_GBT_USED-1 := 0;
-	
 	-- d-wrapper flags 
 	signal s_dw_close        : std_logic := '0';
 	signal s_dw_total_cnt    : unsigned(15 downto 0);
-	signal s_dw_page_cnt     : unsigned(15 downto 0);
-	signal s_dw_packet_cnt   : unsigned(15 downto 0) := (others => '0');
-    signal s_dw_fsm_monit    : std_logic_vector(7 downto 0);
-	signal s_temp_dw_packet_cnt: std_logic_vector(15 downto 0);
-
+	signal s_dw_page_cnt     : unsigned(15 downto 0) := (others => '0');
+	signal s_dw_pushed_cnt   : unsigned(15 downto 0) := (others => '0');
+	signal s_dw_limited_cnt  : unsigned(15 downto 0) := (others => '0');
+	signal s_temp_dw_limited_cnt: std_logic_vector(15 downto 0);
 	-- avalon gbt monitor 
-	signal s_av_gbt_monit : Array64bit(g_HALF_NUM_GBT_USED-1 downto 0);
-
+	signal s_gbt_monitor : Array32bit(g_HALF_NUM_GBT_USED-1 downto 0);
 	-- d-wrapper datapath 
-	signal s_dw_datapath     : t_mid_dw_datapath;
-	signal s_dw_datapath_cnt : unsigned(15 downto 0) := (others => '0');
+	signal s_dw_datapath : t_mid_dw_datapath;
 
 begin
-	--==============================================================================
-	-- Begin of GBT_LOGIC_GEN
-	-- This statement generates half of the zs packets contain in this project.
-	-- The number of interation depends on the value allocated to the g_HALF_NUM_GBT_USED
-	-- The g_LINK_ID depends on the interation ID 
-	--===============================================================================
-	GBT_LOGIC_GEN : for i in 0 to g_HALF_NUM_GBT_USED-1 generate
-	    s_gbt_access_ena(i) <= mid_rx_bus_i(i).en;
-		--============--
-		-- GBT_ULOGIC --
-		--============--
-		gbt_ulogic_inst: gbt_ulogic
-		generic map (g_LINK_ID => i, g_NUM_HBFRAME_SYNC => g_NUM_HBFRAME_SYNC)
-		port map (
-		clk_240		        => clk_240,                   
-		reset_i	            => reset_i,			
-	    ttc_mode_i	        => ttc_mode_i,
-	    ttc_sox_pulse_i     => ttc_pulse_i.sox,
-		ttc_sel_pulse_i     => ttc_pulse_i.sel,
-		dw_packet_cnt_i     => s_temp_dw_packet_cnt,
-		header_rdreq_i      => s_header_rdreq,
-		mid_rx_bus_i	    => mid_rx_bus_i(i),
-		av_gbt_monit_o      => s_av_gbt_monit(i),
-		gbt_access_ack_i	=> s_gbt_access_ack(i),
-		gbt_access_req_o 	=> s_gbt_access_req(i),
-		gbt_datapath_o	    => s_gbt_datapath(i),
-		gbt_datapath_cnt_o  => s_gbt_datapath_cnt(i));  
-	end generate GBT_LOGIC_GEN;
 	--========--
 	-- HEADER --
 	--========--
@@ -177,11 +158,82 @@ begin
 	clk_240         => clk_240,
 	reset_i	        => reset_i,
 	ttc_data_i      => ttc_data_i,
-	hbt_pulse_i     => ttc_pulse_i.hbt,
-	sox_pulse_i     => ttc_pulse_i.sox,
-	eox_pulse_i     => ttc_pulse_i.eox,
-	header_o        => s_header,
-	header_rdreq_i  => s_header_rdreq); 
+	ttc_pulse_i     => ttc_pulse_i,
+	header_rdreq_i  => s_header_rdreq,
+	header_o        => s_header);
+	--=============================================================================
+	-- Begin of p_enable_pulses
+	-- This process enables and disables the transfer of trigger information to the 
+	-- the "gbt_ulogic.vhd" module. No information is sent if the GBT link is down 
+	-- That means : no RDH and no packets will be transmitted to the DWrappers
+	--=============================================================================
+	p_enable_pulses: process(clk_240)
+	begin
+	 if rising_edge(clk_240) then
+	  for i in 0 to g_HALF_NUM_GBT_USED-1 loop 
+	   -- enable daq based on the status of the GBT link
+	   if mid_rx_bus_i(i).en = '1' then          -- gbt link up  
+	    s_ttc_sox_pulse(i)  <= ttc_pulse_i.sox;  -- ttc sox trigger pulse
+		s_ttc_eox_pulse(i)  <= ttc_pulse_i.eox;  -- ttc eox trigger pulse 
+	    s_ttc_sel_pulse(i)  <= ttc_pulse_i.sel;  -- ttc heartbeat frame sel
+		s_ttc_tfm_pulse(i)  <= ttc_pulse_i.tfm;  -- ttc timeframe pulse
+	    s_ttc_mode(i)       <= ttc_mode_i;       -- ttc readout mode configuration
+	   end if;
+	  end loop;
+	 end if;
+	end process p_enable_pulses; 
+	--=============================================================================
+	-- Begin of p_reset
+	-- This process helps to solve the timing clock stew delay path 
+	--=============================================================================
+	p_reset: process(clk_240)
+	begin
+	 if rising_edge(clk_240) then
+	  for i in 0 to g_HALF_NUM_GBT_USED-1 loop 
+	    s_reset(i) <= reset_i;           
+	  end loop;
+	 end if;
+	end process p_reset;
+	--==============================================================================
+	-- Begin of GBT_LOGIC_GEN
+	-- This statement generates half of the zs packets contain in this project.
+	-- The number of interation depends on the value allocated to the g_HALF_NUM_GBT_USED
+	-- The g_LINK_ID depends on the interation ID 
+	--===============================================================================
+	GBT_LOGIC_GEN : for i in 0 to g_HALF_NUM_GBT_USED-1 generate
+	    s_gbt_access_en(i)   <= mid_rx_bus_i(i).en;
+        s_gbt_access_val(i)  <= s_header_rdreq;
+		--============--
+		-- GBT_ULOGIC --
+		--============--
+		gbt_ulogic_inst: gbt_ulogic
+		generic map (g_LINK_ID => i)
+		port map (
+		clk_240		        => clk_240,                   
+		reset_i	            => s_reset(i),	
+
+	    ttc_mode_i	        => s_ttc_mode(i),
+	    ttc_sox_pulse_i     => s_ttc_sox_pulse(i),
+		ttc_eox_pulse_i     => s_ttc_eox_pulse(i),
+		ttc_sel_pulse_i     => s_ttc_sel_pulse(i),
+		ttc_tfm_pulse_i     => s_ttc_tfm_pulse(i),
+
+		dw_limited_cnt_i    => s_temp_dw_limited_cnt,
+
+		gbt_val_i	        => mid_rx_bus_i(i).valid,
+		gbt_data_i	        => mid_rx_bus_i(i).data,
+
+		mid_switch_i        => mid_switch_i,
+		mid_sync_i          => mid_sync_i,
+
+		gbt_monitor_o       => s_gbt_monitor(i),
+		gbt_access_val_i    => s_gbt_access_val(i),
+		gbt_access_ack_i	=> s_gbt_access_ack(i),
+		gbt_access_req_o 	=> s_gbt_access_req(i),
+		gbt_datapath_o	    => s_gbt_datapath(i),
+		gbt_datapath_cnt_o  => s_gbt_datapath_cnt(i));  
+
+	end generate GBT_LOGIC_GEN;
 	---------
 	-- RDH --
 	---------
@@ -219,21 +271,20 @@ begin
 	OFFSET <= std_logic_vector(to_unsigned(((to_integer(s_dw_total_cnt)+2)*(256))/(8),16))when state = PUSH_RDH10 and s_dw_total_cnt < x"0100" else x"2000"; 
 
     -- define FEEID 
-
 	-- DW#1 - CRUID#1 ==> FEEID = 3
 	-- DW#1 - CRUID#0 ==> FEEID = 1
     DW1_gen: if g_DWRAPPER_ID = 1 generate 
-     FEEID <= std_logic_vector(to_unsigned(3,16)) when av_cruid_config_i = '1' else std_logic_vector(to_unsigned(1,16));  
+     FEEID <= std_logic_vector(to_unsigned(3,16)) when mid_cruid_i /= x"0" else std_logic_vector(to_unsigned(1,16));  
 	end generate DW1_gen;
-
 	-- DW#0 - CRUID#1 ==> FEEID = 2
 	-- DW#0 - CRUID#0 ==> FEEID = 0
 	DW0_gen: if g_DWRAPPER_ID /= 1 generate 
-	 FEEID <= std_logic_vector(to_unsigned(2,16)) when av_cruid_config_i = '1' else std_logic_vector(to_unsigned(0,16)); 
+	 FEEID <= std_logic_vector(to_unsigned(2,16)) when mid_cruid_i /= x"0" else std_logic_vector(to_unsigned(0,16)); 
 	end generate DW0_gen;
 
 	s_header_rdreq  <= '1' when state = IDLE and afull_i = '0' and s_header.ready = '1' else '0';     -- request update header 
-    s_temp_dw_packet_cnt <= std_logic_vector(s_dw_packet_cnt);
+    s_temp_dw_limited_cnt <= std_logic_vector(s_dw_limited_cnt);                                      -- convert to std logic vector
+	s_gbt_access_rdy <= '1' when s_gbt_access_req = s_gbt_access_en else '0';                         -- gbt access ready                                              -- 
 	--=============================================================================
 	-- Begin of p_state
 	-- This process is a sequential state machine 
@@ -260,15 +311,17 @@ begin
 	   -- state"idle"
 	   when IDLE => 
 	    if afull_i = '0' then
+		 -- new header 
 		 if s_header.ready = '1' then  
-		  state <= HDR_VAL;           	               
-		 end if;  
+		  state <= HDR_VAL;  
+		 end if; 
 	    end if;
 	   --=========--
 	   -- HDR_VAL -- 
 	   --=========--
 	   -- state "HDR_VAL"
 	   when HDR_VAL => 
+	    -- valid header
 	    if s_header.valid = '1' then
 		 state <= ACCESS_RDY;
 	    end if;
@@ -277,8 +330,9 @@ begin
 	   --============--
 	   -- state "ACCESS_RDY"
 	   when ACCESS_RDY => 
+	    -- wait until all data are collected 
 	    if s_gbt_access_rdy = '1' then  
-	     state <= PUSH_GAP; 
+	     state <= PUSH_GAP;  
 	    end if;
 	   --==========--
 	   -- PUSH_GAP -- 
@@ -344,12 +398,12 @@ begin
 	   --============--
 	   -- state "PUSH_PLOAD"
 	   when PUSH_PLOAD =>
-		-- maximum packet [8KB = 256 packets]
-	    if s_dw_packet_cnt = x"0100" then
+		-- limited packet pushed [8KB = 256 packets]
+	    if s_dw_limited_cnt = x"0100" then
 		 s_dw_datapath.eop <= '1';	 
 	     state <= PUSH_GAP;
 
-		-- no more data coming
+		-- no more data 
 		elsif s_gbt_datapath(s_indexID).done = '1' then 
 		 if s_dw_total_cnt = x"0000" then
 		  s_dw_datapath.eop <= '1';	  
@@ -371,14 +425,27 @@ begin
 	 end if;	
 	end process p_state;
 	--===============================================================================
-	-- Begin of p_dw_total_cnt 
-	-- This process countains the total number of packets data pushed during a HBF
+	-- Begin of p_total_cnt 
+	-- This process countains the total number of packets data to be pushed during a HBF
 	--===============================================================================
 	p_dw_total_cnt: process(clk_240)
+	 variable sum_out : unsigned(15 downto 0);
 	begin 
 	 if rising_edge(clk_240) then
-	   s_dw_total_cnt <= sum_Array16bit(s_gbt_datapath_cnt);  -- call function <sum_Array16bit>
-	 end if;
+	  if reset_i = '1' then 
+	   -- initial condition
+	   s_dw_total_cnt <= (others => '0');
+	  else 
+	   -- default 
+	   sum_out := (others => '0');
+	   -- add total number of packets to be pushed
+       for i in s_gbt_datapath_cnt'reverse_range loop
+        sum_out := sum_out + unsigned(s_gbt_datapath_cnt(i));
+	   end loop;
+	   -- result
+	   s_dw_total_cnt <= sum_out;
+	  end if;
+     end if;
 	end process p_dw_total_cnt;
     --=============================================================================
 	-- Begin of p_state_out 
@@ -401,11 +468,11 @@ begin
 	  case state is				 
 	   when PUSH_RDH10 => 
 	    -- RDH2 & RDH1 
-	    s_dw_datapath.data <= RDH(1)& RDH(0);                   -- header#10
+	    s_dw_datapath.data <= RDH(1)& RDH(0);                     -- header#10
 	    s_dw_datapath.valid <= '1';
 	   when PUSH_RDH32 => 
 	    -- RDH3 & RDH2 
-	    s_dw_datapath.data <= RDH(3)& RDH(2);                   -- header#32
+	    s_dw_datapath.data <= RDH(3)& RDH(2);                     -- header#32
 	    s_dw_datapath.valid <= '1';
 	   when PUSH_PLOAD => 
 	    -- PLOAD 
@@ -424,76 +491,102 @@ begin
 	p_dw_page_cnt: process(clk_240)
 	begin 
 	 if rising_edge(clk_240) then 
-      if state = IDLE then   
-	   s_dw_page_cnt <= (others => '0');                           -- reset page counter 
+	  -- reset page counter
+      if state = IDLE then  
+	   s_dw_page_cnt <= (others => '0');  
+	  -- inc page counter 
 	  elsif state = PUSH_RDH32 then 
-	   s_dw_page_cnt <= s_dw_page_cnt+1;                           -- increment page counter for every RDH
+	   s_dw_page_cnt <= s_dw_page_cnt+1;    
 	  end if;
 	 end if; 
 	end process p_dw_page_cnt;
 	--=============================================================================
-	-- Begin of p_dw_packet_cnt  
+	-- Begin of p_dw_limited_cnt  
 	-- This process counts the number of packet pushed during a heartbeat frame
-	-- including the RDH. The counter is reset after reaching 256 packets 
+	-- including the RDH. The counter is reset after reaching a limit of 256 packets 
 	--=============================================================================
-	p_dw_packet_cnt: process(clk_240)
+	p_dw_limited_cnt: process(clk_240)
 	begin 
 	 if rising_edge(clk_240) then 
 	  if reset_i = '1' then
-	   s_dw_packet_cnt <= (others => '0');
+	   s_dw_limited_cnt <= (others => '0');
 	  else 
 	   -- initialization
 	   if state = PUSH_RDH32 then
-	    s_dw_packet_cnt  <= x"0003";
+	    s_dw_limited_cnt  <= x"0003"; -- 2 RDHs + 1 for condition in PUSH_PLOAD
 	   -- increment	
 	   elsif state = PUSH_PLOAD then
-        s_dw_packet_cnt <= s_dw_packet_cnt + 1;
+        s_dw_limited_cnt <= s_dw_limited_cnt + 1;
 	   end if;
 	  end if; 
 	 end if;
-	end process p_dw_packet_cnt;  
+	end process p_dw_limited_cnt;  
 	--=============================================================================
-	-- Begin of p_pkt_cnt
+	-- Begin of p_dw_pushed_cnt
 	-- This process is used to count the number of packet transmitted to the dwrapper
+	-- during a complete run (sox - eox)
 	--=============================================================================
-	p_pkt_cnt: process(clk_240)
+	p_dw_pushed_cnt: process(clk_240)
 	begin 
 	 if rising_edge(clk_240) then
 	  if reset_i = '1' then 
-	   s_dw_datapath_cnt <= (others => '0');
-	  else
-	   if s_dw_datapath_cnt = c_MAX_PACKET then 
-		s_dw_datapath_cnt <= (others => '0');          -- reset
-	   elsif s_dw_datapath.valid = '1' then
-		s_dw_datapath_cnt <= s_dw_datapath_cnt+1;      -- increment
+	   s_dw_pushed_cnt <= (others => '0');
+	  else  
+	   if s_dw_pushed_cnt /= x"FFFF" then 
+	    if s_dw_close = '1' then
+		 s_dw_pushed_cnt <= s_dw_pushed_cnt+1;
+		end if;      
 	   end if;
 	  end if;
 	 end if;
-	end process p_pkt_cnt;
+	end process p_dw_pushed_cnt;
 
-	-- gbt access ready 
-	s_gbt_access_rdy <= '1' when s_gbt_access_req = s_gbt_access_ena else '0';
-
-	-- FSM status 
-	s_dw_fsm_monit <= x"00" when state = IDLE         else -- 0000_0000
-			          x"01" when state = HDR_VAL      else -- 0000_0001
-			          x"02" when state = ACCESS_RDY   else -- 0000_0010
-			          x"04" when state = PUSH_GAP     else -- 0000_0100
-			          x"08" when state = PUSH_RDH10   else -- 0000_1000
-			          x"10" when state = PUSH_RDH32   else -- 0001_0000 
-				      x"20" when state = ACCESS_PLOAD else -- 0010_0000 
-				      x"40" when state = PUSH_PLOAD   else -- 0100_0000 
-					  x"FF";                               -- 1111_1111 --> error !!!
-
-	-- avalon gbt monitor
-	av_gbt_monit_o   <= s_av_gbt_monit;
-	-- avalon packet monitor
-	av_dw_monit_o   <= std_logic_vector(s_dw_datapath_cnt) & x"0" & "0" & s_header.cnt & s_dw_fsm_monit; 
-	-- datapath output
+	-- output 
 	dw_datapath_o.sop   <= s_dw_datapath.sop;
 	dw_datapath_o.eop   <= s_dw_datapath.eop;
 	dw_datapath_o.data  <= s_dw_datapath.data;
 	dw_datapath_o.valid <= s_dw_datapath.valid;
+
+	gbt_monitor_o <= s_gbt_monitor;
+	
+    dw_monitor_o(31 downto 16) <= std_logic_vector(s_dw_pushed_cnt);
+    dw_monitor_o(15 downto 8)  <= s_gbt_access_en when g_HALF_NUM_GBT_USED = 8 else (others => '0');
+	dw_monitor_o(7 downto 4)   <= '0' & s_header.cnt;
+    dw_monitor_o(3 downto 0)   <= x"0" when state = IDLE         else -- 0000
+			                      x"1" when state = HDR_VAL      else -- 0001
+			                      x"2" when state = ACCESS_RDY   else -- 0010
+			                      x"3" when state = PUSH_GAP     else -- 0011
+			                      x"4" when state = PUSH_RDH10   else -- 0100
+			                      x"5" when state = PUSH_RDH32   else -- 0101
+				                  x"6" when state = ACCESS_PLOAD else -- 0110
+				                  x"7" when state = PUSH_PLOAD   else -- 0111
+					              x"F";                               -- 1111 --> error !!!		
+								  
+								  
+p_write_cnt : process
+file my_file : text open write_mode is "ul_input_files/sim_dw.txt";
+variable my_line  : line;
+variable my_count : integer := 0;
+begin
+	wait until rising_edge(clk_240);
+	if g_DWRAPPER_ID = 0 then 
+		if s_header_rdreq  = '1' then 
+		my_count := 0;
+		write(my_line, my_count);
+		writeline(my_file, my_line);
+
+		elsif s_dw_datapath.sop  = '1' then 
+		my_count := 1;
+		write(my_line, my_count);
+		writeline(my_file, my_line);
+
+		elsif s_dw_datapath.valid = '1' then 
+		my_count := my_count+1;
+		write(my_line, my_count);
+		writeline(my_file, my_line);
+		end if;
+	end if;
+end process p_write_cnt;
 
 end rtl;
 --===========================================================================--

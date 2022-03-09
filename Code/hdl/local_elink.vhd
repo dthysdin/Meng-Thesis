@@ -33,13 +33,15 @@ library ieee;
 -- Standard packages
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use std.textio.all;
+use ieee.std_logic_textio.all;
 -- Specific package 
 use work.pack_mid_ul.all;
 --=============================================================================
 --Entity declaration for local_elink
 --=============================================================================
 entity local_elink is
-	generic (g_NUM_HBFRAME_SYNC: integer);
+	generic (g_LINK_ID : integer := 0; g_REGIONAL_ID : integer := 0; g_LOCAL_ID : integer := 0);
 	port (
 	-------------------------------------------------------------------
 	-- 240 MHz clock --
@@ -49,19 +51,19 @@ entity local_elink is
 	reset_i        : in std_logic;
 	-------------------------------------------------------------------
 	-- data acquisition info --
-	daq_stop_i     : in std_logic;
-	daq_valid_i    : in std_logic;	
-	daq_resume_i   : in std_logic;
-	-- 
-	orb_pause_o    : out std_logic;
-	eox_pause_o    : out std_logic;
+	daq_enable_i : in std_logic;	
+	daq_resume_i : in t_mid_daq_handshake;
+	daq_pause_o  : out t_mid_daq_handshake;
 	-------------------------------------------------------------------
-	-- mid gbt elink data --									
-	gbt_data_i     : in std_logic_vector(7 downto 0);		
-	gbt_val_i      : in std_logic;									
+	-- mid gbt elink data --	
+	gbt_val_i      : in std_logic;								
+	gbt_data_i     : in std_logic_vector(7 downto 0);										
 	-------------------------------------------------------------------
 	-- timing and trigger mode -- 		 										 
-	ttc_mode_i  : in t_mid_mode;							
+	ttc_mode_i     : in t_mid_mode;	
+	-------------------------------------------------------------------
+	-- mid sync  
+	mid_sync_i : in std_logic_vector(11 downto 0);
 	-------------------------------------------------------------------
 	-- local card info -- 
 	--< in 
@@ -84,8 +86,6 @@ architecture rtl of local_elink is
 	-- ========================================================
 	-- signal declarations
 	-- ========================================================
-	-- local decoder enable
-	signal s_loc_en       : std_logic;
 	-- local fifo 168x128
 	signal s_full	      : std_logic;
 	signal s_empty	      : std_logic;
@@ -94,8 +94,7 @@ architecture rtl of local_elink is
 	signal s_loc_tx_val   : std_logic;
 	signal s_loc_tx_preval: std_logic;
 	-- loc pause 
-	signal s_orb_pause    : std_logic; 
-	signal s_eox_pause    : std_logic; 
+	signal s_daq_pause    : t_mid_daq_handshake; 
 	-- local status
 	signal s_loc_active   : std_logic;
 	signal s_loc_inactive : std_logic := '0';
@@ -115,21 +114,19 @@ begin
 	--==========================================--
 	-- continuous and triggered operation modes --
 	--==========================================--
-    -- DAQ valid input is valid between sox and eox triggers from the LTU
-	-- MID e-link rx enable input is valid when the GBT link is sel and ready  
-	-- MID e-link rx valid input is valid during 1 out 6 (240MHz) clock cycles
-	s_loc_en <= daq_valid_i and gbt_val_i;
 	--===============--
 	-- LOCAL DECODER --
 	--===============--
 	local_decoder_inst: local_decoder
+	generic map (g_LINK_ID => g_LINK_ID, g_REGIONAL_ID => g_REGIONAL_ID, g_LOCAL_ID => g_LOCAL_ID)
 	port map (
 	clk_240	         => clk_240,
 	--
 	reset_i          => reset_i,
 	--
+	loc_en_i         => daq_enable_i,
+	loc_val_i        => gbt_val_i,
 	loc_data_i       => gbt_data_i,
-	loc_en_i         => s_loc_en,
 	--
 	loc_val_o        => s_loc_val,
 	loc_data_o       => s_loc_data);
@@ -137,45 +134,44 @@ begin
 	-- LOCAL CONTROL --
 	--===============--
 	local_control_inst: local_control
-	generic map ( g_NUM_HBFRAME_SYNC => g_NUM_HBFRAME_SYNC)
+	generic map (g_LOCAL_ID => g_LOCAL_ID)
 	port map (
-	clk_240	         => clk_240,
+	clk_240	           => clk_240,
 	--
-	reset_i          => reset_i,
+	reset_i            => reset_i,
 	--
-	daq_stop_i       => daq_stop_i,
-	daq_valid_i      => daq_valid_i,
-	daq_resume_i     => daq_resume_i,
+	daq_enable_i       => daq_enable_i,
+	daq_resume_i       => daq_resume_i,
+	daq_pause_o        => s_daq_pause, 
 	--
-	orb_pause_o      => s_orb_pause,
-	eox_pause_o      => s_eox_pause, 
+	ttc_mode_i         => ttc_mode_i,	
 	--
-	ttc_mode_i       => ttc_mode_i,	
+	mid_sync_i         => mid_sync_i,
 	--
-	loc_val_i        => s_loc_val,
-	loc_data_i       => s_loc_data,
-	loc_full_i       => s_full,
-	loc_inactive_i   => s_loc_inactive,
+	loc_val_i          => s_loc_val,
+	loc_data_i         => s_loc_data,
+	loc_full_i         => s_full,
+	loc_inactive_i     => s_loc_inactive,
 	--
-	loc_val_o        => s_loc_rx_val,
-	loc_data_o       => s_loc_rx_data,
-	loc_missing_o    => s_loc_missing,
-	loc_active_o     => s_loc_active,
-	loc_overflow_o   => s_loc_overflow);
+	loc_val_o          => s_loc_rx_val,
+	loc_data_o         => s_loc_rx_data,
+	loc_missing_o      => s_loc_missing,
+	loc_active_o       => s_loc_active,
+	loc_overflow_o     => s_loc_overflow);
 	--==================--
 	-- LOCAL FIFO168x128 --
 	--==================--
 	fifo_168X128_inst:fifo_168x128
 	port map (
-	data	         => s_loc_rx_data,
-	wrreq	         => s_loc_rx_val,
-	rdreq	         => loc_rdreq_i,
-	clock	         => clk_240,
-	sclr	         => reset_i,
-	q	             => s_loc_tx_data,
-	full	         => s_full,	
-	empty	         => s_empty,
-	usedw            => s_usedw);
+	data	           => s_loc_rx_data,
+	wrreq	           => s_loc_rx_val,
+	rdreq	           => loc_rdreq_i,
+	clock	           => clk_240,
+	sclr	           => reset_i,
+	q	               => s_loc_tx_data,
+	full	           => s_full,	
+	empty	           => s_empty,
+	usedw              => s_usedw);
 	--===========================================================================
 	-- Begin of p_loc_pipe
 	-- pipeline to overcome the latency of the fifo (2 clk cycles)
@@ -201,7 +197,7 @@ begin
 	  else 
 	   -- eox event   
 	   if s_loc_tx_val = '1' and s_loc_tx_data(158) = '1' then  
-	    s_loc_inactive <= '1';  -- local card inactive (end of run)
+	    s_loc_inactive <= '1';  -- local card inactive 
 	   end if;  
 	  end if; 
 	 end if; 
@@ -224,34 +220,29 @@ begin
 	  s_stop_reading <= '0';
 
 	  if reset_i = '1' then
-	   ovf_inc := (others => '0');
-	   usedw_inc := (others => '0');
+	   ovf_inc := (others => '0');              -- reset overflow counter 
+	   usedw_inc := (others => '0');            -- reset used word counter 
 	  else
 
 	   -- self-reset
-	   if daq_resume_i = '1' then
-        ovf_inc := (others => '0'); 
-	    usedw_inc := (others => '0');
+	   if daq_resume_i.orb = '1' then
+        ovf_inc := (others => '0');             -- initial condition
+	    usedw_inc := (others => '0');           -- initial condition
 
-	   -- overflow state
+	   -- overflow
 	   elsif s_loc_overflow = '1' then 
-	    read_wr := loc_rdreq_i & s_loc_rx_val; -- concatenate (read & write)   
-
+	    read_wr := loc_rdreq_i & s_loc_rx_val; -- concatenate (read & write)  
 	    case read_wr is 
-        when "01" =>   
-	     -- write
+        when "01" =>                           -- write
 	     ovf_inc   := ovf_inc+1;               -- increment overflow counter  
 	     usedw_inc := unsigned(s_usedw)+1;     -- fifo word increment ahead
-	    when "10" => 
-	     -- read 
-	     usedw_inc := unsigned(s_usedw)-1;     -- fifo word decrement ahead       
-	    when "11" => 
-	     -- read and write
+	    when "10" =>                           -- read
+	     usedw_inc := unsigned(s_usedw)-1;     -- fifo word decrement ahead     
+	    when "11" =>                           -- read and write  
 	     ovf_inc   := ovf_inc+1;               -- increment overflow counter           
          usedw_inc := unsigned(s_usedw);       -- copy fifo word counter 
         when others => null;
 	    end case;
-
 	    -- compare 
 	    if ovf_inc = usedw_inc  then 
          s_stop_reading <= '1'; -- stop reading 
@@ -261,7 +252,11 @@ begin
 	 end if;
 	end process p_cnt_ovf; 
 	
-	-- output 
+	-- output  
+	daq_pause_o.orb   <= s_daq_pause.orb or s_loc_overflow;
+	daq_pause_o.eox   <= s_daq_pause.eox;
+	daq_pause_o.close <= s_daq_pause.close;
+
 	loc_data_o     <= s_loc_tx_data;
 	loc_val_o      <= s_loc_tx_val;
 	loc_empty_o    <= s_stop_reading or s_empty;
@@ -269,9 +264,33 @@ begin
 	loc_active_o   <= s_loc_active;
 	loc_inactive_o <= s_loc_inactive;
 	loc_missing_o  <= s_loc_missing;
-	orb_pause_o    <= s_loc_overflow or s_orb_pause;
-	eox_pause_o    <= s_eox_pause;
+
+
+	p_write_cnt : process
+	file my_file : text open write_mode is "ul_input_files/sim_loc_tx.txt";
+	variable my_line  : line;
+	variable my_count : integer := 0;
+	variable my_select: std_logic_vector(1 downto 0) := "00";
+    begin
+
+	my_select := s_loc_rx_val &  loc_rdreq_i;
 	
+	wait until rising_edge(clk_240);
+
+	 case my_select is 
+	 when "01" =>
+	 	my_count := my_count -1;
+		write(my_line, my_count);
+		writeline(my_file, my_line);
+	 when "10" => 
+	 	my_count := my_count +1;
+	 	write(my_line, my_count);
+		writeline(my_file, my_line);
+	 when others => my_count := my_count;
+	 end case;
+
+	end process p_write_cnt;
+
 end rtl;
 --=============================================================================
 -- architecture end

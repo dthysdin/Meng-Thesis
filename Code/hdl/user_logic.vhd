@@ -94,69 +94,53 @@ end entity user_logic;
 --============================================================================
 architecture rtl of user_logic is
 	-- ========================================================
-	-- constant declarations
-	-- ========================================================
-	constant c_NUM_GBT_USED     : integer := 16;  -- number of gbt links used for the MID readout chain (16 by default ) 
-	constant c_NUM_HBFRAME      : integer := 256; -- number of HBFs collected during a single TF (256 HBF by default)  
-	constant c_NUM_HBFRAME_SYNC : integer := 128; -- number of HBFs collected before synchronization of all gbt frames (128 HBF by default)
-	-- ========================================================
 	-- signal declarations
 	-- ========================================================
+	-- reset 
+	signal s_reset : std_logic; 
 	-- timing & trigger control register 
 	signal s_ttc_data  : t_mid_ttc; 
     signal s_ttc_pulse : t_mid_pulse;
-	signal s_ttc_mode  : t_mid_mode;
-
+	signal s_ttc_mode  : t_mid_mode;    
+	-- avalon signals
+	signal s_monitor : t_mid_monitor;
+    signal s_config  : t_mid_config;
 	-- gbt data input bus
-	signal s_mid_rx_bus : t_mid_gbt_array(c_NUM_GBT_USED-1 downto 0);    
-
-	-- avalon monitoring signals
-	signal s_av_gbt_monit : Array64bit(c_NUM_GBT_USED-1 downto 0);           -- monitor gbt links 
-	signal s_av_dw_monit  : Array32bit(1 downto 0);                          -- monitor d-wrappers
-	signal s_av_trg_monit : std_logic_vector(31 downto 0);                   -- monitor triggers
-
-	-- avalon configuration signals
-	signal s_av_cruid_config : std_logic;                                    -- configure cruid
-	signal s_av_reset_config : std_logic;                                    -- external reset
-    signal s_av_fiber_config : std_logic_vector(2*c_NUM_GBT_USED-1 downto 0);-- configure fiber select 
-
-	-- resets 
-	signal s_AllReset     : std_logic;                                       -- internal all resets
-	signal s_init         : std_Logic;                              
-	
-	-- datapath access
-	signal s_dw_datapath : t_mid_dw_datapath_array(1 downto 0);              -- 2 CRU end-points
+	signal s_mid_rx_bus: t_mid_gbt_array(c_NUM_GBT_USED-1 downto 0);
+	-- dwrappers datapath bus
+	signal s_dw_datapath: t_mid_dw_datapath_array(1 downto 0);          
+                                     
 	
 begin
+
 	--=============--
 	-- ttc_ulogic -- 
 	--=============--
-        ttc_ulogic_inst: ttc_ulogic
-	generic map(g_NUM_HBFRAME      => c_NUM_HBFRAME,      -- number of HBFs collected during a single TF 
-	            g_NUM_HBFRAME_SYNC => c_NUM_HBFRAME_SYNC) -- number of HBFs collected before synchronization of all gbt links used for MID
+    ttc_ulogic_inst: ttc_ulogic
 	port map (
 	clk_240	           => ttc_rxclk, 
-	reset_i            => s_av_reset_config,
-	init_o             => s_init, 
+	mid_reset_i        => s_config.mid_rst,
+	mid_sync_i         => s_config.mid_sync,
+	sync_reset_o       => s_reset, 
 	ttc_rxd_i          => ttc_rxd,
 	ttc_rxready_i      => ttc_rxready,
-    ttc_rxvalid_i      => ttc_rxvalid,   
+    ttc_rxvalid_i      => ttc_rxvalid, 
+	ttc_monitor_o      => s_monitor.trg,  
 	ttc_data_o         => s_ttc_data,
 	ttc_mode_o         => s_ttc_mode,  
-	ttc_pulse_o        => s_ttc_pulse,  
-    av_trg_monit_o     => s_av_trg_monit
+	ttc_pulse_o        => s_ttc_pulse
        );  
 	--===================--
 	-- gbt_ulogic_select -- 
 	--===================--
 	gbt_ulogic_select_inst: gbt_ulogic_select
-	generic map (g_NUM_GBT_INPUT  => g_NUM_GBT_LINKS,     -- total number of cru gbt link ports available (24 links max)
-                     g_NUM_GBT_OUTPUT => c_NUM_GBT_USED)      -- total number of cru gbt link ports used for MID   
+	generic map (g_NUM_GBT_INPUT => g_NUM_GBT_LINKS,     -- total number of cru gbt link ports available (24 links max)
+                g_NUM_GBT_OUTPUT => c_NUM_GBT_USED)      -- total number of cru gbt link ports used for MID   
 	port map (
 	clk_240	        => ttc_rxclk,  
-	fiber_select_i  => s_av_fiber_config, 
 	gbt_rx_ready_i	=> gbt_rx_ready_i,
 	gbt_rx_bus_i	=> gbt_rx_bus_i,
+	mid_mapping_i   => s_config.mid_mapping, 
 	mid_rx_bus_o	=> s_mid_rx_bus
 	 ); 
 	--================--
@@ -164,68 +148,61 @@ begin
 	--================--
 	gbt_ulogic_mux_inst0: gbt_ulogic_mux
 	generic map(g_DWRAPPER_ID => 0,                        -- ID of the CRU end-point 
-                    g_HALF_NUM_GBT_USED => c_NUM_GBT_USED/2,   -- half the number of cru gbt links used for MID (8 links max)
-		    g_NUM_HBFRAME_SYNC  => c_NUM_HBFRAME_SYNC) -- number of HBFs collected before synchronization of all gbt links used for MID            
+                g_HALF_NUM_GBT_USED => c_NUM_GBT_USED/2)   -- half the number of cru gbt link used for MID (8 links max)          
 	port map(
-	clk_240		  => ttc_rxclk,               
-	reset_i	          => s_AllReset,
-	afull_i 	  => afull0,		
-	ttc_data_i	  => s_ttc_data,
-	ttc_mode_i	  => s_ttc_mode,
-	ttc_pulse_i       => s_ttc_pulse,
-	mid_rx_bus_i      => s_mid_rx_bus(c_NUM_GBT_USED/2-1 downto 0),
-	av_cruid_config_i => s_av_cruid_config,
-	av_gbt_monit_o    => s_av_gbt_monit(c_NUM_GBT_USED/2-1 downto 0),
-	av_dw_monit_o     => s_av_dw_monit(0),
-	dw_datapath_o     => s_dw_datapath(0)
+	clk_240		       => ttc_rxclk,               
+	reset_i	           => s_reset,
+	afull_i 	       => afull0,		
+	ttc_data_i	       => s_ttc_data,
+	ttc_mode_i	       => s_ttc_mode,
+	ttc_pulse_i        => s_ttc_pulse,
+	mid_rx_bus_i       => s_mid_rx_bus(c_NUM_GBT_USED/2-1 downto 0),
+	mid_cruid_i        => s_config.mid_cruid,
+	mid_switch_i       => s_config.mid_switch,
+	mid_sync_i         => s_config.mid_sync,
+	gbt_monitor_o      => s_monitor.gbt(c_NUM_GBT_USED/2-1 downto 0),
+	dw_monitor_o       => s_monitor.dw(0),
+	dw_datapath_o      => s_dw_datapath(0)
 			);  
 	--================--
 	-- gbt_ulogic_mux --
 	--================--
 	gbt_ulogic_mux_inst1: gbt_ulogic_mux
 	generic map(g_DWRAPPER_ID => 1,                        -- ID of the CRU end-point 
-                    g_HALF_NUM_GBT_USED => c_NUM_GBT_USED/2,   -- half the number of cru gbt link used for MID (8 links max) 
-	            g_NUM_HBFRAME_SYNC  => c_NUM_HBFRAME_SYNC) -- number of HBFs collected before synchronization of all gbt links used for MID 
+                g_HALF_NUM_GBT_USED => c_NUM_GBT_USED/2)   -- half the number of cru gbt link used for MID (8 links max)  
 	port map(
-	clk_240		  => ttc_rxclk,               
-	reset_i           => s_AllReset,
-	afull_i 	  => afull1,			
-	ttc_data_i	  => s_ttc_data,
-	ttc_mode_i	  => s_ttc_mode,
-	ttc_pulse_i       => s_ttc_pulse,
-	mid_rx_bus_i      => s_mid_rx_bus(c_NUM_GBT_USED-1 downto c_NUM_GBT_USED/2),
-	av_cruid_config_i => s_av_cruid_config,
-	av_gbt_monit_o    => s_av_gbt_monit(c_NUM_GBT_USED-1 downto c_NUM_GBT_USED/2),
-	av_dw_monit_o     => s_av_dw_monit(1),
-	dw_datapath_o     => s_dw_datapath(1)
+	clk_240		       => ttc_rxclk,               
+	reset_i            => s_reset,
+	afull_i 	       => afull1,			
+	ttc_data_i	       => s_ttc_data,
+	ttc_mode_i	       => s_ttc_mode,
+	ttc_pulse_i        => s_ttc_pulse,
+	mid_rx_bus_i       => s_mid_rx_bus(c_NUM_GBT_USED-1 downto c_NUM_GBT_USED/2),
+	mid_cruid_i        => s_config.mid_cruid,
+	mid_switch_i       => s_config.mid_switch,
+	mid_sync_i         => s_config.mid_sync,
+	gbt_monitor_o      => s_monitor.gbt(c_NUM_GBT_USED-1 downto c_NUM_GBT_USED/2),
+	dw_monitor_o       => s_monitor.dw(1),
+	dw_datapath_o      => s_dw_datapath(1)
 			);  
 	--===============--
 	-- avalon_ulogic --
 	--===============--
-	AVL: avalon_ulogic
-	generic map(g_NUM_GBT_USED => c_NUM_GBT_USED)         -- number of cru gbt link used for MID             
+	AVL: avalon_ulogic           
 	port map (
 	mms_clk 	=> mms_clk,
 	mms_reset 	=> mms_reset,
-	mms_waitreq     => mms_waitreq,
+	mms_waitreq => mms_waitreq,
 	mms_addr	=> mms_addr,
 	mms_wr		=> mms_wr,
 	mms_wrdata	=> mms_wrdata,
 	mms_rd		=> mms_rd,
 	mms_rdval	=> mms_rdval,
 	mms_rddata	=> mms_rddata,
-	-- configuration 
-	reset_config => s_av_reset_config,
-	cruid_config => s_av_cruid_config,
-	fiber_config => s_av_fiber_config,
-	-- monitors
-	trg_monit    => s_av_trg_monit,   
-    gbt_monit    => s_av_gbt_monit, 
-	dw_monit     => s_av_dw_monit
+    --
+	config      => s_config,
+	monitor     => s_monitor
 		);
-
-	-- all reset 
-	s_AllReset <= s_init or s_av_reset_config;
 
 	-- define leds
 	BlueGreenRed_LED_1 <=not("100"); -- blue (active low)

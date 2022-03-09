@@ -50,17 +50,19 @@ use ieee.numeric_std.all;
 --Entity declaration for local_decoder
 --=============================================================================
 entity local_decoder is
+	generic (g_LINK_ID : integer; g_REGIONAL_ID : integer; g_LOCAL_ID : integer);
 	port (
 	-------------------------------------------------------------------
 	-- 240 MHz clock --
 	clk_240	    : in std_logic;
 	-------------------------------------------------------------------
 	-- avalon + auto reset --  
-	reset_i     : in std_logic;		                
+	reset_i     : in std_logic;			                
 	-------------------------------------------------------------------
 	-- local card info -- 
 	--< in 
-	loc_en_i    : in std_logic;		               	                
+	loc_en_i    : in std_logic;	
+	loc_val_i   : in std_logic;	               	                
 	loc_data_i  : in std_logic_vector(7 downto 0);  
 	--> out 
 	loc_val_o   : out std_logic;		                 
@@ -86,15 +88,55 @@ architecture rtl of local_decoder is
 	-- ========================================================
 	-- signal declarations
 	-- ========================================================
-	signal s_checker: std_logic_vector(7 downto 0);
+	signal s_local_ID: std_logic_vector(3 downto 0);
 	signal s_loc_data: std_logic_vector(167 downto 0);
 	signal s_loc_val : std_logic;
 --=============================================================================
 -- architecture begin
 --============================================================================= 
 begin
-	-- checker 
-    s_checker <= x"F0" and loc_data_i when state /= IDLE else x"00";
+	
+	-- LOCAL ID    
+	-- ###LinkID is odd 
+	linkIDH_gen : if ((g_LINK_ID mod 2) /= 0)  generate  
+
+	 -- ###Regional_ID#1  
+	 regIDHH_gen: if g_REGIONAL_ID = 1 generate  
+	  s_local_ID <= x"F" when g_LOCAL_ID = 3 else        -- Loc#15
+	                x"E" when g_LOCAL_ID = 2 else        -- Loc#14
+	                x"D" when g_LOCAL_ID = 1 else        -- Loc#13
+					x"C";                                -- Loc#12
+	 end generate;
+
+	 -- ###Regional_ID#0  
+	 regIDHL_gen: if g_REGIONAL_ID /= 1 generate  
+      s_local_ID <= x"B" when g_LOCAL_ID = 3 else        -- Loc#11
+	                x"A" when g_LOCAL_ID = 2 else        -- Loc#10 
+					x"9" when g_LOCAL_ID = 1 else        -- Loc#9
+					x"8";                                -- Loc#8
+	 end generate;
+
+	end generate;
+
+	-- ###LinkID is even 
+	linkIDL_gen : if ((g_LINK_ID mod 2) = 0)  generate 
+
+	 -- ###Regional_ID#1  
+	 regIDLH_gen: if g_REGIONAL_ID = 1 generate  
+	  s_local_ID <= x"7" when g_LOCAL_ID = 3 else        -- Loc#7
+					x"6" when g_LOCAL_ID = 2 else        -- Loc#6  
+					x"5" when g_LOCAL_ID = 1 else        -- Loc#5 
+					x"4";                                -- Loc#4
+	 end generate;
+
+	 -- ###Regional_ID#0  
+	 regIDLL_gen: if g_REGIONAL_ID /= 1 generate  
+	  s_local_ID <= x"3" when g_LOCAL_ID = 3 else        -- Loc#3
+					x"2" when g_LOCAL_ID = 2 else        -- Loc#2  
+					x"1" when g_LOCAL_ID = 1 else        -- Loc#1 
+					x"0";                                -- Loc#0
+	 end generate;
+	end generate;
 	--=============================================================================
 	-- Begin of p_local
 	-- This process identify the local data event frame 
@@ -107,6 +149,7 @@ begin
 	--=============================================================================
 	p_local: process(clk_240)
 	 -- Define variables 
+	 variable checker : std_logic_vector(7 downto 0) := x"00";
 	 variable format  : std_logic_vector(7 downto 0) := x"00";
 	 variable trigger : std_logic_vector(7 downto 0) := x"00";
 	 variable ibc     : std_logic_vector(15 downto 0):= x"0000";
@@ -114,6 +157,7 @@ begin
 	 variable tracklet: std_logic_vector(3 downto 0) := x"0";
 	 variable chambers: std_logic_vector(127 downto 0):= (others => '0');
 	 variable index   : integer range 0 to 16:= 0;
+
 
 	begin
 	 if rising_edge(clk_240) then 
@@ -124,21 +168,22 @@ begin
 	  if reset_i = '1' then 
 	   state <= idle;
 	  else 
-	   -- local decoder enable
-	   if loc_en_i = '1' then 	   
+	   -- local decoder enable 
+	   if loc_en_i = '1' then
+	    if loc_val_i = '1' then 	   
 	    case state is
 	    --=======--
 	    --  IDLE  --
 	    --=======--	
 	    -- state "idle"
 	    when idle => 	
-	     chambers := (others => '0'); -- reset strip patterns data
-	     index := 0;                  -- reset index counter
-	     format := loc_data_i;        -- copy status byte
-		  
-	     -- identify the start bit of the local frame (always '1') 
-	     -- identify the card type of local frame (always '1')
-	     if loc_data_i(7 downto 6) = "11" then
+	     chambers := (others => '0');      -- reset strip patterns data
+	     index    := 0;                    -- reset index counter
+	     format   := loc_data_i;           -- status byte
+		 checker  := x"C0" and loc_data_i; -- valid event checker 
+
+		 -- check start bit & card type 
+	     if checker = x"C0"  then
 	      state <= trg;
 	     else 
 	      state <= idle;   
@@ -148,12 +193,12 @@ begin
 	    --=====--	
 	    -- state "trg"
 	    when trg => 
-	     -- copy trigger byte
-	     trigger := loc_data_i;  
+	     trigger := loc_data_i;         -- trigger byte
+		 checker := x"F0" and loc_data_i; -- valid trigger checker 
 
 	     -- sox trigger event
 	     if loc_data_i(7) = '1' then 
-		  if s_checker = x"80" then 
+		  if checker = x"80" then 
 	       state <= ibc_1;          
 		  else 
            state <= idle;            
@@ -161,21 +206,13 @@ begin
 
 		 -- eox trigger event
 		 elsif loc_data_i(6) = '1' then
-		  if s_checker = x"40"  then 
+		  if checker = x"40"  then 
 			state <= ibc_1;         
 		  else 
 			state <= idle;          
 		  end if;
-
-		 -- pause trigger event 
-		 elsif loc_data_i(5) = '1' then
-		   state <= idle;            
-
-		 -- resume trigger event 
-		 elsif loc_data_i(4) = '1' then
-		  state <= idle;
-
-		 -- other trigger            
+		  
+		 -- other triggers
 	     else
 	      state <= ibc_1;            
 	     end if;
@@ -184,10 +221,10 @@ begin
 	    --=======--	
 	    -- state "ibc_1"
 	    when ibc_1 => 
-	     -- copy internal bunch counter(1)
-	     ibc(15 downto 8) := loc_data_i;
-		 -- check bcid data 
-	     if s_checker = x"00" then 
+	     ibc(15 downto 8) := loc_data_i;    -- internal bunch counter#1 
+		 checker := x"F0" and loc_data_i;     -- check ibc1 byte 
+
+	     if checker = x"00" then 
 		  state <= ibc_2;           
 		 else  
 	      state <= idle;             
@@ -197,27 +234,31 @@ begin
 	    --=======--	
 	    -- state "ibc_2"
 	    when ibc_2 =>
-	     -- internal bunch counter(2)
-	     ibc(7 downto 0) := loc_data_i;		
+	     ibc(7 downto 0) := loc_data_i;	     -- internal bunch counter#2	
 	     state <= dec;	
         --=====--
 	    -- DEC --
 	    --=====--
 	    -- state "dec"
 	    when dec =>
-         -- position of local in crate
-	     position := loc_data_i(7 downto 4);
-         -- tracklet of strip patterns	 
-	     tracklet := loc_data_i(3 downto 0);	 
-	     if tracklet = x"0" then
-          -- local event with no strip patterns
-	      s_loc_data <= format & trigger & ibc & position & tracklet & chambers;
-	      s_loc_val <= '1'; 			
-	      state <= idle; 
-	     else
-	      -- local event with strip patterns
-	      state <= strip;
-	     end if;
+	     position := loc_data_i(7 downto 4); -- position of local in crate	 
+	     tracklet := loc_data_i(3 downto 0); -- tracklet of strip patterns 
+
+		 if s_local_ID = position then 
+		  -- correct ID
+	      if tracklet = x"0" then 
+		   -- no strip patterns  
+	       s_loc_data <= format & trigger & ibc & position & tracklet & chambers;
+	       s_loc_val <= '1'; 			
+	       state <= idle; 
+	      else
+		   -- strip patterns
+	       state <= strip;          
+	      end if;
+		 else 
+		  -- incorrect ID
+          state <= idle; 
+		 end if;
         --=======--
 	    -- STRIP --
 	    --=======--
@@ -271,7 +312,8 @@ begin
 	     -- jump to save state (ERROR?!)
 	     state <= idle;
 	    end case;
-	   end if;	-- link up & data valid 
+		end if; -- gtb data valid
+	   end if;	-- daq valid (TTC trigger received after reset)
 	  end if;	-- synchronous reset  
      end if;	-- synchronous clock
 	end process p_local;

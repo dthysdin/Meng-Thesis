@@ -58,7 +58,8 @@ entity regional_decoder is
 	-------------------------------------------------------------------
 	-- reg card info -- 
 	--< in 
-	reg_en_i     : in std_logic;		       	      
+	reg_en_i     : in std_logic;	
+	reg_val_i    : in std_logic;	       	      
 	reg_data_i   : in std_logic_vector(7 downto 0);    
 	--> out
 	reg_val_o    : out std_logic;                      
@@ -83,15 +84,12 @@ architecture rtl of regional_decoder is
 	-- ========================================================
 	-- signal declarations
 	-- ========================================================
-	signal s_checker: std_logic_vector(7 downto 0);
 	signal s_reg_data: std_logic_vector(39 downto 0);
 	signal s_reg_val : std_logic;
 --=============================================================================
 -- architecture begin
 --=============================================================================
 begin
-    -- checker 
-    s_checker <= x"F0" and reg_data_i when state /= IDLE else x"00";
 	--=============================================================================
 	-- Begin of p_regional
 	-- The size of the regional event is 5 bytes
@@ -100,6 +98,7 @@ begin
 	--=============================================================================
 	p_regional: process(clk_240)
 	-- Define variables 
+	variable checker  : std_logic_vector(7 downto 0) := x"00";
 	variable format   : std_logic_vector(7 downto 0) := x"00";
 	variable trigger  : std_logic_vector(7 downto 0) := x"00";
 	variable ibc      : std_logic_vector(15 downto 0):= x"0000";
@@ -115,19 +114,20 @@ begin
 	  if reset_i = '1' then 
 	   state <= idle;
 	  else  
-	   -- regional decoder enable  
+	   -- regional decoder enable    
 	   if reg_en_i = '1' then 
+	    if reg_val_i = '1' then 
 	    case state is
 	    --=======--
 	    --  IDLE --
 	    --=======--	
 	    -- state "idle"
 	    when idle => 
-	     format := reg_data_i;	-- copy status byte
+	     format  := reg_data_i;	          -- status byte
+		 checker := x"C0" and reg_data_i; -- valid event checker  
 
-	     -- identify the start bit of the regional frame (always '1') 
-	     -- identify the card type of regional frame (always '0') 
-	     if reg_data_i(7 downto 6) = "10" then
+		 -- check regional start bit('1') & card type('0')
+	     if checker = x"80" then
 	      state <= trg;
 	     else 
 	      state <= idle;   
@@ -138,11 +138,12 @@ begin
 	    -- state "trg"
 	    when trg => 
 		 -- copy trigger byte
-	     trigger := reg_data_i;  
+	     trigger := reg_data_i; 
+		 checker := x"F0" and reg_data_i; -- valid trigger checker  
 
 	     -- sox trigger event
 	     if reg_data_i(7) = '1' then 
-		  if s_checker = x"80" then 
+		  if checker = x"80" then 
 	       state <= ibc_1;           
 		  else 
            state <= idle;             
@@ -150,19 +151,11 @@ begin
 
 		 -- eox trigger event
 		 elsif reg_data_i(6) = '1' then
-		  if s_checker = x"40"  then 
+		  if checker = x"40"  then 
 			state <= ibc_1;        
 		  else 
 			state <= idle;           
 		  end if;
-
-		 -- pause trigger event 
-		 elsif reg_data_i(5) = '1' then
-		  state <= idle;  
-
-		 -- resume trigger event 
-		 elsif reg_data_i(4) = '1' then
-		  state <= idle; 
 
 		 -- other trigger           
 	     else
@@ -174,9 +167,10 @@ begin
 	    -- state "ibc_1"
 	    when ibc_1 => 
          -- copy internal bunch counter(1)
-	     ibc(15 downto 8) := reg_data_i;	 
+	     ibc(15 downto 8) := reg_data_i;  -- internal bunch counter#1 
+		 checker := x"F0" and reg_data_i;   -- check ibc1 byte 
 
-	     if s_checker = x"00" then 
+	     if checker = x"00" then 
 		  state <= ibc_2;           
 		 else  
 	      state <= idle;             
@@ -185,20 +179,16 @@ begin
         -- IBC_2  --
 	    --========--	
 	    -- state "ibc_2"
-	    when ibc_2 =>
-	     -- copy internal bunch counter(2)			
-         ibc(7 downto 0) := reg_data_i;		
+	    when ibc_2 =>		
+         ibc(7 downto 0) := reg_data_i;	 -- internal bunch counter#2
          state <= dec;
 	    --======--
 	    --  DEC --
 	    --======--
 	    -- state "dec"
         when dec =>	
-         -- position of local in crate
-	     position := reg_data_i(7 downto 4);
-         -- patterns tracklet 
-	     tracklet := reg_data_i(3 downto 0);	 
-					
+	     position := reg_data_i(7 downto 4); -- position of local in crate
+	     tracklet := reg_data_i(3 downto 0); -- patterns tracklet 	 		
 	     s_reg_data <= format & trigger & ibc & position & tracklet;
 	     s_reg_val <= '1';
 	     state <= idle; 
@@ -210,9 +200,10 @@ begin
 	     -- jump to save state (ERROR?!)
 	     state <= idle;					 
 	    end case;
-	   end if; -- e-link is up & valid 
-      end if;  -- synchronous reset   
-	 end if;   -- synchronous clock
+		end if; -- gtb data valid
+	   end if;  -- daq valid (TTC trigger received after reset) 
+      end if;   -- synchronous reset   
+	 end if;    -- synchronous clock
 	end process p_regional;
 	
 	-- output frame 

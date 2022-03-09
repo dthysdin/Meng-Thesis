@@ -19,7 +19,7 @@
 --              the timing viloated paths has been added. 
 -- <27-11-2020> Reset the module before starting a new run
 -- <11/12/2020> synchronize the timeframes 
--- <13/02/2021> add payload active to the output
+-- <13/02/2021> add monitoring signals 
 ------------------------------------------------------------------------------
 -- TODO:  <completed>
 -------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ use work.pack_mid_ul.all;
 --Entity declaration for transmitter
 --=============================================================================
 entity packetizer is
-	generic (g_NUM_HBFRAME_SYNC: integer; g_LINK_ID : integer);
+	generic (g_LINK_ID : integer);
 	port (
 	-------------------------------------------------------------------
 	-- 240 MHz clock --
@@ -55,30 +55,30 @@ entity packetizer is
 	-- reset --	
     reset_i         : in std_logic;
 	-------------------------------------------------------------------		
-	-- pulses --
+	-- ttc data  --
 	sox_pulse_i     : in std_logic;	
-	sel_pulse_i     : in std_logic;		
-	-------------------------------------------------------------------
-    -- mid ttc mode --					 
+	eox_pulse_i     : in std_logic;
+	sel_pulse_i     : in std_logic;	
+	tfm_pulse_i     : in std_logic;
 	ttc_mode_i      : in t_mid_mode;					   								   
 	-------------------------------------------------------------------
-	-- mid gbt data -- 
+	-- mid gbt data -- 	
+	gbt_val_i       : in std_logic;
 	gbt_data_i      : in std_logic_vector(79 downto 0);	
-	gbt_val_i       : in std_logic;		
 	-------------------------------------------------------------------
-	-- missing event counter
-	missing_event_cnt_o : out std_logic_vector(11 downto 0);
+	-- mid config
+	mid_sync_i: in std_logic_vector(11 downto 0);
 	-------------------------------------------------------------------		
 	-- packet info --
-	packet_o        : out t_mid_pkt_array(1 downto 0);		
-	packet_active_o : out std_logic_vector(9 downto 0);				
-	packet_rdreq_i  : in std_logic_vector(1 downto 0);				
+	packet_rdreq_i  : in std_logic_vector(1 downto 0);
+	packet_o        : out t_mid_pkt_array(1 downto 0);							
+	packet_monitor_o: out t_mid_elink_monit_array(1 downto 0);	
 	-------------------------------------------------------------------
 	-- payload info --					
-	payload_o       : out t_mid_pload;
-	payloadID_o     : out std_logic_vector(3 downto 0);
-	payload_empty_o : out std_logic_vector(1 downto 0);				
-	payload_rdreq_i : in std_logic_vector(1 downto 0)						
+	payload_o        : out t_mid_pload;
+	payload_monitor_o: out t_mid_pload_monit;
+	payload_empty_o  : out std_logic_vector(1 downto 0);				
+	payload_rdreq_i  : in std_logic_vector(1 downto 0)						
 	-------------------------------------------------------------------
 	     );  
 end packetizer;
@@ -103,10 +103,9 @@ architecture rtl of packetizer is
 	signal s_mux_val  : std_logic_vector(1 downto 0);
 	signal s_mux_stop : std_logic_vector(1 downto 0);
 	signal s_mux_data : Array8bit(1 downto 0);
-	signal s_crateID  : Array4bit(1 downto 0);
-	signal s_active   : std_logic_vector(9 downto 0);
-	signal s_missing_cnt: t_mid_missing_cnt_array(1 downto 0);
-	signal s_missing_event_cnt: unsigned(11 downto 0) := (others => '0');
+	signal s_elink_monitor : t_mid_elink_monit_array(1 downto 0);
+
+	signal s_missing_load_cnt : Array16bit(1 downto 0):= (others => (others => '0'));
 
 	-- temporary registers 
 	signal s_temp_size_val : std_logic_vector(1 downto 0);
@@ -137,10 +136,9 @@ architecture rtl of packetizer is
 	signal s_payload_tx_val  : std_logic_vector(1 downto 0); -- val 
 	
 	-- pipeline payload registers 
-	signal s_pipe_val    : std_logic;		                 -- val 
-	signal s_pipe_predata:  Array16bit(1 downto 0);	         -- predata
-	signal s_pipe_data   :  Array16bit(1 downto 0);	         -- data 
-	
+	signal s_pipe_val        : std_logic;		                 -- val 
+	signal s_pipe_predata    : Array16bit(1 downto 0);	         -- predata
+	signal s_pipe_data       : Array16bit(1 downto 0);	         -- data 
 
 begin 
 	--=============================================================================
@@ -152,27 +150,31 @@ begin
 		-- ELINK_MUX --
 		--===========--
 		elink_mux_inst: elink_mux
-		generic map (g_REGIONAL_ID => i, g_NUM_HBFRAME_SYNC => g_NUM_HBFRAME_SYNC, g_LINK_ID => g_LINK_ID)
+		generic map (g_LINK_ID => g_LINK_ID, g_REGIONAL_ID => i)
 		port map (
-		clk_240	       => clk_240,  
+		clk_240	           => clk_240,  
 		--		
-		reset_i	       => reset_i,
+		reset_i	           => reset_i,
 		--
-		sox_pulse_i    => sox_pulse_i,
-		ttc_mode_i     => ttc_mode_i,						
+		sox_pulse_i        => sox_pulse_i,
+		eox_pulse_i        => eox_pulse_i,
+		sel_pulse_i        => sel_pulse_i,
+		tfm_pulse_i        => tfm_pulse_i,
+		ttc_mode_i         => ttc_mode_i,						
 		--	
-		packet_full_i  => s_packet_full(i),
+		packet_full_i      => s_packet_full(i),
 		--
-		gbt_data_i     => gbt_data_i(39+40*i downto i*40),
-		gbt_val_i      => gbt_val_i,
+		mid_sync_i         => mid_sync_i,
+		--
+		gbt_val_i          => gbt_val_i,
+		gbt_data_i         => gbt_data_i(39+40*i downto i*40),
+		
 		-- 
-		active_o       => s_active(4+i*5 downto 0+i*5),
-		crateID_o      => s_crateID(i),
-		missing_cnt_o  => s_missing_cnt(i),
+		elink_monitor_o    => s_elink_monitor(i),
 		--
-		mux_val_o      => s_mux_val(i),
-		mux_stop_o     => s_mux_stop(i),
-		mux_data_o     => s_mux_data(i));  
+		mux_val_o          => s_mux_val(i),
+		mux_stop_o         => s_mux_stop(i),
+		mux_data_o         => s_mux_data(i));  
 		--========================--
 		-- PACKETIZER PACKET_FIFO --
 		--========================--
@@ -202,26 +204,11 @@ begin
 		full           => s_payload_full(i),
 		empty          => s_payload_empty(i));
 	end generate ELINK_MUX_GEN;
-    --=============================================================================
-	-- Begin of p_missing_event_cnt
-	-- This process adds the number of events rejected during the daq
-	--=============================================================================
-	p_missing_event_cnt: process(clk_240)
-	begin 
-	 if rising_edge(clk_240) then
-	  if reset_i = '1' then 
-	   s_missing_event_cnt <= (others => '0');
-	  else 
-	   if s_missing_event_cnt /= x"FFF" then 
-	    s_missing_event_cnt <= sum_Array12bit(s_missing_cnt);
-	   end if;
-	  end if;
-     end if;
-	end process p_missing_event_cnt;
 	--=============================================================================
 	-- Begin of p_temp_stop
-	-- This process stops the aquisition of byte data once the a hearbeat frame or
-	-- a time frame have been collected from all active e-links
+	-- This process allows the acquisition to stop imediately upon receiption of a hertbeat trigger.
+	-- Furthermore, it also allows the system to stop after collecting g_NUM_HBF to facilitate the 
+	-- transtion between two timeframes.
 	--=============================================================================
 	p_temp_stop: process(clk_240)
 	begin
@@ -229,13 +216,19 @@ begin
       if reset_i = '1' then 
 	   s_temp_stop <= "00"; 
 	  else 
-	   for i in 0 to 1 loop    
-		if s_mux_stop(i) = '1' or sel_pulse_i = '1' then          -- collect FEE heartbeat frame
-		 s_temp_stop(i) <= '1';                                   -- stop daq 
-		elsif s_mux_val(i) = '0' and s_temp_stop(i) = '1' then
-		 s_temp_stop(i) <= '0';                                   -- initial value 
-		end if;
-	   end loop;
+       -- collect desynchronuous HBF
+	   if sel_pulse_i = '1' then 
+	    s_temp_stop <= "11";      -- stop daq 
+	   else 
+	    -- collect synchronized HBF 
+	    for i in 0 to 1 loop    
+		 if s_mux_stop(i) = '1' then        
+		  s_temp_stop(i) <= '1';  -- stop daq 
+		 elsif s_mux_val(i) = '0' and s_temp_stop(i) = '1' then -- condition to enable done is met.
+		  s_temp_stop(i) <= '0';  -- reset value 
+		 end if;
+	    end loop;
+       end if;
 	  end if;
      end if;
 	end process p_temp_stop;
@@ -259,8 +252,7 @@ begin
         -- valid mux byte --	 
 	    if s_mux_val(i) = '1' then 
 	     s_temp_data(i)(7+8*index(i) downto 8*index(i)) <= s_mux_data(i); -- collect 8-bit data 
-         if index(i) = MAX_BYTE then 
-		  -- max (256-bit)
+         if index(i) = MAX_BYTE then -- max (256-bit)
 	      s_temp_val(i) <= '1';
           index(i) := 0;
 	     else 
@@ -276,8 +268,7 @@ begin
 	      s_temp_done(i) <= '1';
 	      index(i) := 0;
 	     else  
-		  -- stop after reaching 256-bit 
-	      s_temp_done(i) <= '1';
+	      s_temp_done(i) <= '1'; -- enable done after reaching 256-bit 
 	     end if;
 	    end if;
        end loop; 
@@ -286,8 +277,8 @@ begin
 	end process p_byte_mux;
 	
 	-- packet write request 
-	s_packet_wrreq(0) <= s_temp_val(0) and (not s_packet_full(0));
-	s_packet_wrreq(1) <= s_temp_val(1) and (not s_packet_full(1));
+	s_packet_wrreq(0) <= s_temp_val(0);
+	s_packet_wrreq(1) <= s_temp_val(1);
 	-- copy packet data to fifo 
 	s_packet_rx_data(0) <= s_temp_data(0);
 	s_packet_rx_data(1) <= s_temp_data(1);
@@ -298,7 +289,7 @@ begin
 	-- and store this the number of packet pushed in the payload load memoy.
 	--=============================================================================
 	p_pushed: process(clk_240)
-	 variable selct : Array2bit(1 downto 0) :=(others => "00");
+	 variable temp_select : Array2bit(1 downto 0) :=(others => "00");
 	 variable u_pushed: t_u16_array(1 downto 0) :=(others => x"0000");
 	begin
 	 if rising_edge(clk_240) then
@@ -310,11 +301,10 @@ begin
 	   s_temp_size_val <= "00";
 			
 	   for i in 0 to 1 loop
-	   -- concatenate val & done 
-	   selct(i) := s_temp_val(i) & s_temp_done(i);
-		
-	   -- muxtiplexer 
-	   case selct(i) is 
+	   -- multiplexer 
+	   temp_select(i) := s_temp_val(i) & s_temp_done(i);
+
+	   case temp_select(i) is 
         when "10" => 
          -- packet valid 
          u_pushed(i) := u_pushed(i) + 1; -- increment
@@ -324,8 +314,7 @@ begin
 	     s_temp_size_val(i) <= '1';
 	     u_pushed(i) := x"0000";
 	    when "11" => 
-         -- last packet valid 
-         -- last packet pushed 
+         -- last packet valid / last packet pushed 
 	     s_temp_size(i) <= std_logic_vector(u_pushed(i)+1); -- increment & push
 	     s_temp_size_val(i) <= '1';
 	     u_pushed(i) := x"0000";
@@ -346,7 +335,7 @@ begin
 	
 	--===========================================================================
 	-- Begin of p_pipe_mux
-	-- This process multiplex the payload transmitted from the higher and lower
+	-- This process is used to pipeline the registers
 	--===========================================================================
 	p_pipe_mux: process(clk_240)
 	begin 
@@ -355,61 +344,81 @@ begin
 	  s_pipe_val <= '0';
 	  s_pipe_data <= (others =>(others => '0'));
 	  
-	  for i in 0 to 1 loop 
-	   -- copy data from the payload tx fifo
+	  for i in 0 to 1 loop  
+	   -- stage 1 -- 
+	   -- request payload data 
 	   if payload_rdreq_i(i) = '1' then 
-	    s_pipe_predata(i) <= s_payload_tx_data(i);   
+	    s_pipe_predata(i) <= s_payload_tx_data(i);   -- copy data from fifo
+	   end if;  
+	   s_payload_tx_val(i) <= payload_rdreq_i(i);    -- copy read signal from "transmitter.vhd"
+	   -- transmission of data
+	   -- stage 2 --
+	   if s_payload_tx_val(i) = '1' then
+		s_pipe_data(i) <= s_pipe_predata(i);         -- transfer data to "transmitter.vhd"
+		s_pipe_val <= '1';
 	   end if;
-	   -- payload available after 1 clk delay
-	   s_payload_tx_val(i) <= payload_rdreq_i(i);    
-	  end loop;
-			
-	  -- mux --
-	  case s_payload_tx_val is	
-	  when "01" => 
-	   s_pipe_data(0) <= s_pipe_predata(0);
-	   s_pipe_val <= '1';	
-
-	  when "10" =>
-	   s_pipe_data(1) <= s_pipe_predata(1);
-	   s_pipe_val <= '1';	
-
-	  when "11" =>
-	   s_pipe_data(1) <= s_pipe_predata(1);
-	   s_pipe_data(0) <= s_pipe_predata(0);
-	   s_pipe_val <= '1';
-	  when others => null;
-	  end case;	
+	  end loop;	
 	 end if;
 	end process p_pipe_mux;
 	--===========================================================================
-	-- Begin of p_pipe_mux
-	-- This process multiplex the payload transmitted from the higher and lower
+	-- Begin of p_packet_val
+	-- This process delays the signal below for 1 clock cycle 
 	--===========================================================================
 	p_packet_val: process(clk_240)
 	begin 
 	 if rising_edge(clk_240) then
-	  s_packet_tx_val <= packet_rdreq_i; -- packet data available after 1 clk 
+	  s_packet_tx_val <= packet_rdreq_i; 
      end if;
 	end process p_packet_val;
-
-	-- output missing events counter 
-	missing_event_cnt_o <= std_logic_vector(s_missing_event_cnt);
+	--=============================================================================
+	-- Begin of p_missing_load_cnt
+	-- This process counts the number of missing payloads
+	-- The counter is reset at the beginning of each run
+	-- Note:
+	-- no packets available in the memory upon receiption of the heartbeat pulse 
+	-- means, that an error has occurred. 
+	--=============================================================================
+	p_missing_load_cnt: process(clk_240)
+	 variable u_counter_0 : unsigned(15 downto 0) := (others => '0');
+	 variable u_counter_1 : unsigned(15 downto 0) := (others => '0');
+	begin
+	 if rising_edge(clk_240) then
+      if reset_i = '1' then 
+	   u_counter_0 := (others => '0'); 
+	   u_counter_1 := (others => '0');  
+	  else 
+	    -- heartbeat 
+		if sel_pulse_i = '1' then 
+		 -- no packet available in load A 
+		 if u_counter_0 /= x"FFFF" and s_packet_empty(0) = '1' then         
+		  u_counter_0 := u_counter_0+1; -- error counter 
+		 end if;
+		 -- no packet available in load B 
+		 if u_counter_1 /= x"FFFF" and s_packet_empty(1) = '1' then         
+		  u_counter_1 := u_counter_1+1; -- error counter 
+		 end if;
+		end if;
+		
+	   s_missing_load_cnt(0) <= std_logic_vector(u_counter_0);
+	   s_missing_load_cnt(1) <= std_logic_vector(u_counter_1);
+	  end if;          
+     end if;
+	end process p_missing_load_cnt;
 
     -- output packet 
-	packet_active_o <= s_active; 
 	gen_packet: for i in 0 to 1 generate 
-    	packet_o(i).valid <= s_packet_tx_val(i);
-		packet_o(i).ready <= not (s_packet_empty(i));
-		packet_o(i).data  <= s_packet_tx_data(i);
+    	packet_o(i).valid   <= s_packet_tx_val(i);
+		packet_o(i).ready   <= not (s_packet_empty(i));
+		packet_o(i).data    <= s_packet_tx_data(i);
+		packet_monitor_o(i) <= s_elink_monitor(i);
 	end generate;
-	
+
 	-- output payload 
+	payload_monitor_o.missing_load_cnt <= s_missing_load_cnt;
 	payload_o.data(0)  <= s_pipe_data(0);
 	payload_o.data(1)  <= s_pipe_data(1);
 	payload_o.valid    <= s_pipe_val;                   
-	payload_o.ready    <= not (s_payload_empty(0) or s_payload_empty(1));  
-	payloadID_o        <= s_crateID(0) or s_crateID(1);                             
+	payload_o.ready    <= s_payload_empty(0) nor s_payload_empty(1);                         
 	payload_empty_o    <= s_payload_empty;
 
 end rtl;

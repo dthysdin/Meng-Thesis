@@ -13,7 +13,8 @@
 -- Version   : 2.0
 -------------------------------------------------------------------------------
 -- last changes 
--- <21-02-2021> 
+-- <23-01-2022>
+-- check the tfm and hbf counters 
 -------------------------------------------------------------------------------
 -- TODO:  Completed 
 -- <nothing to do>
@@ -38,26 +39,28 @@ use work.pack_mid_ul.all;
 --Entity declaration for ttc_ulogic
 --=============================================================================
 entity ttc_ulogic is
-    generic (g_NUM_HBFRAME: integer; g_NUM_HBFRAME_SYNC: integer);
     port (
     -------------------------------------------------------------------
     -- 240 MHz clock --
-    clk_240	   : in std_logic;
+    clk_240	     : in std_logic;
     -------------------------------------------------------------------
-	-- resets --  	
-    reset_i    : in std_logic; 
-    init_o     : out std_logic;  
-    -------------------------------------------------------------------
-    -- trigger monitor register  -- 
-    av_trg_monit_o : out std_logic_vector(31 downto 0);
+	-- mid --  	
+    mid_reset_i : in std_logic;   
+    mid_sync_i : in std_logic_vector(11 downto 0);
+    ------------------------------------------------------------------
+    -- sync reset --
+    sync_reset_o  : out std_logic;
     -------------------------------------------------------------------
     -- ttc info -- 
-    ttc_rxd_i      : in std_logic_vector(199 downto 0);
-    ttc_rxvalid_i  : in std_logic;   
-    ttc_rxready_i  : in std_logic;  
-    ttc_data_o     : out t_mid_ttc;
-    ttc_mode_o     : out t_mid_mode;
-    ttc_pulse_o    : out t_mid_pulse 
+    -- in 
+    ttc_rxvalid_i : in std_logic;   
+    ttc_rxready_i : in std_logic;
+    ttc_rxd_i     : in std_logic_vector(199 downto 0);
+    -- out
+    ttc_data_o    : out t_mid_ttc;
+    ttc_mode_o    : out t_mid_mode;
+    ttc_pulse_o   : out t_mid_pulse;
+    ttc_monitor_o : out std_logic_vector(31 downto 0)
     ------------------------------------------------------------------------
        );  
 end ttc_ulogic;
@@ -68,36 +71,36 @@ architecture rtl of ttc_ulogic is
     -- ========================================================
     -- signal declarations
     -- ========================================================
+    signal s_sync_reset : std_logic;
     -- timing & trigger control info pipeline 
     signal s_ttc_data  : t_mid_ttc;
     signal s_ttc_valid : std_logic;
-    
     -- main trigger registers 
     signal s_is_sox : std_logic := '0';
     signal s_is_eox : std_logic := '0';
-
     -- pulses 
-    signal s_pulse_init : std_logic;
-    signal s_pulse_hbt  : std_logic; 
-    signal s_pulse_sox  : std_logic;
-    signal s_pulse_eox  : std_logic;
-    signal s_pulse_sel  : std_logic;
-
+    signal s_pulse_hbt  : std_logic;     -- heartbeat pulse
+    signal s_pulse_tfm  : std_logic;     -- timeframe pulse
+    signal s_pulse_sox  : std_logic;     -- sox pulse 
+    signal s_pulse_eox  : std_logic;     -- eox pulse 
+    signal s_pulse_sel  : std_logic;     -- heartbeat sel pulse
+    signal s_temp_pulse_sox : std_logic; -- temporary sox pulse
+    signal s_temp_pulse_eox : std_logic; -- temporary eox pulse
     -- modes 
     signal s_continuous : std_logic := '0';
     signal s_triggered  : std_logic := '0';
     signal s_triggered_data : std_logic_vector(15 downto 0) := (others => '0');
-	
+    signal s_is_continuous  : std_logic := '0';
+    signal s_is_triggered   : std_logic := '0';
     -- avalon trigger counters 
-    signal s_hbframe_cnt : unsigned(11 downto 0) := x"000"; 
-    signal s_tframe_cnt  : unsigned(11 downto 0) := x"000";
+    signal s_heartbeat_cnt : unsigned(11 downto 0) := x"000"; 
+    signal s_timeframe_cnt : unsigned(11 downto 0) := x"000";
 
 
 begin 
 
     -- valid trigger & timing info
      s_ttc_valid <= ttc_rxd_i(119) and ttc_rxvalid_i and ttc_rxready_i;
-
     --=============================================================================
     -- Begin of p_ttc_data
     -- This process contains the trigger information register 
@@ -106,7 +109,6 @@ begin
     begin 
      if rising_edge(clk_240) then
       if s_ttc_valid = '1' then 
-       -- timing and trigger info
        s_ttc_data.orbit <= ttc_rxd_i(79 downto 48);
        s_ttc_data.bcid  <= x"0" & ttc_rxd_i(43 downto 32);
        s_ttc_data.trg	<= ttc_rxd_i(31 downto 0); 
@@ -114,69 +116,56 @@ begin
      end if; 
     end process p_ttc_data;
     --=============================================================================
-    -- Begin of p_ttc_pulse
-    -- This process contains the trigger information register 
+    -- Begin of p_trg
+    -- This process contains the sox and eox trigger registers 
     --=============================================================================
-    p_ttc_pulse: process(clk_240)
+    p_trg: process(clk_240)
     begin 
      if rising_edge(clk_240) then
-      -- default 
-      s_pulse_init <= '0';
-      s_pulse_hbt  <= '0';
-      s_pulse_eox  <= '0';
-
-      if reset_i = '1' then 
+      if mid_reset_i = '1' then 
        s_is_sox <= '0';
        s_is_eox <= '0';
       else
        if s_ttc_valid = '1' then 
-        -- init pulse
-        if ttc_rxd_i(7) = '1' or ttc_rxd_i(9) = '1' then 
-         s_pulse_init <= '1';
-         s_is_sox <= '1';
-         s_is_eox <= '0';
-
-        -- eox pulse 
+        -- sox trigger 
+        if ttc_rxd_i(7) = '1' or ttc_rxd_i(9) = '1' then  
+         s_is_sox <= '1';     -- store sox 
+         s_is_eox <= '0';     -- reset eox 
+        -- eox trigger 
         elsif ttc_rxd_i(8) = '1' or ttc_rxd_i(10) = '1' then 
-         s_pulse_eox <= '1';
-         s_is_sox <= '0';
-         s_is_eox <= '1';
-        
-        -- heartbeat pulse 
-        elsif ttc_rxd_i(0) = '1' and ttc_rxd_i(1) = '1' and s_is_sox = '1' then
-         s_pulse_hbt <= '1';
+         s_is_sox <= '0';     -- reset sox
+         s_is_eox <= '1';     -- store eox
         end if;
        end if;
       end if;
      end if; 
-    end process p_ttc_pulse;
+    end process p_trg;
     --=============================================================================
     -- Begin of p_mode
-    -- This process 
+    -- This process determines the type of running modes based on the ttc information
     --=============================================================================
     p_mode: process(clk_240)
     begin 
      if rising_edge(clk_240) then 
-      if reset_i = '1' then 
+      if mid_reset_i = '1' then 
        s_continuous <= '0';
        s_triggered <= '0';
        s_triggered_data <= (others => '0');
       else 
        if s_ttc_valid = '1' then 
+
         -- continuous (soc-eoc) 
         if ttc_rxd_i(9) = '1' then 
          s_continuous <= '1';
         elsif ttc_rxd_i(10) = '1' then 
          s_continuous <= '0';
-        end if;
-
         -- triggered (sot-eot) 
-        if ttc_rxd_i(7) = '1' then 
+        elsif ttc_rxd_i(7) = '1' then 
          s_triggered <= '1';
         elsif ttc_rxd_i(8) = '1' then 
          s_triggered <= '0';
         end if;
-
+        
         -- data in triggered mode (physics trigger)
         if ttc_rxd_i(4) = '1' and s_triggered = '1' then 
          s_triggered_data <= x"0" & ttc_rxd_i(43 downto 32);
@@ -185,6 +174,75 @@ begin
       end if;
      end if;
     end process p_mode;
+    --============================================================================
+    -- Begin of p_ismode
+    -- This process stores the the readout mode transmitted from the LTU
+    -- This process is used for monitoring purposes
+    --=============================================================================
+    p_ismode: process(clk_240)
+    begin
+     if rising_edge(clk_240) then 
+      if mid_reset_i = '1' then 
+       s_is_continuous <= '0';
+       s_is_triggered  <= '0';
+      else 
+       if s_continuous = '1' then 
+        s_is_continuous <= '1';
+        s_is_triggered  <= '0';
+       elsif s_triggered = '1' then 
+        s_is_continuous <= '0';
+        s_is_triggered  <= '1';
+       end if;
+      end if;
+     end if;
+    end process p_ismode;
+    --=============================================================================
+    -- Begin of p_ttc_pulse
+    -- This process generates eox and heartbeat pulses  
+    --=============================================================================
+    p_ttc_pulse: process(clk_240)
+    begin 
+     if rising_edge(clk_240) then
+      -- default 
+      s_pulse_hbt  <= '0';
+      s_temp_pulse_eox  <= '0';
+      s_temp_pulse_sox  <= '0';
+
+      if s_ttc_valid = '1' then 
+       -- pulse sox
+       if ttc_rxd_i(7) = '1' or ttc_rxd_i(9) = '1' then 
+        s_temp_pulse_sox <= '1';   
+       -- pulse eox
+       elsif ttc_rxd_i(8) = '1' or ttc_rxd_i(10) = '1' then 
+        s_temp_pulse_eox <= '1'; 
+       -- pulse heaertbeat   
+       elsif ttc_rxd_i(0) = '1' and ttc_rxd_i(1) = '1' and s_is_sox = '1' then
+        s_pulse_hbt <= '1';  
+       end if;
+      end if;
+     end if; 
+    end process p_ttc_pulse;
+    --=============================================================================
+    -- Begin of p_sync_reset
+    -- This process contains the trigger information register 
+    --=============================================================================
+    p_sync_reset: process(clk_240)
+    begin 
+     if rising_edge(clk_240) then
+      -- avalon mid reset 
+      if mid_reset_i = '1' then 
+       s_sync_reset <= '1';
+      -- sox pulse reset
+      elsif s_ttc_valid = '1' then 
+       if ttc_rxd_i(7) = '1' or ttc_rxd_i(9) = '1' then 
+        s_sync_reset <= '1';
+       end if;
+      -- remain low  
+      else 
+       s_sync_reset <= '0';
+      end if;
+     end if; 
+    end process p_sync_reset;
     --=============================================================================
     -- Begin of p_ttc_counters
     -- This process contains avalon trigger counters to monitor the ttc information
@@ -193,72 +251,100 @@ begin
      variable temp_cnt : unsigned(11 downto 0) := x"001";
     begin 
      if rising_edge(clk_240) then
-      -- default
-      s_pulse_sel <= '0';
-      s_pulse_sox <= '0';
 
-      if reset_i = '1' then
-       -- hard reset 
-       temp_cnt      := (others => '0');
-       s_hbframe_cnt <= (others => '0'); 
-       s_tframe_cnt  <= (others => '0');
-
+      -- synchronuous reset 
+      if s_sync_reset = '1' then
+        s_heartbeat_cnt <= x"000"; 
+        temp_cnt        := x"000";
+        s_timeframe_cnt <= x"000";
       else 
-       -- initialization pulse
-       if s_pulse_init = '1' then 
-        temp_cnt      := x"001";
-        s_hbframe_cnt <= x"001"; 
-        s_tframe_cnt  <= x"000";
-        s_pulse_sox   <= '1';
-
+       -- initialization (sox pulse) 
+       if s_pulse_sox = '1' then 
+        s_heartbeat_cnt <= x"001"; 
+        temp_cnt        := x"001";
+        s_timeframe_cnt <= x"000";
+        
        -- heartbeat trigger pulse  
-       elsif s_pulse_hbt = '1' then 
-        -- heartbeat counter 
-        if s_hbframe_cnt = to_unsigned(g_NUM_HBFRAME_SYNC, s_hbframe_cnt'length) then  
-         s_hbframe_cnt <= x"001";                  -- reinitialize HBF counter & automatically collect data                                                                         
+       elsif s_pulse_hbt = '1' then
+
+        -- heartbeat counter
+        if s_heartbeat_cnt = unsigned(mid_sync_i) then  
+         s_heartbeat_cnt <= x"001";                       -- reinitialize heartbeat counter                                                                         
         else 
-         s_hbframe_cnt <= s_hbframe_cnt+1;         -- increment HBF counter
-         s_pulse_sel <= '1';                       -- send a pulse & force the collection of data
+         s_heartbeat_cnt <= s_heartbeat_cnt+1;             -- increment heartbeat counter
         end if;
 
         -- timeframe counter                                                  
-        if s_tframe_cnt = to_unsigned(g_NUM_HBFRAME, s_tframe_cnt'length) then 
-         s_tframe_cnt <= x"000";                   -- reinitialize TF counter 
-         temp_cnt := x"001";                       -- reinitialize temporary counter
-        elsif temp_cnt = to_unsigned(g_NUM_HBFRAME, temp_cnt'length) then  
-         temp_cnt := x"001";                       -- reinitialize temporary counter  
-         s_tframe_cnt <= s_tframe_cnt+1;           -- increment TF counter
+        if s_timeframe_cnt = unsigned(mid_sync_i) then 
+         s_timeframe_cnt <= x"000";                       -- reinitialize TF counter 
+         temp_cnt        := x"001";                       -- reinitialize temp counter
+        elsif temp_cnt = unsigned(mid_sync_i) then   
+         s_timeframe_cnt <= s_timeframe_cnt+1;            -- increment TF counter
+         temp_cnt := x"001";                              -- reinitialize heartbeat counter 
         else 
-         temp_cnt := temp_cnt+1;                   -- increment temporary counter
+         temp_cnt := temp_cnt+1;                          -- increment heartbeat counter
         end if;
+        
        end if;
       end if; 
      end if; 
     end process p_ttc_counters;
+    --=============================================================================
+    -- Begin of p_sox_pulse
+    -- This process generates the sox pulse 
+    -- This pulse is used to start the MID data acquisition 
+    --=============================================================================
+    p_sox_pulse: process(clk_240)
+    begin 
+     if rising_edge(clk_240) then
+      s_pulse_sox <= s_temp_pulse_sox;
+      s_pulse_eox <= s_temp_pulse_eox;
+     end if; 
+    end process p_sox_pulse;
+    --=============================================================================
+    -- Begin of p_sel_pulse
+    -- This process generates the heartbeat sel pulse
+    -- This pulse is used to collect heartbeat frame data
+    --=============================================================================
+    p_sel_pulse: process(clk_240)
+    begin 
+     if rising_edge(clk_240) then
+      -- initial condition
+      s_pulse_sel  <= '0';
+      s_pulse_tfm  <= '0';
+      -- heartbeat trigger 
+      if s_pulse_hbt = '1' then 
+       if s_heartbeat_cnt /= unsigned(mid_sync_i) then 
+        s_pulse_sel <= '1';   -- sel pulse on
+       elsif s_heartbeat_cnt = unsigned(mid_sync_i) then 
+        s_pulse_tfm <= '1';
+       end if;
+      end if;
+     end if; 
+    end process p_sel_pulse;
 
-    -- avalon trigger info 
-    av_trg_monit_o(31 downto 24) <= s_is_sox & "000000" & s_is_eox;  -- sox & eox received flags 
-    av_trg_monit_o(23 downto 12) <= std_logic_vector(s_tframe_cnt);  -- number of timeframes received during the run 
-    av_trg_monit_o(11 downto 0)  <= std_logic_vector(s_hbframe_cnt); -- number of heartbeat received during the timeframe
+    -- output 
+    ttc_monitor_o(31 downto 28) <= s_is_sox & "00" & s_is_eox;              -- sox & eox received flags 
+    ttc_monitor_o(27 downto 24) <= s_is_continuous & "00" & s_is_triggered; -- continuous & triggered mode flags
+    ttc_monitor_o(23 downto 12) <= std_logic_vector(s_timeframe_cnt);       -- number of timeframes received during the run 
+    ttc_monitor_o(11 downto 0)  <= std_logic_vector(s_heartbeat_cnt);       -- number of heartbeat received during the timeframe
 
-    -- ttc pulses
+
     ttc_pulse_o.sox <= s_pulse_sox;
     ttc_pulse_o.hbt <= s_pulse_hbt;
-    ttc_pulse_o.sel <= s_pulse_sel;
+    ttc_pulse_o.tfm <= s_pulse_tfm;
     ttc_pulse_o.eox <= s_pulse_eox;
+    ttc_pulse_o.sel <= s_pulse_sel;
 
-    -- ttc mode 
     ttc_mode_o.continuous <= s_continuous;
     ttc_mode_o.triggered  <= s_triggered;
     ttc_mode_o.triggered_data <= s_triggered_data;
 
-    -- timing and trigger info
     ttc_data_o.orbit <= s_ttc_data.orbit;
     ttc_data_o.bcid  <= s_ttc_data.bcid;
     ttc_data_o.trg   <= s_ttc_data.trg;
 
-    -- pulse init 
-    init_o <= s_pulse_init;
+    sync_reset_o <= s_sync_reset;
     
 end rtl;
 --=============================================================================
