@@ -1,19 +1,16 @@
 
-# Master of Engineering.
-===================
-
 ## MID user-logic component 
 
-
-#### Prerequisite 
+### Prerequisite 
 
 The design is validated using **QUARTUS Prime 18.1 Pro** and **Intel-ModelSim**
 
 ### Design component 
-___
-The block diagram shows the user-logic component. 
 
+The block diagram shows the user-logic component. 
+___
 ![user-logic overview](ul.png)
+__
 
 Each module is connected to the avalon slave.
 - The GBT wrappers transmit data through the GBT mapping. They are not symetrical as one side of the FPGA is fully used for GBT,
@@ -28,6 +25,6 @@ Therefore it can send data from CRU to FEE via the GBT. The GBT mux select the s
 - The Single Word Transfer handler is used to transfer slow control command from the DCS to the FEE via the GBT.
 - The Board Support can monitor temperatures, configure PLL, ...
 
-## Authors
+### Authors
 
 Orcel Thys
