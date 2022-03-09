@@ -2,7 +2,7 @@
 # Master of Engineering: Electrical Engineering.
 ===================
 
-## Design and development of MID user-logic component 
+## MID user-logic component 
 
 
 #### Prerequisite 
