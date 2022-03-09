@@ -1,5 +1,5 @@
 
-# Master of Engineering: Electrical Engineering.
+# Master of Engineering.
 ===================
 
 ## MID user-logic component 
