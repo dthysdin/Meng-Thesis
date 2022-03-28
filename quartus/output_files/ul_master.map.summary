@@ -1,0 +1,16 @@
+Analysis & Synthesis Status : Successful - Mon Mar 28 13:50:40 2022
+Quartus Prime Version : 21.1.0 Build 842 10/21/2021 SJ Lite Edition
+Revision Name : ul_master
+Top-level Entity Name : user_logic
+Family : MAX 10
+Total logic elements : 31,763
+    Total combinational functions : 26,639
+    Dedicated logic registers : 21,313
+Total registers : 21313
+Total pins : 6,544
+Total virtual pins : 0
+Total memory bits : 992,768
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0
+UFM blocks : 0
+ADC blocks : 0

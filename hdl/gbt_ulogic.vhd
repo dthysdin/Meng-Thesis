@@ -101,36 +101,7 @@ architecture rtl of gbt_ulogic is
 	signal s_gbt_monitor_word : Array32bit(3 downto 0);
 	signal s_trans_monitor    : t_mid_trans_monit;
 
-begin	
-	--============--
-	-- PACKETIZER --
-	--============--
-	packetizer_inst: packetizer
-	generic map (g_LINK_ID => g_LINK_ID)
-	port map  (
-	clk_240            => clk_240,	
-	--	
-	reset_i            => reset_i,	
-	--
-	sox_pulse_i        => ttc_sox_pulse_i,
-	eox_pulse_i        => ttc_eox_pulse_i,
-	sel_pulse_i        => ttc_sel_pulse_i,	
-	tfm_pulse_i        => ttc_tfm_pulse_i,
-	ttc_mode_i         => ttc_mode_i,
-	--
-	gbt_val_i          => gbt_val_i,	
-	gbt_data_i         => gbt_data_i,
-	--
-	mid_sync_i         => mid_sync_i,							
-	--
-	packet_o           => s_packet,													
-	packet_rdreq_i     => s_packet_rdreq,
-	packet_monitor_o   => s_packet_monitor,
-	-- 
-	payload_o          => s_payload,
-	payload_monitor_o  => s_payload_monitor,
-	payload_empty_o    => s_payload_empty,
-	payload_rdreq_i    => s_payload_rdreq);
+begin
 	
 	--============--
 	-- TRANSMITTER --
@@ -158,7 +129,37 @@ begin
 	gbt_datapath_cnt_o  => s_gbt_datapath_cnt,
 	--
 	trans_monitor_o     => s_trans_monitor);  
-    
+	
+	--====================--
+	-- PAYLOAD_SERIALIZER --
+	--====================--
+	payload_serializer_inst: payload_serializer
+	generic map (g_LINK_ID => g_LINK_ID)
+	port map  (
+	clk_240            => clk_240,	
+	--	
+	reset_i            => reset_i,	
+	--
+	sox_pulse_i        => ttc_sox_pulse_i,
+	eox_pulse_i        => ttc_eox_pulse_i,
+	sel_pulse_i        => ttc_sel_pulse_i,	
+	tfm_pulse_i        => ttc_tfm_pulse_i,
+	ttc_mode_i         => ttc_mode_i,
+	--
+	gbt_val_i          => gbt_val_i,	
+	gbt_data_i         => gbt_data_i,
+	--
+	mid_sync_i         => mid_sync_i,							
+	--
+	packet_o           => s_packet,													
+	packet_rdreq_i     => s_packet_rdreq,
+	packet_monitor_o   => s_packet_monitor,
+	-- 
+	payload_o          => s_payload,
+	payload_monitor_o  => s_payload_monitor,
+	payload_empty_o    => s_payload_empty,
+	payload_rdreq_i    => s_payload_rdreq);
+
 	-- monitoring 
 	s_gbt_monitor_word(0)(31 downto 28) <= s_packet_monitor(1).crateID or s_packet_monitor(0).crateID;    
 	s_gbt_monitor_word(0)(27 downto 24) <= std_logic_vector(to_unsigned(g_LINK_ID mod 2,4));            

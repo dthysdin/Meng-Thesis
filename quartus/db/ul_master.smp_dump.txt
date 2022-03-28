@@ -1,0 +1,530 @@
+
+State Machine - |user_logic|avalon_ulogic:AVL|avalon_mm_bus_arbitrer:busmux|state
+Name state.PUTRDVAL state.WAITRDVAL state.WAITACK state.ACCEPT state.IDLE 
+state.IDLE 0 0 0 0 0 
+state.ACCEPT 0 0 0 1 1 
+state.WAITACK 0 0 1 0 1 
+state.WAITRDVAL 0 1 0 0 1 
+state.PUTRDVAL 1 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|state
+Name state.PUSH_PLOAD state.ACCESS_PLOAD state.PUSH_RDH32 state.PUSH_RDH10 state.PUSH_GAP state.ACCESS_RDY state.HDR_VAL state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 
+state.HDR_VAL 0 0 0 0 0 0 1 1 
+state.ACCESS_RDY 0 0 0 0 0 1 0 1 
+state.PUSH_GAP 0 0 0 0 1 0 0 1 
+state.PUSH_RDH10 0 0 0 1 0 0 0 1 
+state.PUSH_RDH32 0 0 1 0 0 0 0 1 
+state.ACCESS_PLOAD 0 1 0 0 0 0 0 1 
+state.PUSH_PLOAD 1 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|state
+Name state.DECODE_LOC state.MUX_LOC state.LOC_READY state.DECODE_REG state.REG_READY state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.REG_READY 0 0 0 0 1 1 
+state.DECODE_REG 0 0 0 1 0 1 
+state.LOC_READY 0 0 1 0 0 1 
+state.MUX_LOC 0 1 0 0 0 1 
+state.DECODE_LOC 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|regional_elink:regional_elink_inst|regional_sync:regional_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|regional_elink:regional_elink_inst|regional_zs:regional_zs_inst|state
+Name state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 
+state.TRG 0 0 0 1 1 
+state.IBC_1 0 0 1 0 1 
+state.IBC_2 0 1 0 0 1 
+state.DEC 1 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:3:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:3:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:2:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:2:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:1:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:1:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:0:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:0:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|state
+Name state.DECODE_LOC state.MUX_LOC state.LOC_READY state.DECODE_REG state.REG_READY state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.REG_READY 0 0 0 0 1 1 
+state.DECODE_REG 0 0 0 1 0 1 
+state.LOC_READY 0 0 1 0 0 1 
+state.MUX_LOC 0 1 0 0 0 1 
+state.DECODE_LOC 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|regional_elink:regional_elink_inst|regional_sync:regional_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|regional_elink:regional_elink_inst|regional_zs:regional_zs_inst|state
+Name state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 
+state.TRG 0 0 0 1 1 
+state.IBC_1 0 0 1 0 1 
+state.IBC_2 0 1 0 0 1 
+state.DEC 1 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:3:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:3:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:2:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:2:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:1:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:1:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:0:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:0:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|transmitter:transmitter_inst|state
+Name state.PLOAD_SEND state.PLOAD_ACCESS state.PLOAD_VAL state.PLOAD_RDY state.IDLE 
+state.IDLE 0 0 0 0 0 
+state.PLOAD_RDY 0 0 0 1 1 
+state.PLOAD_VAL 0 0 1 0 1 
+state.PLOAD_ACCESS 0 1 0 0 1 
+state.PLOAD_SEND 1 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst1|header:header_inst|state
+Name state.UPDATE state.REFRESH state.IDLE 
+state.IDLE 0 0 0 
+state.REFRESH 0 1 1 
+state.UPDATE 1 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|state
+Name state.PUSH_PLOAD state.ACCESS_PLOAD state.PUSH_RDH32 state.PUSH_RDH10 state.PUSH_GAP state.ACCESS_RDY state.HDR_VAL state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 
+state.HDR_VAL 0 0 0 0 0 0 1 1 
+state.ACCESS_RDY 0 0 0 0 0 1 0 1 
+state.PUSH_GAP 0 0 0 0 1 0 0 1 
+state.PUSH_RDH10 0 0 0 1 0 0 0 1 
+state.PUSH_RDH32 0 0 1 0 0 0 0 1 
+state.ACCESS_PLOAD 0 1 0 0 0 0 0 1 
+state.PUSH_PLOAD 1 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|state
+Name state.DECODE_LOC state.MUX_LOC state.LOC_READY state.DECODE_REG state.REG_READY state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.REG_READY 0 0 0 0 1 1 
+state.DECODE_REG 0 0 0 1 0 1 
+state.LOC_READY 0 0 1 0 0 1 
+state.MUX_LOC 0 1 0 0 0 1 
+state.DECODE_LOC 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|regional_elink:regional_elink_inst|regional_sync:regional_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|regional_elink:regional_elink_inst|regional_zs:regional_zs_inst|state
+Name state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 
+state.TRG 0 0 0 1 1 
+state.IBC_1 0 0 1 0 1 
+state.IBC_2 0 1 0 0 1 
+state.DEC 1 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:3:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:3:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:2:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:2:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:1:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:1:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:0:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:1:event_mux_inst|local_elink:\LOC_GEN:0:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|state
+Name state.DECODE_LOC state.MUX_LOC state.LOC_READY state.DECODE_REG state.REG_READY state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.REG_READY 0 0 0 0 1 1 
+state.DECODE_REG 0 0 0 1 0 1 
+state.LOC_READY 0 0 1 0 0 1 
+state.MUX_LOC 0 1 0 0 0 1 
+state.DECODE_LOC 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|regional_elink:regional_elink_inst|regional_sync:regional_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|regional_elink:regional_elink_inst|regional_zs:regional_zs_inst|state
+Name state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 
+state.TRG 0 0 0 1 1 
+state.IBC_1 0 0 1 0 1 
+state.IBC_2 0 1 0 0 1 
+state.DEC 1 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:3:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:3:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:2:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:2:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:1:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:1:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:0:local_elink_inst|local_sync:local_sync_inst|state
+Name state.FINISH_RUN state.SEND_EOX state.SEND_ORBIT state.SEND state.TRIGGER_MODE_FILTER state.TRIGGER_MODE state.READOUT_MODE state.READY state.START_RUN state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 0 0 
+state.START_RUN 0 0 0 0 0 0 0 0 1 1 
+state.READY 0 0 0 0 0 0 0 1 0 1 
+state.READOUT_MODE 0 0 0 0 0 0 1 0 0 1 
+state.TRIGGER_MODE 0 0 0 0 0 1 0 0 0 1 
+state.TRIGGER_MODE_FILTER 0 0 0 0 1 0 0 0 0 1 
+state.SEND 0 0 0 1 0 0 0 0 0 1 
+state.SEND_ORBIT 0 0 1 0 0 0 0 0 0 1 
+state.SEND_EOX 0 1 0 0 0 0 0 0 0 1 
+state.FINISH_RUN 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|payload_serializer:payload_serializer_inst|event_mux:\ELINK_MUX_GEN:0:event_mux_inst|local_elink:\LOC_GEN:0:local_elink_inst|local_zs:local_zs_inst|state
+Name state.STRIP state.DEC state.IBC_2 state.IBC_1 state.TRG state.IDLE 
+state.IDLE 0 0 0 0 0 0 
+state.TRG 0 0 0 0 1 1 
+state.IBC_1 0 0 0 1 0 1 
+state.IBC_2 0 0 1 0 0 1 
+state.DEC 0 1 0 0 0 1 
+state.STRIP 1 0 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|gbt_ulogic:\GBT_LOGIC_GEN:0:gbt_ulogic_inst|transmitter:transmitter_inst|state
+Name state.PLOAD_SEND state.PLOAD_ACCESS state.PLOAD_VAL state.PLOAD_RDY state.IDLE 
+state.IDLE 0 0 0 0 0 
+state.PLOAD_RDY 0 0 0 1 1 
+state.PLOAD_VAL 0 0 1 0 1 
+state.PLOAD_ACCESS 0 1 0 0 1 
+state.PLOAD_SEND 1 0 0 0 1 
+
+State Machine - |user_logic|data_readout:data_readout_inst0|header:header_inst|state
+Name state.UPDATE state.REFRESH state.IDLE 
+state.IDLE 0 0 0 
+state.REFRESH 0 1 1 
+state.UPDATE 1 0 1 

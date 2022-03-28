@@ -10,28 +10,28 @@ z2
 cModel Technology
 dC:/intelFPGA_lite/20.1
 Eavalon_mm_bus_arbitrer
-Z0 w1601661625
+Z0 w1647000261
 Z1 DPx4 work 13 pack_cru_core 0 22 0;5F0PH?SfO4ZF`;Bz_`j0
 Z2 DPx8 synopsys 10 attributes 0 22 dc>JdEHRM@6GGENe5bZ?D1
 Z3 DPx4 ieee 14 std_logic_misc 0 22 dN]HY6l5ohPcZ:TaC@B;53
 Z4 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
 Z5 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z6 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
-!i122 2993
-Z7 dC:/Users/user/Documents/Thesis/Code/sim
-Z8 8C:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_bus_arbitrer.vhd
-Z9 FC:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_bus_arbitrer.vhd
+!i122 3150
+Z7 dC:/Users/user/Desktop/Meng-Thesis/sim
+Z8 8C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_bus_arbitrer.vhd
+Z9 FC:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_bus_arbitrer.vhd
 l0
 Z10 L42 1
 VkO<^f68;<PXkU06zbc=9l0
 !s100 U?Xe>g6zgEW3A6XTS8J;=1
 Z11 OV;C;2020.1;71
 32
-Z12 !s110 1645560874
+Z12 !s110 1648469892
 !i10b 1
-Z13 !s108 1645560873.000000
-Z14 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_bus_arbitrer.vhd|
-Z15 !s107 C:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_bus_arbitrer.vhd|
+Z13 !s108 1648469892.000000
+Z14 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_bus_arbitrer.vhd|
+Z15 !s107 C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_bus_arbitrer.vhd|
 !i113 1
 Z16 o-work work -2002 -explicit
 Z17 tExplicit 1 CvgOpt 0
@@ -43,7 +43,7 @@ R4
 R5
 R6
 DEx4 work 22 avalon_mm_bus_arbitrer 0 22 kO<^f68;<PXkU06zbc=9l0
-!i122 2993
+!i122 3150
 l85
 L68 152
 Vc09[m4EnAAF=LUHaBM23M1
@@ -66,21 +66,21 @@ R2
 R3
 R5
 R6
-!i122 2994
+!i122 3151
 R7
-Z18 8C:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_slave.vhd
-Z19 FC:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_slave.vhd
+Z18 8C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_slave.vhd
+Z19 FC:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_slave.vhd
 l0
 Z20 L29 1
 VVKRaJj2Nj5>D`<hmQFz9H2
 !s100 c<XjVYZeQzCmfGEj<o`6<2
 R11
 32
-Z21 !s110 1645560875
+Z21 !s110 1648469893
 !i10b 1
-Z22 !s108 1645560874.000000
-Z23 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_slave.vhd|
-Z24 !s107 C:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_slave.vhd|
+R13
+Z22 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_slave.vhd|
+Z23 !s107 C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_slave.vhd|
 !i113 1
 R16
 R17
@@ -93,7 +93,7 @@ R3
 R5
 R6
 DEx4 work 15 avalon_mm_slave 0 22 VKRaJj2Nj5>D`<hmQFz9H2
-!i122 2994
+!i122 3151
 l78
 L53 165
 VVF3=F6:8SY8>YZ9G?Gc_T0
@@ -102,43 +102,43 @@ R11
 32
 R21
 !i10b 1
+R13
 R22
 R23
-R24
 !i113 1
 R16
 R17
 Eavalon_ulogic
-Z25 w1645560858
-Z26 DPx4 work 11 pack_mid_ul 0 22 ZQBAlkmbJMTcTg6_hz03U2
+Z24 w1648468116
+Z25 DPx4 work 11 pack_mid_ul 0 22 TjR7?:MWBdFVlHNXDU<e43
 R1
 R4
 R2
 R3
 R5
 R6
-!i122 3013
+!i122 3159
 R7
-Z27 8C:/Users/user/Documents/Thesis/Code/hdl/avalon_ulogic.vhd
-Z28 FC:/Users/user/Documents/Thesis/Code/hdl/avalon_ulogic.vhd
+Z26 8C:/Users/user/Desktop/Meng-Thesis/hdl/avalon_ulogic.vhd
+Z27 FC:/Users/user/Desktop/Meng-Thesis/hdl/avalon_ulogic.vhd
 l0
-Z29 L39 1
+Z28 L39 1
 Vm`0zi@`NE?Nb@f^K3a9hc3
 !s100 9GmK43EG^GjTm<c;_4M;R2
 R11
 32
-Z30 !s110 1645560893
+Z29 !s110 1648469897
 !i10b 1
-Z31 !s108 1645560892.000000
-Z32 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/avalon_ulogic.vhd|
-Z33 !s107 C:/Users/user/Documents/Thesis/Code/hdl/avalon_ulogic.vhd|
+Z30 !s108 1648469896.000000
+Z31 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/avalon_ulogic.vhd|
+Z32 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/avalon_ulogic.vhd|
 !i113 1
 R16
 R17
 Artl
 DPx4 work 9 ulverinfo 0 22 eZ=[JYW;`eSjHklNOR>zP0
-Z34 DPx4 work 10 verinfopkg 0 22 c88XFR=FQXF[J2?9ciW2k1
-R26
+Z33 DPx4 work 10 verinfopkg 0 22 c88XFR=FQXF[J2?9ciW2k1
+R25
 R1
 R4
 R2
@@ -146,128 +146,128 @@ R3
 R5
 R6
 DEx4 work 13 avalon_ulogic 0 22 m`0zi@`NE?Nb@f^K3a9hc3
-!i122 3013
+!i122 3159
 l95
 L60 302
-V7C2WkEe[HF:I7D=5cVMl<0
-!s100 ;A1<QY0`Y4h:Nn>Ei]Be01
+VNTX]`]NOAY`2aegM4da1S2
+!s100 O=V8=0zKEjX`6e?A;KzC_1
 R11
 32
-R30
+R29
 !i10b 1
+R30
 R31
 R32
-R33
 !i113 1
 R16
 R17
 Ecdcbus
-Z35 w1601661624
+R0
 R5
 R6
-!i122 2995
+!i122 3152
 R7
-Z36 8C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcbus.vhd
-Z37 FC:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcbus.vhd
+Z34 8C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcbus.vhd
+Z35 FC:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcbus.vhd
 l0
 L21 1
 VK<CWm[?<b<K`8o?2imXO50
 !s100 1aF@@:8;DJPM2z;9hb6Vd3
 R11
 32
-Z38 !s110 1645560876
+R21
 !i10b 1
-Z39 !s108 1645560875.000000
-Z40 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcbus.vhd|
-Z41 !s107 C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcbus.vhd|
+Z36 !s108 1648469893.000000
+Z37 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcbus.vhd|
+Z38 !s107 C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcbus.vhd|
 !i113 1
 R16
 R17
 Aimp
-Z42 DEx4 work 5 cdcor 0 22 hQei?[j4?Ce2<9kf:FWTI0
+Z39 DEx4 work 5 cdcor 0 22 hQei?[j4?Ce2<9kf:FWTI0
 R5
 R6
 DEx4 work 6 cdcbus 0 22 K<CWm[?<b<K`8o?2imXO50
-!i122 2995
+!i122 3152
 l61
 L44 93
 VPz0l8eBidRe^VaNOb4;B<2
 !s100 0^I?K:GMTLdnEZSWU^>_l0
 R11
 32
-R38
+R21
 !i10b 1
-R39
-R40
-R41
+R36
+R37
+R38
 !i113 1
 R16
 R17
 Ecdcor
-Z43 w1601661623
+R0
 R5
 R6
-!i122 2996
+!i122 3153
 R7
-Z44 8C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcor.vhd
-Z45 FC:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcor.vhd
+Z40 8C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcor.vhd
+Z41 FC:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcor.vhd
 l0
 L10 1
 VhQei?[j4?Ce2<9kf:FWTI0
 !s100 ;S4nQb7JFg:Mc6L6LGRI30
 R11
 32
-Z46 !s110 1645560877
+Z42 !s110 1648469894
 !i10b 1
-Z47 !s108 1645560876.000000
-Z48 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcor.vhd|
-Z49 !s107 C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcor.vhd|
+R36
+Z43 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcor.vhd|
+Z44 !s107 C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcor.vhd|
 !i113 1
 R16
 R17
 Aimp
 R2
 R3
-Z50 DEx4 work 9 cdcreduce 0 22 :?<fifeQ>dh>^chfjV2g83
+Z45 DEx4 work 9 cdcreduce 0 22 :?<fifeQ>dh>^chfjV2g83
 R5
 R6
-R42
-!i122 2996
+R39
+!i122 3153
 l28
 L27 11
 V>0_kighAF`joR^eJNIa270
 !s100 KeI1mnnN9`iCAGP8_GF0e3
 R11
 32
-R46
+R42
 !i10b 1
-R47
-R48
-R49
+R36
+R43
+R44
 !i113 1
 R16
 R17
 Ecdcreduce
-R43
+R0
 R2
 R3
 R5
 R6
-!i122 2997
+!i122 3154
 R7
-Z51 8C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcreduce.vhd
-Z52 FC:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcreduce.vhd
+Z46 8C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcreduce.vhd
+Z47 FC:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcreduce.vhd
 l0
-Z53 L36 1
+Z48 L36 1
 V:?<fifeQ>dh>^chfjV2g83
 !s100 DO6>z:X^5ZVdl5;>aLa0h0
 R11
 32
-Z54 !s110 1645560878
+R42
 !i10b 1
-Z55 !s108 1645560877.000000
-Z56 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcreduce.vhd|
-Z57 !s107 C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcreduce.vhd|
+Z49 !s108 1648469894.000000
+Z50 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcreduce.vhd|
+Z51 !s107 C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcreduce.vhd|
 !i113 1
 R16
 R17
@@ -276,44 +276,44 @@ R2
 R3
 R5
 R6
-R50
-!i122 2997
+R45
+!i122 3154
 l67
 L56 29
 Vn5ClHZM@MIGN7LgM@_Bf80
 !s100 ZjX3<]3XidG[JNl?CmOg:1
 R11
 32
-R54
+R42
 !i10b 1
-R55
-R56
-R57
+R49
+R50
+R51
 !i113 1
 R16
 R17
 Eclk_gen
-Z58 w1616749920
+R0
 R4
 R2
 R3
 R5
 R6
-!i122 3002
+!i122 3176
 R7
-Z59 8C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/clk_gen_tb.vhd
-Z60 FC:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/clk_gen_tb.vhd
+Z52 8C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/clk_gen_tb.vhd
+Z53 FC:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/clk_gen_tb.vhd
 l0
 L27 1
 V4HT56bJH7C;:@6J0PU4UM3
 !s100 ];2Z74kn^aQL1?Y^JkCni0
 R11
 32
-Z61 !s110 1645560882
+Z54 !s110 1648469905
 !i10b 1
-Z62 !s108 1645560881.000000
-Z63 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/clk_gen_tb.vhd|
-Z64 !s107 C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/clk_gen_tb.vhd|
+Z55 !s108 1648469904.000000
+Z56 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/clk_gen_tb.vhd|
+Z57 !s107 C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/clk_gen_tb.vhd|
 !i113 1
 R16
 R17
@@ -324,52 +324,105 @@ R3
 R5
 R6
 DEx4 work 7 clk_gen 0 22 4HT56bJH7C;:@6J0PU4UM3
-!i122 3002
+!i122 3176
 l85
 L54 158
 VWa>OEWG>5J=N4COm71H>90
 !s100 BM7?2_T_S]3VDA1<^Eghn3
 R11
 32
-R61
+R54
 !i10b 1
-R62
+R55
+R56
+R57
+!i113 1
+R16
+R17
+Edata_readout
+Z58 w1648462350
+R25
+R1
+Z59 DPx4 ieee 16 std_logic_textio 0 22 ^l:n6VFdg74Q?CKDhjD]D3
+R4
+R2
+R3
+R5
+R6
+!i122 3160
+R7
+Z60 8C:/Users/user/Desktop/Meng-Thesis/hdl/data_readout.vhd
+Z61 FC:/Users/user/Desktop/Meng-Thesis/hdl/data_readout.vhd
+l0
+Z62 L50 1
+VYZUl03Vi:L<J@Ygo8L7UC1
+!s100 Z5`CiFKPV;H1nmPf^hz3a2
+R11
+32
+R29
+!i10b 1
+Z63 !s108 1648469897.000000
+Z64 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/data_readout.vhd|
+Z65 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/data_readout.vhd|
+!i113 1
+R16
+R17
+Artl
+R25
+R1
+R59
+R4
+R2
+R3
+R5
+R6
+DEx4 work 12 data_readout 0 22 YZUl03Vi:L<J@Ygo8L7UC1
+!i122 3160
+l152
+L87 479
+V0W;anTPVK4az=`i_``WC72
+!s100 F^4OS=GOl2^Mg>R1M6jjn0
+R11
+32
+R29
+!i10b 1
 R63
 R64
+R65
 !i113 1
 R16
 R17
 Eelink_mux
-Z65 w1642966612
+Z66 w1642966612
 R2
 R3
-R26
+Z67 DPx4 work 11 pack_mid_ul 0 22 ZQBAlkmbJMTcTg6_hz03U2
 R1
 R4
 R5
 R6
 !i122 3014
-R7
-Z66 8C:/Users/user/Documents/Thesis/Code/hdl/elink_mux.vhd
-Z67 FC:/Users/user/Documents/Thesis/Code/hdl/elink_mux.vhd
+Z68 dC:/Users/user/Documents/Thesis/Code/sim
+Z69 8C:/Users/user/Documents/Thesis/Code/hdl/elink_mux.vhd
+Z70 FC:/Users/user/Documents/Thesis/Code/hdl/elink_mux.vhd
 l0
-Z68 L43 1
+Z71 L43 1
 VY0kAR?GCTMk26TCT[::kN3
 !s100 bhi^DiSXGJdz7RgPZB;n11
 R11
 32
-R30
+Z72 !s110 1645560893
 !i10b 1
-Z69 !s108 1645560893.000000
-Z70 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/elink_mux.vhd|
-Z71 !s107 C:/Users/user/Documents/Thesis/Code/hdl/elink_mux.vhd|
+Z73 !s108 1645560893.000000
+Z74 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/elink_mux.vhd|
+Z75 !s107 C:/Users/user/Documents/Thesis/Code/hdl/elink_mux.vhd|
 !i113 1
 R16
 R17
 Artl
 R2
 R3
-R26
+R67
 R1
 R4
 R5
@@ -377,38 +430,89 @@ R6
 DEx4 work 9 elink_mux 0 22 Y0kAR?GCTMk26TCT[::kN3
 !i122 3014
 l146
-L83 633
+Z76 L83 633
 VaBAn1_:7<a?2:`cgz?kK`1
 !s100 bB=ka^0:AOV75o3V^kQD[3
 R11
 32
-R30
+R72
 !i10b 1
-R69
-R70
+R73
+R74
+R75
+!i113 1
+R16
+R17
+Eevent_mux
+Z77 w1648462498
+R2
+R3
+R25
+R1
+R4
+R5
+R6
+!i122 3161
+R7
+Z78 8C:/Users/user/Desktop/Meng-Thesis/hdl/event_mux.vhd
+Z79 FC:/Users/user/Desktop/Meng-Thesis/hdl/event_mux.vhd
+l0
 R71
+VnSS=diN>I9KnlS6B^NY??0
+!s100 QU9<K5I1Gz:hn=3@IbQnD1
+R11
+32
+Z80 !s110 1648469898
+!i10b 1
+R63
+Z81 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/event_mux.vhd|
+Z82 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/event_mux.vhd|
+!i113 1
+R16
+R17
+Artl
+R2
+R3
+R25
+R1
+R4
+R5
+R6
+DEx4 work 9 event_mux 0 22 nSS=diN>I9KnlS6B^NY??0
+!i122 3161
+l146
+R76
+Va>z4MZRDh<3P651zU7U=02
+!s100 3kV6WW]:19he8i2;P;`fe2
+R11
+32
+R80
+!i10b 1
+R63
+R81
+R82
 !i113 1
 R16
 R17
 Efifo_168x128
-Z72 w1612026252
+Z83 w1612026252
 R5
 R6
 !i122 3011
-R7
-Z73 8C:/Users/user/Documents/Thesis/Code/ip/fifo_168x128.vhd
-Z74 FC:/Users/user/Documents/Thesis/Code/ip/fifo_168x128.vhd
-l0
 R68
+Z84 8C:/Users/user/Documents/Thesis/Code/ip/fifo_168x128.vhd
+Z85 FC:/Users/user/Documents/Thesis/Code/ip/fifo_168x128.vhd
+l0
+R71
 VYST7DOhYP0NeQXgPYb;fQ0
 !s100 a3C?C^I0:Y;f5Bea^5bT=2
 R11
 32
-Z75 !s110 1645560890
+Z86 !s110 1645560890
 !i10b 1
-Z76 !s108 1645560889.000000
-Z77 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_168x128.vhd|
-Z78 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_168x128.vhd|
+Z87 !s108 1645560889.000000
+Z88 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_168x128.vhd|
+Z89 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_168x128.vhd|
 !i113 1
 R16
 R17
@@ -418,38 +522,38 @@ R6
 DEx4 work 12 fifo_168x128 0 22 YST7DOhYP0NeQXgPYb;fQ0
 !i122 3011
 l94
-Z79 L59 69
+Z90 L59 69
 V:aL2Rf[IUza[j?T9R]ISQ2
 !s100 n=k2>XQSHU7o:a<[G:CHo2
 R11
 32
-R75
+R86
 !i10b 1
-R76
-R77
-R78
+R87
+R88
+R89
 !i113 1
 R16
 R17
 Efifo_168x64
-Z80 w1612967134
+Z91 w1612967134
 R5
 R6
 !i122 3010
-R7
-Z81 8C:/Users/user/Documents/Thesis/Code/ip/fifo_168x64.vhd
-Z82 FC:/Users/user/Documents/Thesis/Code/ip/fifo_168x64.vhd
-l0
 R68
+Z92 8C:/Users/user/Documents/Thesis/Code/ip/fifo_168x64.vhd
+Z93 FC:/Users/user/Documents/Thesis/Code/ip/fifo_168x64.vhd
+l0
+R71
 V9g7DGk4EZOzmY8C=ScBEg1
 !s100 U;4Q[7^?hcFQ;zeK;^Ioc3
 R11
 32
-Z83 !s110 1645560889
+Z94 !s110 1645560889
 !i10b 1
-Z84 !s108 1645560888.000000
-Z85 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_168x64.vhd|
-Z86 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_168x64.vhd|
+Z95 !s108 1645560888.000000
+Z96 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_168x64.vhd|
+Z97 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_168x64.vhd|
 !i113 1
 R16
 R17
@@ -459,38 +563,38 @@ R6
 DEx4 work 11 fifo_168x64 0 22 9g7DGk4EZOzmY8C=ScBEg1
 !i122 3010
 l92
-Z87 L58 67
+Z98 L58 67
 VX^fF>7l<XO2>O02g`=oTE2
 !s100 o`OGkz[mi[02`<Y8=PTUI3
 R11
 32
-R83
+R94
 !i10b 1
-R84
-R85
-R86
+R95
+R96
+R97
 !i113 1
 R16
 R17
 Efifo_16x8
-Z88 w1612031771
+Z99 w1612031771
 R5
 R6
 !i122 3006
-R7
-Z89 8C:/Users/user/Documents/Thesis/Code/ip/fifo_16x8.vhd
-Z90 FC:/Users/user/Documents/Thesis/Code/ip/fifo_16x8.vhd
-l0
 R68
+Z100 8C:/Users/user/Documents/Thesis/Code/ip/fifo_16x8.vhd
+Z101 FC:/Users/user/Documents/Thesis/Code/ip/fifo_16x8.vhd
+l0
+R71
 Va8Q57LIU7>MjRo_HmniN82
 !s100 Q`NCS2_KE3=WooR`d?5Mc3
 R11
 32
-Z91 !s110 1645560886
+Z102 !s110 1645560886
 !i10b 1
-Z92 !s108 1645560885.000000
-Z93 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_16x8.vhd|
-Z94 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_16x8.vhd|
+Z103 !s108 1645560885.000000
+Z104 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_16x8.vhd|
+Z105 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_16x8.vhd|
 !i113 1
 R16
 R17
@@ -500,38 +604,38 @@ R6
 DEx4 work 9 fifo_16x8 0 22 a8Q57LIU7>MjRo_HmniN82
 !i122 3006
 l92
-R87
+R98
 V?18M;j>IdcmC2`lbJidn^3
 !s100 Ig;h5Vcd=3YICDU]mbcU50
 R11
 32
-R91
+R102
 !i10b 1
-R92
-R93
-R94
+R103
+R104
+R105
 !i113 1
 R16
 R17
 Efifo_256x256
-Z95 w1612027003
+Z106 w1612027003
 R5
 R6
 !i122 3012
-R7
-Z96 8C:/Users/user/Documents/Thesis/Code/ip/fifo_256x256.vhd
-Z97 FC:/Users/user/Documents/Thesis/Code/ip/fifo_256x256.vhd
-l0
 R68
+Z107 8C:/Users/user/Documents/Thesis/Code/ip/fifo_256x256.vhd
+Z108 FC:/Users/user/Documents/Thesis/Code/ip/fifo_256x256.vhd
+l0
+R71
 Vnb;E6`M?;nh2c<O8`[05L0
 !s100 0U>om=SFh1;nbQ6oXkXd43
 R11
 32
-Z98 !s110 1645560892
+Z109 !s110 1645560892
 !i10b 1
-Z99 !s108 1645560890.000000
-Z100 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_256x256.vhd|
-Z101 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_256x256.vhd|
+Z110 !s108 1645560890.000000
+Z111 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_256x256.vhd|
+Z112 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_256x256.vhd|
 !i113 1
 R16
 R17
@@ -546,33 +650,33 @@ VNLUfQD5FWK_0AcFUdY`:11
 !s100 Ee[W<ASdklPO1<`:LD?_32
 R11
 32
-R98
+R109
 !i10b 1
-R99
-R100
-R101
+R110
+R111
+R112
 !i113 1
 R16
 R17
 Efifo_40x128
-Z102 w1612026066
+Z113 w1612026066
 R5
 R6
 !i122 3008
-R7
-Z103 8C:/Users/user/Documents/Thesis/Code/ip/fifo_40x128.vhd
-Z104 FC:/Users/user/Documents/Thesis/Code/ip/fifo_40x128.vhd
-l0
 R68
+Z114 8C:/Users/user/Documents/Thesis/Code/ip/fifo_40x128.vhd
+Z115 FC:/Users/user/Documents/Thesis/Code/ip/fifo_40x128.vhd
+l0
+R71
 VJd9OWUJT5geFe;o2eYhi50
 !s100 P3=_YoSD^T8Kj02[jT9jg1
 R11
 32
-Z105 !s110 1645560887
+Z116 !s110 1645560887
 !i10b 1
-Z106 !s108 1645560887.000000
-Z107 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_40x128.vhd|
-Z108 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_40x128.vhd|
+Z117 !s108 1645560887.000000
+Z118 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_40x128.vhd|
+Z119 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_40x128.vhd|
 !i113 1
 R16
 R17
@@ -582,38 +686,38 @@ R6
 DEx4 work 11 fifo_40x128 0 22 Jd9OWUJT5geFe;o2eYhi50
 !i122 3008
 l94
-R79
+R90
 VdK_3WJ63KN_eg^QJ^ee_P3
 !s100 X2e0l23:d=7@aUIFI>^Pi3
 R11
 32
-R105
+R116
 !i10b 1
-R106
-R107
-R108
+R117
+R118
+R119
 !i113 1
 R16
 R17
 Efifo_40x64
-Z109 w1612967100
+Z120 w1612967100
 R5
 R6
 !i122 3007
-R7
-Z110 8C:/Users/user/Documents/Thesis/Code/ip/fifo_40x64.vhd
-Z111 FC:/Users/user/Documents/Thesis/Code/ip/fifo_40x64.vhd
-l0
 R68
+Z121 8C:/Users/user/Documents/Thesis/Code/ip/fifo_40x64.vhd
+Z122 FC:/Users/user/Documents/Thesis/Code/ip/fifo_40x64.vhd
+l0
+R71
 V5zadHHX:8H@jEJg^l;a_K0
 !s100 8jJ87:`T1R?8c5SEJ0A8i2
 R11
 32
-R105
+R116
 !i10b 1
-Z112 !s108 1645560886.000000
-Z113 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_40x64.vhd|
-Z114 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_40x64.vhd|
+Z123 !s108 1645560886.000000
+Z124 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_40x64.vhd|
+Z125 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_40x64.vhd|
 !i113 1
 R16
 R17
@@ -623,38 +727,38 @@ R6
 DEx4 work 10 fifo_40x64 0 22 5zadHHX:8H@jEJg^l;a_K0
 !i122 3007
 l92
-R87
+R98
 V_YeFnjHC39@Fo`17MXf]L1
 !s100 ]g2fBfd8mX^VFPEh;Q2:D2
 R11
 32
-R105
+R116
 !i10b 1
-R112
-R113
-R114
+R123
+R124
+R125
 !i113 1
 R16
 R17
 Efifo_64x8
-Z115 w1612029415
+Z126 w1612029415
 R5
 R6
 !i122 3009
-R7
-Z116 8C:/Users/user/Documents/Thesis/Code/ip/fifo_64x8.vhd
-Z117 FC:/Users/user/Documents/Thesis/Code/ip/fifo_64x8.vhd
-l0
 R68
+Z127 8C:/Users/user/Documents/Thesis/Code/ip/fifo_64x8.vhd
+Z128 FC:/Users/user/Documents/Thesis/Code/ip/fifo_64x8.vhd
+l0
+R71
 V6HfTG^B7NaSHS1d<8M8?F1
 !s100 @]A@_zQ2<PcSGFbgVW7o;1
 R11
 32
-Z118 !s110 1645560888
+Z129 !s110 1645560888
 !i10b 1
-R106
-Z119 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_64x8.vhd|
-Z120 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_64x8.vhd|
+R117
+Z130 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/ip/fifo_64x8.vhd|
+Z131 !s107 C:/Users/user/Documents/Thesis/Code/ip/fifo_64x8.vhd|
 !i113 1
 R16
 R17
@@ -669,97 +773,148 @@ VRc_7AQ4kIm`A48HYAzz8Q0
 !s100 _gmIO5nA^1A0DB6fTdmoZ0
 R11
 32
-R118
+R129
 !i10b 1
-R106
-R119
-R120
+R117
+R130
+R131
 !i113 1
 R16
 R17
-Egbt_ulogic
-R65
+Egbt_map
+Z132 w1648462558
+R25
 R1
-R26
 R4
 R2
 R3
 R5
 R6
-!i122 3015
+!i122 3162
 R7
-Z121 8C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic.vhd
-Z122 FC:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic.vhd
+Z133 8C:/Users/user/Desktop/Meng-Thesis/hdl/gbt_map.vhd
+Z134 FC:/Users/user/Desktop/Meng-Thesis/hdl/gbt_map.vhd
 l0
-R29
+Z135 L35 1
+VGz3ml0bi?nXFDSUcnjk5a0
+!s100 AQN0jk3loRiJCY>clObiH3
+R11
+32
+R80
+!i10b 1
+Z136 !s108 1648469898.000000
+Z137 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/gbt_map.vhd|
+Z138 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/gbt_map.vhd|
+!i113 1
+R16
+R17
+Artl
+R25
+R1
+R4
+R2
+R3
+R5
+R6
+DEx4 work 7 gbt_map 0 22 Gz3ml0bi?nXFDSUcnjk5a0
+!i122 3162
+l56
+Z139 L50 137
+VK`X<Vc9ETOcYbTcAbkWGS2
+!s100 ^i5ZBK4j4D26MHoZ0g1Gn0
+R11
+32
+R80
+!i10b 1
+R136
+R137
+R138
+!i113 1
+R16
+R17
+Egbt_ulogic
+Z140 w1648463247
+R1
+R25
+R4
+R2
+R3
+R5
+R6
+!i122 3163
+R7
+Z141 8C:/Users/user/Desktop/Meng-Thesis/hdl/gbt_ulogic.vhd
+Z142 FC:/Users/user/Desktop/Meng-Thesis/hdl/gbt_ulogic.vhd
+l0
+R28
 VON=C``gooD`6JIhYT[i7Z0
 !s100 109H7o7aF<G2lRJ=fP<go2
 R11
 32
-!s110 1645560894
+Z143 !s110 1648469899
 !i10b 1
-Z123 !s108 1645560894.000000
-Z124 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic.vhd|
-Z125 !s107 C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic.vhd|
+R136
+Z144 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/gbt_ulogic.vhd|
+Z145 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/gbt_ulogic.vhd|
 !i113 1
 R16
 R17
 Artl
 R1
-R26
+R25
 R4
 R2
 R3
 R5
 R6
 DEx4 work 10 gbt_ulogic 0 22 ON=C``gooD`6JIhYT[i7Z0
-!i122 3015
+!i122 3163
 l104
-L83 109
-Vbf]jAokmG6;;fYOOIe5;Q2
-!s100 nYlzgOJ:B3Lih793Y6BiQ2
+L83 110
+V?ETLX54>cREhD4ZN9@7e32
+!s100 i6O]925ohVgK@7ObUnhm11
 R11
 32
-!s110 1645560895
+R143
 !i10b 1
-R123
-R124
-R125
+R136
+R144
+R145
 !i113 1
 R16
 R17
 Egbt_ulogic_mux
-Z126 w1645429161
-R26
+Z146 w1645429161
+R67
 R1
-Z127 DPx4 ieee 16 std_logic_textio 0 22 ^l:n6VFdg74Q?CKDhjD]D3
+R59
 R4
 R2
 R3
 R5
 R6
 !i122 3016
-R7
-Z128 8C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_mux.vhd
-Z129 FC:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_mux.vhd
+R68
+Z147 8C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_mux.vhd
+Z148 FC:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_mux.vhd
 l0
-Z130 L50 1
+R62
 VMkMW36PlDS@Uf<0ge[1f51
 !s100 ^0j=]8`mJj=FbD4Q@m0Ld1
 R11
 32
-Z131 !s110 1645560896
+Z149 !s110 1645560896
 !i10b 1
-Z132 !s108 1645560895.000000
-Z133 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_mux.vhd|
-Z134 !s107 C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_mux.vhd|
+Z150 !s108 1645560895.000000
+Z151 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_mux.vhd|
+Z152 !s107 C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_mux.vhd|
 !i113 1
 R16
 R17
 Artl
-R26
+R67
 R1
-R127
+R59
 R4
 R2
 R3
@@ -773,17 +928,17 @@ VRhO:S@PO4Em1EGl8b1ldc0
 !s100 T;HSaMlTVLb:Pi>RNdOG^1
 R11
 32
-R131
+R149
 !i10b 1
-R132
-R133
-R134
+R150
+R151
+R152
 !i113 1
 R16
 R17
 Egbt_ulogic_select
-R65
-R26
+R66
+R67
 R1
 R4
 R2
@@ -791,25 +946,25 @@ R3
 R5
 R6
 !i122 3017
-R7
-Z135 8C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_select.vhd
-Z136 FC:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_select.vhd
+R68
+Z153 8C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_select.vhd
+Z154 FC:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_select.vhd
 l0
-L35 1
+R135
 V9Cj3IbbgF5bo1CilL]G@62
 !s100 cg<L9Q0EWSLBK:LX<fSc10
 R11
 32
-Z137 !s110 1645560897
+Z155 !s110 1645560897
 !i10b 1
-Z138 !s108 1645560896.000000
-Z139 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_select.vhd|
-Z140 !s107 C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_select.vhd|
+Z156 !s108 1645560896.000000
+Z157 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_select.vhd|
+Z158 !s107 C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_select.vhd|
 !i113 1
 R16
 R17
 Artl
-R26
+R67
 R1
 R4
 R2
@@ -819,48 +974,48 @@ R6
 DEx4 work 17 gbt_ulogic_select 0 22 9Cj3IbbgF5bo1CilL]G@62
 !i122 3017
 l56
-L50 137
+R139
 V<bV<_Z3[2DQCN60h7?W3Z0
 !s100 DAh`j1:A:UE;gOl<kH[^o0
 R11
 32
-R137
+R155
 !i10b 1
-R138
-R139
-R140
+R156
+R157
+R158
 !i113 1
 R16
 R17
 Eheader
-R65
-R26
+Z159 w1647000260
+R25
 R1
 R4
 R2
 R3
 R5
 R6
-!i122 3018
+!i122 3164
 R7
-Z141 8C:/Users/user/Documents/Thesis/Code/hdl/header.vhd
-Z142 FC:/Users/user/Documents/Thesis/Code/hdl/header.vhd
+Z160 8C:/Users/user/Desktop/Meng-Thesis/hdl/header.vhd
+Z161 FC:/Users/user/Desktop/Meng-Thesis/hdl/header.vhd
 l0
-R68
+R71
 V[8ZRH^U6_lNj77cS`IFPP1
 !s100 WniD`9HX1jYnMmQ9?@J812
 R11
 32
-Z143 !s110 1645560898
+R143
 !i10b 1
-Z144 !s108 1645560897.000000
-Z145 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/header.vhd|
-Z146 !s107 C:/Users/user/Documents/Thesis/Code/hdl/header.vhd|
+Z162 !s108 1648469899.000000
+Z163 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/header.vhd|
+Z164 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/header.vhd|
 !i113 1
 R16
 R17
 Artl
-R26
+R25
 R1
 R4
 R2
@@ -868,7 +1023,7 @@ R3
 R5
 R6
 DEx4 work 6 header 0 22 [8ZRH^U6_lNj77cS`IFPP1
-!i122 3018
+!i122 3164
 l91
 L65 143
 VJ2L<6h_VD`GlWmHU0OJki2
@@ -877,44 +1032,44 @@ R11
 32
 R143
 !i10b 1
-R144
-R145
-R146
+R162
+R163
+R164
 !i113 1
 R16
 R17
 Elocal_control
-Z147 w1645465975
+Z165 w1645465975
 R1
-R26
-R127
+R67
+R59
 R4
 R2
 R3
 R5
 R6
 !i122 3019
-R7
-Z148 8C:/Users/user/Documents/Thesis/Code/hdl/local_control.vhd
-Z149 FC:/Users/user/Documents/Thesis/Code/hdl/local_control.vhd
+R68
+Z166 8C:/Users/user/Documents/Thesis/Code/hdl/local_control.vhd
+Z167 FC:/Users/user/Documents/Thesis/Code/hdl/local_control.vhd
 l0
 R10
 Vjh<zLb]>KG6[=Pf^k2@5:0
 !s100 `zCHCSf?h<;XB2?^cH0bY3
 R11
 32
-Z150 !s110 1645560899
+Z168 !s110 1645560899
 !i10b 1
-Z151 !s108 1645560898.000000
-Z152 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/local_control.vhd|
-Z153 !s107 C:/Users/user/Documents/Thesis/Code/hdl/local_control.vhd|
+Z169 !s108 1645560898.000000
+Z170 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/local_control.vhd|
+Z171 !s107 C:/Users/user/Documents/Thesis/Code/hdl/local_control.vhd|
 !i113 1
 R16
 R17
 Artl
 R1
-R26
-R127
+R67
+R59
 R4
 R2
 R3
@@ -928,36 +1083,36 @@ VA:?BChT^QzhAo8UWS_aK82
 !s100 WNKEFMRg=YDBTOA@ecdV=0
 R11
 32
-R150
+R168
 !i10b 1
-R151
-R152
-R153
+R169
+R170
+R171
 !i113 1
 R16
 R17
 Elocal_decoder
-R65
+R66
 R4
 R2
 R3
 R5
 R6
 !i122 3020
-R7
-Z154 8C:/Users/user/Documents/Thesis/Code/hdl/local_decoder.vhd
-Z155 FC:/Users/user/Documents/Thesis/Code/hdl/local_decoder.vhd
+R68
+Z172 8C:/Users/user/Documents/Thesis/Code/hdl/local_decoder.vhd
+Z173 FC:/Users/user/Documents/Thesis/Code/hdl/local_decoder.vhd
 l0
-L52 1
+Z174 L52 1
 V[^?oM4[=]94O<^hIQ;nFK3
 !s100 ^8:zHmVj^5R3mYCKY]:Mi2
 R11
 32
-Z156 !s110 1645560901
+Z175 !s110 1645560901
 !i10b 1
-Z157 !s108 1645560900.000000
-Z158 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/local_decoder.vhd|
-Z159 !s107 C:/Users/user/Documents/Thesis/Code/hdl/local_decoder.vhd|
+Z176 !s108 1645560900.000000
+Z177 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/local_decoder.vhd|
+Z178 !s107 C:/Users/user/Documents/Thesis/Code/hdl/local_decoder.vhd|
 !i113 1
 R16
 R17
@@ -970,44 +1125,44 @@ R6
 DEx4 work 13 local_decoder 0 22 [^?oM4[=]94O<^hIQ;nFK3
 !i122 3020
 l97
-L76 250
+Z179 L76 250
 VaL<bEkelV^gO@?5zO@?kQ3
 !s100 `;J6:lIKTP4da0bb??PDd0
 R11
 32
-R156
+R175
 !i10b 1
-R157
-R158
-R159
+R176
+R177
+R178
 !i113 1
 R16
 R17
 Elocal_elink
-Z160 w1645465966
+Z180 w1648469218
 R1
 R2
 R3
-R26
-R127
+R25
+R59
 R4
 R5
 R6
-!i122 3021
+!i122 3165
 R7
-Z161 8C:/Users/user/Documents/Thesis/Code/hdl/local_elink.vhd
-Z162 FC:/Users/user/Documents/Thesis/Code/hdl/local_elink.vhd
+Z181 8C:/Users/user/Desktop/Meng-Thesis/hdl/local_elink.vhd
+Z182 FC:/Users/user/Desktop/Meng-Thesis/hdl/local_elink.vhd
 l0
-R68
+R71
 VYN2cA;:QDdnk3oj8Vgo1Q3
 !s100 bP<^hDH3>Yhf[UEPZ42JY1
 R11
 32
-Z163 !s110 1645560902
+Z183 !s110 1648469900
 !i10b 1
-Z164 !s108 1645560901.000000
-Z165 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/local_elink.vhd|
-Z166 !s107 C:/Users/user/Documents/Thesis/Code/hdl/local_elink.vhd|
+R162
+Z184 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/local_elink.vhd|
+Z185 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/local_elink.vhd|
 !i113 1
 R16
 R17
@@ -1015,24 +1170,124 @@ Artl
 R1
 R2
 R3
-R26
-R127
+R25
+R59
 R4
 R5
 R6
 DEx4 work 11 local_elink 0 22 YN2cA;:QDdnk3oj8Vgo1Q3
-!i122 3021
+!i122 3165
 l113
-L85 210
-V0g2fM6K;G5Wj@XWmPRQ283
-!s100 IkMIOIg5bXe6nO?eA:UVC0
+L85 184
+VocVO]^`WaaU;;mcR<N`Zh1
+!s100 YDchz3eX5@lIJJKf2]ROG2
 R11
 32
-R163
+R183
 !i10b 1
-R164
-R165
-R166
+R162
+R184
+R185
+!i113 1
+R16
+R17
+Elocal_sync
+Z186 w1648462795
+R1
+R25
+R59
+R4
+R2
+R3
+R5
+R6
+!i122 3166
+R7
+Z187 8C:/Users/user/Desktop/Meng-Thesis/hdl/local_sync.vhd
+Z188 FC:/Users/user/Desktop/Meng-Thesis/hdl/local_sync.vhd
+l0
+R10
+VUh9DkYn;;mM1@46AQ>XX_0
+!s100 f1`gY4>7ZHc<hgGcafi?U1
+R11
+32
+R183
+!i10b 1
+Z189 !s108 1648469900.000000
+Z190 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/local_sync.vhd|
+Z191 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/local_sync.vhd|
+!i113 1
+R16
+R17
+Artl
+R1
+R25
+R59
+R4
+R2
+R3
+R5
+R6
+DEx4 work 10 local_sync 0 22 Uh9DkYn;;mM1@46AQ>XX_0
+!i122 3166
+l148
+L83 440
+VOI6K5k4e5`Sk:2>LdR`bc2
+!s100 =eTDULl9]WKL^GLeed?8G3
+R11
+32
+R183
+!i10b 1
+R189
+R190
+R191
+!i113 1
+R16
+R17
+Elocal_zs
+Z192 w1648462951
+R4
+R2
+R3
+R5
+R6
+!i122 3167
+R7
+Z193 8C:/Users/user/Desktop/Meng-Thesis/hdl/local_zs.vhd
+Z194 FC:/Users/user/Desktop/Meng-Thesis/hdl/local_zs.vhd
+l0
+R174
+VRiI_CI^QPHX<k:nGZQi081
+!s100 Izle0QUJ=n]50]YSDdb6e3
+R11
+32
+Z195 !s110 1648469901
+!i10b 1
+R189
+Z196 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/local_zs.vhd|
+Z197 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/local_zs.vhd|
+!i113 1
+R16
+R17
+Artl
+R4
+R2
+R3
+R5
+R6
+DEx4 work 8 local_zs 0 22 RiI_CI^QPHX<k:nGZQi081
+!i122 3167
+l97
+R179
+V_2`COa5DYSge>IdZFG@F>0
+!s100 9n0`>?NZ3U^Rg2n[io1T83
+R11
+32
+R195
+!i10b 1
+R189
+R196
+R197
 !i113 1
 R16
 R17
@@ -1040,11 +1295,11 @@ Ppack_cru_core
 R4
 R5
 R6
-!i122 2998
-Z167 w1621977689
+!i122 3155
+R0
 R7
-Z168 8C:/Users/user/Documents/Thesis/Code/sim/cru_files/pack_cru_core.vhd
-Z169 FC:/Users/user/Documents/Thesis/Code/sim/cru_files/pack_cru_core.vhd
+Z198 8C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/pack_cru_core.vhd
+Z199 FC:/Users/user/Desktop/Meng-Thesis/sim/cru_files/pack_cru_core.vhd
 l0
 L12 1
 V0;5F0PH?SfO4ZF`;Bz_`j0
@@ -1052,11 +1307,11 @@ V0;5F0PH?SfO4ZF`;Bz_`j0
 R11
 32
 b1
-Z170 !s110 1645560879
+Z200 !s110 1648469895
 !i10b 1
-Z171 !s108 1645560878.000000
-Z172 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/cru_files/pack_cru_core.vhd|
-Z173 !s107 C:/Users/user/Documents/Thesis/Code/sim/cru_files/pack_cru_core.vhd|
+R49
+Z201 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/pack_cru_core.vhd|
+Z202 !s107 C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/pack_cru_core.vhd|
 !i113 1
 R16
 R17
@@ -1065,18 +1320,18 @@ R1
 R4
 R5
 R6
-!i122 2998
+!i122 3155
 l0
 L524 1
 Vj3dY<9z@oFFLb59]_DNXM0
 !s100 @zh?j3bfQIb:GETJm5J[l3
 R11
 32
-R170
+R200
 !i10b 1
-R171
-R172
-R173
+R49
+R201
+R202
 !i113 1
 R16
 R17
@@ -1087,51 +1342,51 @@ R2
 R3
 R5
 R6
-!i122 3022
-Z174 w1645376939
+!i122 3168
+Z203 w1648469687
 R7
-Z175 8C:/Users/user/Documents/Thesis/Code/hdl/pack_mid_ul.vhd
-Z176 FC:/Users/user/Documents/Thesis/Code/hdl/pack_mid_ul.vhd
+Z204 8C:/Users/user/Desktop/Meng-Thesis/hdl/pack_mid_ul.vhd
+Z205 FC:/Users/user/Desktop/Meng-Thesis/hdl/pack_mid_ul.vhd
 l0
-R53
-VZQBAlkmbJMTcTg6_hz03U2
-!s100 R>901N6e>GDX;ck_UJYX[1
+R48
+VTjR7?:MWBdFVlHNXDU<e43
+!s100 Ja01[]@;cKX[;nHSCcZB@3
 R11
 32
-R163
+R195
 !i10b 1
-Z177 !s108 1645560902.000000
-Z178 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/pack_mid_ul.vhd|
-Z179 !s107 C:/Users/user/Documents/Thesis/Code/hdl/pack_mid_ul.vhd|
+Z206 !s108 1648469901.000000
+Z207 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/pack_mid_ul.vhd|
+Z208 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/pack_mid_ul.vhd|
 !i113 1
 R16
 R17
 Bbody
-R26
+R25
 R1
 R4
 R2
 R3
 R5
 R6
-!i122 3022
+!i122 3168
 l0
 L630 1
-VjiAMLSb;cg02j:ih8e4AC2
-!s100 X?>mF=B>Vj^>nDfkWjUV`3
+V4:McYJC[ZA@SC1P6:bIX23
+!s100 8[:T;TLo>A_8[PYb?o=^d2
 R11
 32
-R163
+R195
 !i10b 1
-R177
-R178
-R179
+R206
+R207
+R208
 !i113 1
 R16
 R17
 Epacketizer
-Z180 w1642966611
-R26
+Z209 w1642966611
+R67
 R1
 R4
 R2
@@ -1139,25 +1394,25 @@ R3
 R5
 R6
 !i122 3023
-R7
-Z181 8C:/Users/user/Documents/Thesis/Code/hdl/packetizer.vhd
-Z182 FC:/Users/user/Documents/Thesis/Code/hdl/packetizer.vhd
+R68
+Z210 8C:/Users/user/Documents/Thesis/Code/hdl/packetizer.vhd
+Z211 FC:/Users/user/Documents/Thesis/Code/hdl/packetizer.vhd
 l0
-L48 1
+Z212 L48 1
 V4P@DI=2AOBhCWmXKP=HiM1
 !s100 YdL@VoBYCG?[VaW0zUe]^0
 R11
 32
-Z183 !s110 1645560903
+Z213 !s110 1645560903
 !i10b 1
-Z184 !s108 1645560903.000000
-Z185 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/packetizer.vhd|
-Z186 !s107 C:/Users/user/Documents/Thesis/Code/hdl/packetizer.vhd|
+Z214 !s108 1645560903.000000
+Z215 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/packetizer.vhd|
+Z216 !s107 C:/Users/user/Documents/Thesis/Code/hdl/packetizer.vhd|
 !i113 1
 R16
 R17
 Artl
-R26
+R67
 R1
 R4
 R2
@@ -1172,137 +1427,188 @@ VkJeK]EA4oB4TP;YZhUE3S2
 !s100 mf`3IKZ?l4HEEL_i3o7:;3
 R11
 32
-R183
+R213
 !i10b 1
-R184
-R185
-R186
+R214
+R215
+R216
 !i113 1
 R16
 R17
-Eread_gbt_sim
-Z187 w1632491435
-R127
+Epayload_serializer
+Z217 w1648466784
+R25
+R1
 R4
 R2
 R3
 R5
 R6
-!i122 3003
+!i122 3169
 R7
-Z188 8C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_gbt_tb.vhd
-Z189 FC:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_gbt_tb.vhd
+Z218 8C:/Users/user/Desktop/Meng-Thesis/hdl/payload_serializer.vhd
+Z219 FC:/Users/user/Desktop/Meng-Thesis/hdl/payload_serializer.vhd
+l0
+R212
+VekEhaM@?275boK9Kb5mD=3
+!s100 _0[FMSg56[PA8d^G<DA1l0
+R11
+32
+Z220 !s110 1648469902
+!i10b 1
+R206
+Z221 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/payload_serializer.vhd|
+Z222 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/payload_serializer.vhd|
+!i113 1
+R16
+R17
+Artl
+R25
+R1
+R4
+R2
+R3
+R5
+R6
+DEx4 work 18 payload_serializer 0 22 ekEhaM@?275boK9Kb5mD=3
+!i122 3169
+l143
+L88 335
+VJlnfFSTK8]W^kG4P4@no82
+!s100 FzeVH847<mWeN6LQk0GFj1
+R11
+32
+R220
+!i10b 1
+R206
+R221
+R222
+!i113 1
+R16
+R17
+Eread_gbt_sim
+R0
+R59
+R4
+R2
+R3
+R5
+R6
+!i122 3177
+R7
+Z223 8C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_gbt_tb.vhd
+Z224 FC:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_gbt_tb.vhd
 l0
 R20
 VBBB;dQ5M[F:][ZT94ohPA2
 !s100 @c>;i96^<A>XKP`=1A;Be0
 R11
 32
-Z190 !s110 1645560883
+R54
 !i10b 1
-Z191 !s108 1645560882.000000
-Z192 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_gbt_tb.vhd|
-Z193 !s107 C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_gbt_tb.vhd|
+Z225 !s108 1648469905.000000
+Z226 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_gbt_tb.vhd|
+Z227 !s107 C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_gbt_tb.vhd|
 !i113 1
 R16
 R17
 Asim
-R127
+R59
 R4
 R2
 R3
 R5
 R6
 DEx4 work 12 read_gbt_sim 0 22 BBB;dQ5M[F:][ZT94ohPA2
-!i122 3003
+!i122 3177
 l49
 L48 44
 VWZ]6<:LIB3=03We95lN>`2
 !s100 A:b?0cE7D=_AdZIL9iRYJ3
 R11
 32
-R190
+R54
 !i10b 1
-R191
-R192
-R193
+R225
+R226
+R227
 !i113 1
 R16
 R17
 Eread_ttc_tb
-Z194 w1632491410
-R127
+R0
+R59
 R4
 R2
 R3
 R5
 R6
-!i122 3004
+!i122 3178
 R7
-Z195 8C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_ttc_tb.vhd
-Z196 FC:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_ttc_tb.vhd
+Z228 8C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_ttc_tb.vhd
+Z229 FC:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_ttc_tb.vhd
 l0
 L23 1
 V_0bTffmNaGXeJYUaMj3GO2
 !s100 KT9VXT;<ESJcSlHf@?TVg3
 R11
 32
-Z197 !s110 1645560884
+Z230 !s110 1648469906
 !i10b 1
-Z198 !s108 1645560883.000000
-Z199 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_ttc_tb.vhd|
-Z200 !s107 C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_ttc_tb.vhd|
+R225
+Z231 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_ttc_tb.vhd|
+Z232 !s107 C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_ttc_tb.vhd|
 !i113 1
 R16
 R17
 Asim
-R127
+R59
 R4
 R2
 R3
 R5
 R6
 DEx4 work 11 read_ttc_tb 0 22 _0bTffmNaGXeJYUaMj3GO2
-!i122 3004
+!i122 3178
 l41
 L40 36
 VJ<flhQADNRPOYIEnc`Z2L1
 !s100 zFYSYYG<AHa<0T0eGQ58T1
 R11
 32
-R197
+R230
 !i10b 1
-R198
-R199
-R200
+R225
+R231
+R232
 !i113 1
 R16
 R17
 Eregional_control
-Z201 w1645465987
+Z233 w1645465987
 R1
 R2
 R3
-R26
-R127
+R67
+R59
 R4
 R5
 R6
 !i122 3024
-R7
-Z202 8C:/Users/user/Documents/Thesis/Code/hdl/regional_control.vhd
-Z203 FC:/Users/user/Documents/Thesis/Code/hdl/regional_control.vhd
+R68
+Z234 8C:/Users/user/Documents/Thesis/Code/hdl/regional_control.vhd
+Z235 FC:/Users/user/Documents/Thesis/Code/hdl/regional_control.vhd
 l0
 R10
 V9iIRaIHP4z2ceJQz[8o6T1
 !s100 Bd32_dP[[Yg0^n0CnDZC60
 R11
 32
-Z204 !s110 1645560904
+Z236 !s110 1645560904
 !i10b 1
-Z205 !s108 1645560904.000000
-Z206 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/regional_control.vhd|
-Z207 !s107 C:/Users/user/Documents/Thesis/Code/hdl/regional_control.vhd|
+Z237 !s108 1645560904.000000
+Z238 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/regional_control.vhd|
+Z239 !s107 C:/Users/user/Documents/Thesis/Code/hdl/regional_control.vhd|
 !i113 1
 R16
 R17
@@ -1310,8 +1616,8 @@ Artl
 R1
 R2
 R3
-R26
-R127
+R67
+R59
 R4
 R5
 R6
@@ -1323,33 +1629,33 @@ VT>dn@@2=`j93EJln`9=0N1
 !s100 [AJF32k3V9hFeSbgFCBZi3
 R11
 32
-R204
+R236
 !i10b 1
-R205
-R206
-R207
+R237
+R238
+R239
 !i113 1
 R16
 R17
 Eregional_decoder
-Z208 w1642966610
+Z240 w1642966610
 R5
 R6
 !i122 3025
-R7
-Z209 8C:/Users/user/Documents/Thesis/Code/hdl/regional_decoder.vhd
-Z210 FC:/Users/user/Documents/Thesis/Code/hdl/regional_decoder.vhd
+R68
+Z241 8C:/Users/user/Documents/Thesis/Code/hdl/regional_decoder.vhd
+Z242 FC:/Users/user/Documents/Thesis/Code/hdl/regional_decoder.vhd
 l0
-R130
+R62
 VnjV0=[AVV_T?L^oo;<JoN0
 !s100 m1U0_Df8;8S9zElRkjz<J1
 R11
 32
-Z211 !s110 1645560905
+Z243 !s110 1645560905
 !i10b 1
-R205
-Z212 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/regional_decoder.vhd|
-Z213 !s107 C:/Users/user/Documents/Thesis/Code/hdl/regional_decoder.vhd|
+R237
+Z244 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/regional_decoder.vhd|
+Z245 !s107 C:/Users/user/Documents/Thesis/Code/hdl/regional_decoder.vhd|
 !i113 1
 R16
 R17
@@ -1359,44 +1665,44 @@ R6
 DEx4 work 16 regional_decoder 0 22 njV0=[AVV_T?L^oo;<JoN0
 !i122 3025
 l92
-L73 141
+Z246 L73 141
 VG4Q_nTLZ3;aLBih1`9RRE2
 !s100 mG5AH>]EdFJ105hH;^9C_2
 R11
 32
-R211
+R243
 !i10b 1
-R205
-R212
-R213
+R237
+R244
+R245
 !i113 1
 R16
 R17
 Eregional_elink
-Z214 w1645465998
+Z247 w1648464376
 R1
 R2
 R3
-R26
-R127
+R25
+R59
 R4
 R5
 R6
-!i122 3026
+!i122 3170
 R7
-Z215 8C:/Users/user/Documents/Thesis/Code/hdl/regional_elink.vhd
-Z216 FC:/Users/user/Documents/Thesis/Code/hdl/regional_elink.vhd
+Z248 8C:/Users/user/Desktop/Meng-Thesis/hdl/regional_elink.vhd
+Z249 FC:/Users/user/Desktop/Meng-Thesis/hdl/regional_elink.vhd
 l0
-R68
+R71
 VzF:jh<LlOdhncm7oFJ8380
 !s100 lFd9S@O9RaK_4L>?f9hf71
 R11
 32
-Z217 !s110 1645560906
+R220
 !i10b 1
-Z218 !s108 1645560905.000000
-Z219 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/regional_elink.vhd|
-Z220 !s107 C:/Users/user/Documents/Thesis/Code/hdl/regional_elink.vhd|
+Z250 !s108 1648469902.000000
+Z251 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/regional_elink.vhd|
+Z252 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/regional_elink.vhd|
 !i113 1
 R16
 R17
@@ -1404,249 +1710,20 @@ Artl
 R1
 R2
 R3
-R26
-R127
+R25
+R59
 R4
 R5
 R6
 DEx4 work 14 regional_elink 0 22 zF:jh<LlOdhncm7oFJ8380
-!i122 3026
+!i122 3170
 l118
-L87 224
-V]T4idU4iRQik6e1jC@K033
-!s100 j9:ohn>A;27oELQMBm2Z92
+L87 196
+V3j8P9;P4nR2f<N2K7UXOD0
+!s100 hd0NLR]l:EEKiBEjc3l`E0
 R11
 32
-R217
-!i10b 1
-R218
-R219
 R220
-!i113 1
-R16
-R17
-Etransmitter
-Z221 w1642966609
-R1
-R26
-R4
-R2
-R3
-R5
-R6
-!i122 3027
-R7
-Z222 8C:/Users/user/Documents/Thesis/Code/hdl/transmitter.vhd
-Z223 FC:/Users/user/Documents/Thesis/Code/hdl/transmitter.vhd
-l0
-L44 1
-Vz1BJh7MUXiKQk4Jd9HL=n1
-!s100 Pg3D_7I;>jc;3;NjnHF;B3
-R11
-32
-Z224 !s110 1645560907
-!i10b 1
-Z225 !s108 1645560906.000000
-Z226 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/transmitter.vhd|
-Z227 !s107 C:/Users/user/Documents/Thesis/Code/hdl/transmitter.vhd|
-!i113 1
-R16
-R17
-Artl
-R1
-R26
-R4
-R2
-R3
-R5
-R6
-DEx4 work 11 transmitter 0 22 z1BJh7MUXiKQk4Jd9HL=n1
-!i122 3027
-l102
-L81 239
-VV<k;IokH=oMmU:1YLa@Sf1
-!s100 fo8hX2@O`>3VB19Zl?RNX1
-R11
-32
-R224
-!i10b 1
-R225
-R226
-R227
-!i113 1
-R16
-R17
-Ettc_ulogic
-Z228 w1642966976
-R26
-R1
-R4
-R2
-R3
-R5
-R6
-!i122 3028
-R7
-Z229 8C:/Users/user/Documents/Thesis/Code/hdl/ttc_ulogic.vhd
-Z230 FC:/Users/user/Documents/Thesis/Code/hdl/ttc_ulogic.vhd
-l0
-L41 1
-VNKb^L@JW18bSzSlR]^4h02
-!s100 _mG^^[`KZ:hfR4oKVD^M`1
-R11
-32
-Z231 !s110 1645560908
-!i10b 1
-Z232 !s108 1645560907.000000
-Z233 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/ttc_ulogic.vhd|
-Z234 !s107 C:/Users/user/Documents/Thesis/Code/hdl/ttc_ulogic.vhd|
-!i113 1
-R16
-R17
-Artl
-R26
-R1
-R4
-R2
-R3
-R5
-R6
-DEx4 work 10 ttc_ulogic 0 22 NKb^L@JW18bSzSlR]^4h02
-!i122 3028
-l100
-L70 280
-VJEP>CMCG[dLnQWU:j@gmj1
-!s100 :K[<_BfM0L948BU>42WEf3
-R11
-32
-R231
-!i10b 1
-R232
-R233
-R234
-!i113 1
-R16
-R17
-Pulverinfo
-R34
-R5
-R6
-!i122 2999
-w1602658474
-R7
-8C:/Users/user/Documents/Thesis/Code/sim/cru_files/ulverinfo.vhd
-FC:/Users/user/Documents/Thesis/Code/sim/cru_files/ulverinfo.vhd
-l0
-L4 1
-VeZ=[JYW;`eSjHklNOR>zP0
-!s100 C3DH_DoM@[:DW@F_T?X`L3
-R11
-32
-!s110 1645560880
-!i10b 1
-!s108 1645560879.000000
-!s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/cru_files/ulverinfo.vhd|
-!s107 C:/Users/user/Documents/Thesis/Code/sim/cru_files/ulverinfo.vhd|
-!i113 1
-R16
-R17
-Euser_logic
-Z235 w1642966607
-R26
-R1
-R4
-R2
-R3
-R5
-R6
-!i122 3029
-R7
-Z236 8C:/Users/user/Documents/Thesis/Code/hdl/user_logic.vhd
-Z237 FC:/Users/user/Documents/Thesis/Code/hdl/user_logic.vhd
-l0
-L45 1
-VZgA[mi@V5Am_CBCn[?a0>1
-!s100 H4G03>dLjnYKmc=9L[R]H3
-R11
-32
-Z238 !s110 1645560909
-!i10b 1
-Z239 !s108 1645560908.000000
-Z240 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/hdl/user_logic.vhd|
-Z241 !s107 C:/Users/user/Documents/Thesis/Code/hdl/user_logic.vhd|
-!i113 1
-R16
-R17
-Artl
-R26
-R1
-R4
-R2
-R3
-R5
-R6
-Z242 DEx4 work 10 user_logic 0 22 ZgA[mi@V5Am_CBCn[?a0>1
-!i122 3029
-l114
-Z243 L95 148
-Z244 V5Ee0hAL?R1;e7A3zmS>=>2
-Z245 !s100 eiZ4IHTZNU8P4AZC5h:z81
-R11
-32
-R238
-!i10b 1
-R239
-R240
-R241
-!i113 1
-R16
-R17
-Euser_logic_tb
-Z246 w1645219116
-R2
-R3
-R26
-R1
-R127
-R4
-R5
-R6
-!i122 3005
-R7
-Z247 8C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/user_logic_tb.vhd
-Z248 FC:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/user_logic_tb.vhd
-l0
-R29
-VO>;ojYWMaF>boP=3l_XLC3
-!s100 P3h]e[PB[LEXkamB@T^il2
-R11
-32
-Z249 !s110 1645560885
-!i10b 1
-Z250 !s108 1645560884.000000
-Z251 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/user_logic_tb.vhd|
-Z252 !s107 C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/user_logic_tb.vhd|
-!i113 1
-R16
-R17
-Asim
-R2
-R3
-R26
-R1
-R127
-R4
-R5
-R6
-DEx4 work 13 user_logic_tb 0 22 O>;ojYWMaF>boP=3l_XLC3
-!i122 3005
-l206
-L44 355
-VF0PZiX5iOiLH7[OA1m0JG1
-!s100 CN7ZXF4`=ZWR7eFF^>B2X3
-R11
-32
-R249
 !i10b 1
 R250
 R251
@@ -1654,37 +1731,360 @@ R252
 !i113 1
 R16
 R17
-Pverinfo
-R34
+Eregional_sync
+Z253 w1648469830
+R1
+R2
+R3
+R25
+R59
+R4
 R5
 R6
-!i122 3001
-w1601660029
+!i122 3171
 R7
-8C:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfov203a.vhd
-FC:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfov203a.vhd
+Z254 8C:/Users/user/Desktop/Meng-Thesis/hdl/regional_sync.vhd
+Z255 FC:/Users/user/Desktop/Meng-Thesis/hdl/regional_sync.vhd
+l0
+R10
+V2kSdk^G5o@2aR9EJ<Wg241
+!s100 8EizV9d^=Y6eNQXad5zbR3
+R11
+32
+R220
+!i10b 1
+R250
+Z256 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/regional_sync.vhd|
+Z257 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/regional_sync.vhd|
+!i113 1
+R16
+R17
+Artl
+R1
+R2
+R3
+R25
+R59
+R4
+R5
+R6
+DEx4 work 13 regional_sync 0 22 2kSdk^G5o@2aR9EJ<Wg241
+!i122 3171
+l153
+L83 476
+VZ3Om5iOaG4H4Y?c:45:d?2
+!s100 J22D;e6X84QGmCJLAePRX1
+R11
+32
+Z258 !s110 1648469903
+!i10b 1
+R250
+R256
+R257
+!i113 1
+R16
+R17
+Eregional_zs
+Z259 w1648462895
+R5
+R6
+!i122 3172
+R7
+Z260 8C:/Users/user/Desktop/Meng-Thesis/hdl/regional_zs.vhd
+Z261 FC:/Users/user/Desktop/Meng-Thesis/hdl/regional_zs.vhd
+l0
+R62
+V1K>C6WZmR:8Gf;a7oKE1E0
+!s100 ]@Kn^OEnRN>9CDiLcXY8O2
+R11
+32
+R258
+!i10b 1
+Z262 !s108 1648469903.000000
+Z263 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/regional_zs.vhd|
+Z264 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/regional_zs.vhd|
+!i113 1
+R16
+R17
+Artl
+R5
+R6
+DEx4 work 11 regional_zs 0 22 1K>C6WZmR:8Gf;a7oKE1E0
+!i122 3172
+l92
+R246
+Vj[0O278@n7A64C39?lRAI1
+!s100 GT7nQ^h`CU<mzC;74Re5X3
+R11
+32
+R258
+!i10b 1
+R262
+R263
+R264
+!i113 1
+R16
+R17
+Etransmitter
+R159
+R1
+R25
+R4
+R2
+R3
+R5
+R6
+!i122 3173
+R7
+Z265 8C:/Users/user/Desktop/Meng-Thesis/hdl/transmitter.vhd
+Z266 FC:/Users/user/Desktop/Meng-Thesis/hdl/transmitter.vhd
+l0
+L44 1
+Vz1BJh7MUXiKQk4Jd9HL=n1
+!s100 Pg3D_7I;>jc;3;NjnHF;B3
+R11
+32
+R258
+!i10b 1
+R262
+Z267 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/transmitter.vhd|
+Z268 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/transmitter.vhd|
+!i113 1
+R16
+R17
+Artl
+R1
+R25
+R4
+R2
+R3
+R5
+R6
+DEx4 work 11 transmitter 0 22 z1BJh7MUXiKQk4Jd9HL=n1
+!i122 3173
+l102
+L81 239
+VV<k;IokH=oMmU:1YLa@Sf1
+!s100 fo8hX2@O`>3VB19Zl?RNX1
+R11
+32
+R258
+!i10b 1
+R262
+R267
+R268
+!i113 1
+R16
+R17
+Ettc_ulogic
+R159
+R25
+R1
+R4
+R2
+R3
+R5
+R6
+!i122 3174
+R7
+Z269 8C:/Users/user/Desktop/Meng-Thesis/hdl/ttc_ulogic.vhd
+Z270 FC:/Users/user/Desktop/Meng-Thesis/hdl/ttc_ulogic.vhd
+l0
+L41 1
+VNKb^L@JW18bSzSlR]^4h02
+!s100 _mG^^[`KZ:hfR4oKVD^M`1
+R11
+32
+Z271 !s110 1648469904
+!i10b 1
+R262
+Z272 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/ttc_ulogic.vhd|
+Z273 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/ttc_ulogic.vhd|
+!i113 1
+R16
+R17
+Artl
+R25
+R1
+R4
+R2
+R3
+R5
+R6
+DEx4 work 10 ttc_ulogic 0 22 NKb^L@JW18bSzSlR]^4h02
+!i122 3174
+l100
+L70 280
+VJEP>CMCG[dLnQWU:j@gmj1
+!s100 :K[<_BfM0L948BU>42WEf3
+R11
+32
+R271
+!i10b 1
+R262
+R272
+R273
+!i113 1
+R16
+R17
+Pulverinfo
+R33
+R5
+R6
+!i122 3156
+R0
+R7
+8C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/ulverinfo.vhd
+FC:/Users/user/Desktop/Meng-Thesis/sim/cru_files/ulverinfo.vhd
+l0
+L4 1
+VeZ=[JYW;`eSjHklNOR>zP0
+!s100 C3DH_DoM@[:DW@F_T?X`L3
+R11
+32
+R200
+!i10b 1
+Z274 !s108 1648469895.000000
+!s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/ulverinfo.vhd|
+!s107 C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/ulverinfo.vhd|
+!i113 1
+R16
+R17
+Euser_logic
+Z275 w1648463422
+R25
+R1
+R4
+R2
+R3
+R5
+R6
+!i122 3175
+R7
+Z276 8C:/Users/user/Desktop/Meng-Thesis/hdl/user_logic.vhd
+Z277 FC:/Users/user/Desktop/Meng-Thesis/hdl/user_logic.vhd
+l0
+L45 1
+VZgA[mi@V5Am_CBCn[?a0>1
+!s100 H4G03>dLjnYKmc=9L[R]H3
+R11
+32
+R271
+!i10b 1
+R55
+Z278 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/hdl/user_logic.vhd|
+Z279 !s107 C:/Users/user/Desktop/Meng-Thesis/hdl/user_logic.vhd|
+!i113 1
+R16
+R17
+Artl
+R25
+R1
+R4
+R2
+R3
+R5
+R6
+DEx4 work 10 user_logic 0 22 ZgA[mi@V5Am_CBCn[?a0>1
+!i122 3175
+l114
+L95 148
+V=25iFdS36RSl:]nFdo`da1
+!s100 ]U452Q5;2HAY;XC0KXCzT2
+R11
+32
+R271
+!i10b 1
+R55
+R278
+R279
+!i113 1
+R16
+R17
+Euser_logic_tb
+Z280 w1648468889
+R2
+R3
+R25
+R1
+R59
+R4
+R5
+R6
+!i122 3179
+R7
+Z281 8C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/user_logic_tb.vhd
+Z282 FC:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/user_logic_tb.vhd
+l0
+R28
+VO>;ojYWMaF>boP=3l_XLC3
+!s100 P3h]e[PB[LEXkamB@T^il2
+R11
+32
+R230
+!i10b 1
+Z283 !s108 1648469906.000000
+Z284 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/user_logic_tb.vhd|
+Z285 !s107 C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/user_logic_tb.vhd|
+!i113 1
+R16
+R17
+Asim
+R2
+R3
+R25
+R1
+R59
+R4
+R5
+R6
+Z286 DEx4 work 13 user_logic_tb 0 22 O>;ojYWMaF>boP=3l_XLC3
+!i122 3179
+l206
+Z287 L44 355
+Z288 VgdQZNPh7kPD0cG24R936e1
+Z289 !s100 <]IKXSE]aG`ZieAW9N0;N2
+R11
+32
+R230
+!i10b 1
+R283
+R284
+R285
+!i113 1
+R16
+R17
+Pverinfo
+R33
+R5
+R6
+!i122 3158
+R0
+R7
+8C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfov203a.vhd
+FC:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfov203a.vhd
 l0
 L4 1
 VaHYSDB=Q:=h<fRf5EX1012
 !s100 jaQ@H`YJN=gST<V_1o@_@2
 R11
 32
-Z253 !s110 1645560881
+Z290 !s110 1648469896
 !i10b 1
-R62
-!s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfov203a.vhd|
-!s107 C:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfov203a.vhd|
+R30
+!s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfov203a.vhd|
+!s107 C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfov203a.vhd|
 !i113 1
 R16
 R17
 Pverinfopkg
 R5
 R6
-!i122 3000
-Z254 w1602658584
+!i122 3157
+R0
 R7
-Z255 8C:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfopkg.vhd
-Z256 FC:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfopkg.vhd
+Z291 8C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfopkg.vhd
+Z292 FC:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfopkg.vhd
 l0
 L17 1
 Vc88XFR=FQXF[J2?9ciW2k1
@@ -1692,30 +2092,30 @@ Vc88XFR=FQXF[J2?9ciW2k1
 R11
 32
 b1
-R253
+R290
 !i10b 1
-Z257 !s108 1645560880.000000
-Z258 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfopkg.vhd|
-Z259 !s107 C:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfopkg.vhd|
+R274
+Z293 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfopkg.vhd|
+Z294 !s107 C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfopkg.vhd|
 !i113 1
 R16
 R17
 Bbody
-R34
+R33
 R5
 R6
-!i122 3000
+!i122 3157
 l0
 L54 1
 V;NBXXF?`lmRf[gd7Fd1en0
 !s100 R4;C9ZM@ADXD^hme[dORB3
 R11
 32
-R253
+R290
 !i10b 1
-R257
-R258
-R259
+R274
+R293
+R294
 !i113 1
 R16
 R17

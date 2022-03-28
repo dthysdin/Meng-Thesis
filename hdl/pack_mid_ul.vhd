@@ -153,7 +153,7 @@ package pack_mid_ul is
 	--=======================================================--
 	-- component declaration 
 	--=======================================================--
-	component regional_decoder is 
+	component regional_zs is 
 	port (
 	-------------------------------------------------------------------
 	clk_240	    : in std_logic;
@@ -168,9 +168,9 @@ package pack_mid_ul is
 	reg_data_o  : out std_logic_vector(39 downto 0)  
 	------------------------------------------------------------------- 
 		);
-	end component regional_decoder;
+	end component regional_zs;
 	 
-	component regional_control is 
+	component regional_sync is 
 	generic (g_LINK_ID : integer; g_REGIONAL_ID : integer);
 	port (
 	-------------------------------------------------------------------
@@ -199,7 +199,7 @@ package pack_mid_ul is
 	reg_crateID_val_o : out std_logic	
 	-------------------------------------------------------------------
 	 );  
-	end component regional_control;
+	end component regional_sync;
 	
 	component regional_elink is
 	generic (g_LINK_ID : integer; g_REGIONAL_ID : integer);
@@ -234,7 +234,7 @@ package pack_mid_ul is
 	 );  
 	end component regional_elink;	
 	
-	component local_decoder is
+	component local_zs is
 	generic (g_LINK_ID : integer; g_REGIONAL_ID : integer; g_LOCAL_ID : integer);
 	port (
 	-------------------------------------------------------------------
@@ -250,9 +250,9 @@ package pack_mid_ul is
 	loc_data_o     : out std_logic_vector(167 downto 0) 
 	-------------------------------------------------------------------
 	 );  
-	end component local_decoder;
+	end component local_zs;
 	
-	component local_control is
+	component local_sync is
 	generic (g_LOCAL_ID : integer);
 	port (
 	-------------------------------------------------------------------
@@ -279,7 +279,7 @@ package pack_mid_ul is
 	loc_overflow_o : out std_logic
 	-------------------------------------------------------------------
 	 );  
-	end component local_control;
+	end component local_sync;
 	
 	component local_elink is
 	generic (g_LINK_ID : integer; g_REGIONAL_ID : integer; g_LOCAL_ID : integer);
@@ -312,7 +312,7 @@ package pack_mid_ul is
 	 );  
 	end component local_elink;
 	
-	component elink_mux is
+	component event_mux is
 	generic (g_LINK_ID : integer; g_REGIONAL_ID : integer);
 	port (
 	-----------------------------------------------------------------------
@@ -340,9 +340,9 @@ package pack_mid_ul is
 	mux_data_o	   : out std_logic_vector(7 downto 0)
 
 	);  
-	end component elink_mux;
+	end component event_mux;
 	
-	component packetizer is
+	component payload_serializer is
 	generic ( g_LINK_ID : integer);
 	port (
 	-----------------------------------------------------------------------
@@ -371,7 +371,7 @@ package pack_mid_ul is
 	payload_rdreq_i   : in std_logic_vector(1 downto 0)							
 	------------------------------------------------------------------------
 				);  
-	end component packetizer;
+	end component payload_serializer;
 	
 	component header is
 	port (
@@ -449,7 +449,7 @@ package pack_mid_ul is
 				);   
 	end component gbt_ulogic;
 	
-	component gbt_ulogic_mux is
+	component data_readout is
 	generic (g_DWRAPPER_ID : integer; g_HALF_NUM_GBT_USED : integer);
 	port (
 	-----------------------------------------------------------------------
@@ -475,9 +475,9 @@ package pack_mid_ul is
 	dw_datapath_o      : out t_mid_dw_datapath	
 	------------------------------------------------------------------------
 				);  
-	end component gbt_ulogic_mux;
+	end component data_readout;
 	
-	component gbt_ulogic_select is
+	component gbt_map is
 	generic ( g_NUM_GBT_INPUT: integer; g_NUM_GBT_OUTPUT : natural); 
 	port (
 	-------------------------------------------------------------------
@@ -488,7 +488,7 @@ package pack_mid_ul is
 	mid_rx_bus_o	: out t_mid_gbt_array(g_NUM_GBT_OUTPUT-1 downto 0)
 	-------------------------------------------------------------------
 	 );  
-	end component gbt_ulogic_select;
+	end component gbt_map;
 	
 	component avalon_ulogic is
 	port (
@@ -628,34 +628,6 @@ package pack_mid_ul is
 end pack_mid_ul;
  
 package body pack_mid_ul is 
-
---	-- <sum_Array16bit>
---	function sum_Array16bit(din : Array16bit) return unsigned is
---	 variable sum_out : unsigned(15 downto 0);
---	 variable dout : unsigned(15 downto 0);
---    begin 
---	 -- default 
---	 sum_out := (others => '0');
---	 for i in din'reverse_range loop 
---	  sum_out := sum_out + unsigned(din(i));
---	 end loop;
---	 dout := sum_out;
---	 return dout;
---	end function sum_Array16bit;
---
---	-- <sum_Array12bit>
---	function sum_Array12bit(din : t_mid_missing_cnt_array) return unsigned is
---	 variable sum_out : unsigned(11 downto 0);
---	 variable dout : unsigned(11 downto 0);
---	begin 
---	 -- default 
---	 sum_out := (others => '0');
---	 for i in din'reverse_range loop 
---	  sum_out := sum_out + unsigned(din(i));
---	 end loop;
---	 dout := sum_out;
---	 return dout;
---	end function sum_Array12bit;
 
 end pack_mid_ul;
 --=============================================================================

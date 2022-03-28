@@ -90,7 +90,7 @@ architecture rtl of avalon_ulogic is
                                             mid_cruid   => x"0",             -- default MID CRUID is 0         
                                             mid_switch  => x"0",             -- default MID switch is 0
                                             mid_mapping => (others => '0'),  -- default MID GBT mapping is 0 (32-bit per EPN)
-                                            mid_sync    => x"080"); -- x"080");          -- default MID sync  x"080" (synchronization every 128 HBF) 
+                                            mid_sync    => x"080");          -- default MID sync  x"080" (synchronization every 128 HBF) 
 
 begin	
 
@@ -133,7 +133,7 @@ begin
 	-----------------------------------------------------------------------------
 	id_comp : avalon_mm_slave
         generic map (
-        MODE_LG => 4, --c_MODE_LGR, 
+        MODE_LG => 4, 
         AWIDTH  => 8,
         MODE    => (0 to 3  => x"1", -- input 
                     others  => x"4") -- disabled 
@@ -168,7 +168,7 @@ begin
         MODE    => (0        => x"0", -- output
                     1 to 5   => x"2", -- output + input
                     6 to 12  => x"4", -- disabled for the moment (not used by MID)
-                    13 to 31 => x"1", -- input 
+                    13 to 14 => x"1", -- 2 gbt inputs 
                     others   => x"4") -- disabled
         )
         port map (
@@ -241,11 +241,11 @@ begin
          if rising_edge(MMS_CLK) then
           -- EPN#0
           if s_av_wr(3) = '1' then
-           ---s_config.mid_mapping(2*c_NUM_GBT_USED-1 downto 0) <= s_av_o(3)(2*c_NUM_GBT_USED-1 downto 0);
+           s_config.mid_mapping(3 downto 0) <= s_av_o(3)(3 downto 0);
           end if;
           -- EPN#1
           if s_av_wr(4) = '1' then
-           --s_config.mid_mapping(4*c_NUM_GBT_USED-1 downto 2*c_NUM_GBT_USED) <= s_av_o(4)(4*c_NUM_GBT_USED-1 downto 2*c_NUM_GBT_USED);
+           s_config.mid_mapping(7 downto 4) <= s_av_o(4)(3 downto 0);
           end if; 
          end if;
 	end process;
@@ -266,8 +266,8 @@ begin
         s_av_i(0)  <= x"0000000" & "000" & s_config.mid_rst;
         s_av_i(1)  <= x"0000000" & s_config.mid_cruid;
         s_av_i(2)  <= x"00000" & s_config.mid_sync; 
-        s_av_i(3)  <= (others => '0'); -- s_av_i(3)(2*c_NUM_GBT_USED-1 downto 0) <= s_config.mid_mapping(2*c_NUM_GBT_USED-1 downto 0);
-        s_av_i(4)  <= (others => '0'); -- s_av_i(4)(4*c_NUM_GBT_USED-1 downto 2*c_NUM_GBT_USED) <= s_config.mid_mapping(4*c_NUM_GBT_USED-1 downto 2*c_NUM_GBT_USED);
+        s_av_i(3)(3 downto 0)  <= s_config.mid_mapping(3 downto 0);
+        s_av_i(4)(3 downto 0)  <= s_config.mid_mapping(7 downto 4);
         s_av_i(5)  <= x"0000000" & s_config.mid_switch;
 
         s_av_i(13) <= monitor.trg;

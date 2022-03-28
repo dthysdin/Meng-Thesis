@@ -47,8 +47,8 @@ architecture sim of user_logic_tb is
 	-- ========================================================
 	constant g_NUM_GBT_INPUT: integer := 24;
 	constant g_NUM_GBT_USED	: integer := 16;
-	constant g_FILE_EPN1 : string(35 downto 1) := "ul_output_files/user_logic_enp1.txt";
-	constant g_FILE_EPN0 : string(35 downto 1) := "ul_output_files/user_logic_epn0.txt";
+	constant g_FILE_EPN1 : string(34 downto 1) := "ul_output_files/user_logic_ep1.txt";
+	constant g_FILE_EPN0 : string(34 downto 1) := "ul_output_files/user_logic_ep0.txt";
 	-- ========================================================
 	-- signal declarations of the design under test
 	-- ========================================================

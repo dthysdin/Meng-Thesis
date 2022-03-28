@@ -122,10 +122,10 @@ begin
     -- DAQ is enabled between sox trigger from the LTU and the eox trigger from all active e-links
 	-- MID e-link rx enable input is valid when the GBT link is connected and ready  
 	-- MID e-link rx valid input is valid during 1 out 6 (240MHz) clock cycles
-	--======================--
-	-- REGIONAL DECODER	--
-	--======================--
-	regional_decoder_inst: regional_decoder
+	--==============--
+	-- REGIONAL ZS	--
+	--==============--
+	regional_zs_inst: regional_zs
 	port map (
 	clk_240        => clk_240,
 	--
@@ -137,10 +137,10 @@ begin
 	--
 	reg_val_o      => s_reg_val,
 	reg_data_o     => s_reg_data);
-	--======================--
-	-- REGIONAL CONTROL 	--
-	--======================--
-	regional_control_inst: regional_control
+	--==================--
+	-- REGIONAL SYNC 	--
+	--==================--
+	regional_sync_inst: regional_sync
 	generic map ( g_REGIONAL_ID => g_REGIONAL_ID, g_LINK_ID => g_LINK_ID)
 	port map (
 	clk_240           => clk_240,
@@ -278,35 +278,7 @@ begin
 	reg_missing_o  <= s_reg_missing;
 	reg_crateID_o  <= s_reg_crateID;
 	reg_crateID_val_o  <= s_reg_crateID_val;
-	
-	
-	p_write_cnt : process
-	file my_file : text open write_mode is "ul_input_files/sim_reg_tx.txt";
-	variable my_line  : line;
-	variable my_count : integer := 0;
-	variable my_select: std_logic_vector(1 downto 0) := "00";
-    begin
 
-	my_select := s_reg_rx_val &  reg_rdreq_i;
-	
-	wait until rising_edge(clk_240);
-
-	 case my_select is 
-	 when "01" =>
-	 	my_count := my_count -1;
-		write(my_line, my_count);
-		writeline(my_file, my_line);
-	 when "10" => 
-	 	my_count := my_count +1;
-	 	write(my_line, my_count);
-		writeline(my_file, my_line);
-	 when others => my_count := my_count;
-	 end case;
-
-	end process p_write_cnt;
-
-
-	
 end rtl;
 --===========================================================================--
 -- architecture end

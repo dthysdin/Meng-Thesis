@@ -22,7 +22,7 @@
 -- TODO:  Completed 
 -- <nothing to do>
 -------------------------------------------------------------------------------
--- Description: This module instantiates the local_decoder and the local_ctrl  
+-- Description: This module instantiates the local_zs and the local_sync  
 -- modules. It stores the local data in a buffer and performs pipelining to solve the
 -- failling paths errors 
 -------------------------------------------------------------------------------
@@ -114,10 +114,10 @@ begin
 	--==========================================--
 	-- continuous and triggered operation modes --
 	--==========================================--
-	--===============--
-	-- LOCAL DECODER --
-	--===============--
-	local_decoder_inst: local_decoder
+	--==========--
+	-- LOCAL ZS --
+	--==========--
+	local_zs_inst: local_zs
 	generic map (g_LINK_ID => g_LINK_ID, g_REGIONAL_ID => g_REGIONAL_ID, g_LOCAL_ID => g_LOCAL_ID)
 	port map (
 	clk_240	         => clk_240,
@@ -130,10 +130,10 @@ begin
 	--
 	loc_val_o        => s_loc_val,
 	loc_data_o       => s_loc_data);
-	--===============--
-	-- LOCAL CONTROL --
-	--===============--
-	local_control_inst: local_control
+	--============--
+	-- LOCAL SYNC --
+	--============--
+	local_sync_inst: local_sync
 	generic map (g_LOCAL_ID => g_LOCAL_ID)
 	port map (
 	clk_240	           => clk_240,
@@ -264,32 +264,6 @@ begin
 	loc_active_o   <= s_loc_active;
 	loc_inactive_o <= s_loc_inactive;
 	loc_missing_o  <= s_loc_missing;
-
-
-	p_write_cnt : process
-	file my_file : text open write_mode is "ul_input_files/sim_loc_tx.txt";
-	variable my_line  : line;
-	variable my_count : integer := 0;
-	variable my_select: std_logic_vector(1 downto 0) := "00";
-    begin
-
-	my_select := s_loc_rx_val &  loc_rdreq_i;
-	
-	wait until rising_edge(clk_240);
-
-	 case my_select is 
-	 when "01" =>
-	 	my_count := my_count -1;
-		write(my_line, my_count);
-		writeline(my_file, my_line);
-	 when "10" => 
-	 	my_count := my_count +1;
-	 	write(my_line, my_count);
-		writeline(my_file, my_line);
-	 when others => my_count := my_count;
-	 end case;
-
-	end process p_write_cnt;
 
 end rtl;
 --=============================================================================

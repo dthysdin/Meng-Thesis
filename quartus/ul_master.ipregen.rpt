@@ -1,0 +1,93 @@
+IP Upgrade report for ul_master
+Mon Mar 28 13:24:44 2022
+Quartus Prime Version 21.1.0 Build 842 10/21/2021 SJ Lite Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. IP Upgrade Summary
+  3. Successfully Upgraded IP Components
+  4. IP Upgrade Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2021  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+
+
+
++----------------------------------------------------------------------------+
+; IP Upgrade Summary                                                         ;
++------------------------------+---------------------------------------------+
+; IP Components Upgrade Status ; Passed - Mon Mar 28 13:24:44 2022           ;
+; Quartus Prime Version        ; 21.1.0 Build 842 10/21/2021 SJ Lite Edition ;
+; Revision Name                ; ul_master                                   ;
+; Top-level Entity Name        ; user_logic                                  ;
+; Family                       ; MAX 10                                      ;
++------------------------------+---------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------+
+; Successfully Upgraded IP Components                                                                                          ;
++--------------+----------------+---------+------------------------+------------------------+------------------------+---------+
+; Entity Name  ; Component Name ; Version ; Original Source File   ; Generation File Path   ; New Source File        ; Message ;
++--------------+----------------+---------+------------------------+------------------------+------------------------+---------+
+; fifo_256x256 ; FIFO           ; 20.1    ; ../ip/fifo_256x256.qip ; ../ip/fifo_256x256.vhd ; ../ip/fifo_256x256.qip ;         ;
+; fifo_168x128 ; FIFO           ; 20.1    ; ../ip/fifo_168x128.qip ; ../ip/fifo_168x128.vhd ; ../ip/fifo_168x128.qip ;         ;
+; fifo_168x64  ; FIFO           ; 20.1    ; ../ip/fifo_168x64.qip  ; ../ip/fifo_168x64.vhd  ; ../ip/fifo_168x64.qip  ;         ;
+; fifo_64x8    ; FIFO           ; 20.1    ; ../ip/fifo_64x8.qip    ; ../ip/fifo_64x8.vhd    ; ../ip/fifo_64x8.qip    ;         ;
+; fifo_40x128  ; FIFO           ; 20.1    ; ../ip/fifo_40x128.qip  ; ../ip/fifo_40x128.vhd  ; ../ip/fifo_40x128.qip  ;         ;
+; fifo_40x64   ; FIFO           ; 20.1    ; ../ip/fifo_40x64.qip   ; ../ip/fifo_40x64.vhd   ; ../ip/fifo_40x64.qip   ;         ;
+; fifo_16x8    ; FIFO           ; 20.1    ; ../ip/fifo_16x8.qip    ; ../ip/fifo_16x8.vhd    ; ../ip/fifo_16x8.qip    ;         ;
++--------------+----------------+---------+------------------------+------------------------+------------------------+---------+
+
+
++---------------------+
+; IP Upgrade Messages ;
++---------------------+
+Info (11902): Backing up file "../ip/fifo_256x256.vhd" to "../ip/fifo_256x256.BAK.vhd"
+Info (11837): Started upgrading IP component FIFO with file "../ip/fifo_256x256.vhd"
+Info (11902): Backing up file "../ip/fifo_168x128.vhd" to "../ip/fifo_168x128.BAK.vhd"
+Info (11837): Started upgrading IP component FIFO with file "../ip/fifo_168x128.vhd"
+Info (11902): Backing up file "../ip/fifo_168x64.vhd" to "../ip/fifo_168x64.BAK.vhd"
+Info (11837): Started upgrading IP component FIFO with file "../ip/fifo_168x64.vhd"
+Info (11902): Backing up file "../ip/fifo_64x8.vhd" to "../ip/fifo_64x8.BAK.vhd"
+Info (11837): Started upgrading IP component FIFO with file "../ip/fifo_64x8.vhd"
+Info (11902): Backing up file "../ip/fifo_40x128.vhd" to "../ip/fifo_40x128.BAK.vhd"
+Info (11837): Started upgrading IP component FIFO with file "../ip/fifo_40x128.vhd"
+Info (11902): Backing up file "../ip/fifo_40x64.vhd" to "../ip/fifo_40x64.BAK.vhd"
+Info (11837): Started upgrading IP component FIFO with file "../ip/fifo_40x64.vhd"
+Info (11902): Backing up file "../ip/fifo_16x8.vhd" to "../ip/fifo_16x8.BAK.vhd"
+Info (11837): Started upgrading IP component FIFO with file "../ip/fifo_16x8.vhd"
+Info (11131): Completed upgrading IP component FIFO with file "../ip/fifo_256x256.vhd"
+Info (11131): Completed upgrading IP component FIFO with file "../ip/fifo_168x128.vhd"
+Info (11131): Completed upgrading IP component FIFO with file "../ip/fifo_168x64.vhd"
+Info (11131): Completed upgrading IP component FIFO with file "../ip/fifo_64x8.vhd"
+Info (11131): Completed upgrading IP component FIFO with file "../ip/fifo_40x128.vhd"
+Info (11131): Completed upgrading IP component FIFO with file "../ip/fifo_40x64.vhd"
+Info (11131): Completed upgrading IP component FIFO with file "../ip/fifo_16x8.vhd"
+Info (23030): Evaluation of Tcl script c:/intelfpga_lite/21.1/quartus/common/tcl/internal/ip_regen/ip_regen.tcl was successful
+Info: Quartus Prime Shell was successful. 0 errors, 0 warnings
+    Info: Peak virtual memory: 4870 megabytes
+    Info: Processing ended: Mon Mar 28 13:24:44 2022
+    Info: Elapsed time: 00:00:20
+    Info: Total CPU time (on all processors): 00:00:28
+
+

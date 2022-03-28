@@ -130,10 +130,10 @@ begin
 	ttc_mode_o         => s_ttc_mode,  
 	ttc_pulse_o        => s_ttc_pulse
        );  
-	--===================--
-	-- gbt_ulogic_select -- 
-	--===================--
-	gbt_ulogic_select_inst: gbt_ulogic_select
+	--=========--
+	-- gbt_map -- 
+	--=========--
+	gbt_map_inst: gbt_map
 	generic map (g_NUM_GBT_INPUT => g_NUM_GBT_LINKS,     -- total number of cru gbt link ports available (24 links max)
                 g_NUM_GBT_OUTPUT => c_NUM_GBT_USED)      -- total number of cru gbt link ports used for MID   
 	port map (
@@ -143,10 +143,10 @@ begin
 	mid_mapping_i   => s_config.mid_mapping, 
 	mid_rx_bus_o	=> s_mid_rx_bus
 	 ); 
-	--================--
-	-- gbt_ulogic_mux --
-	--================--
-	gbt_ulogic_mux_inst0: gbt_ulogic_mux
+	--==============--
+	-- data_readout --
+	--==============--
+	data_readout_inst0: data_readout
 	generic map(g_DWRAPPER_ID => 0,                        -- ID of the CRU end-point 
                 g_HALF_NUM_GBT_USED => c_NUM_GBT_USED/2)   -- half the number of cru gbt link used for MID (8 links max)          
 	port map(
@@ -165,9 +165,9 @@ begin
 	dw_datapath_o      => s_dw_datapath(0)
 			);  
 	--================--
-	-- gbt_ulogic_mux --
+	-- data_readout --
 	--================--
-	gbt_ulogic_mux_inst1: gbt_ulogic_mux
+	data_readout_inst1: data_readout
 	generic map(g_DWRAPPER_ID => 1,                        -- ID of the CRU end-point 
                 g_HALF_NUM_GBT_USED => c_NUM_GBT_USED/2)   -- half the number of cru gbt link used for MID (8 links max)  
 	port map(

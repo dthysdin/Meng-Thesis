@@ -1,212 +1,4 @@
-C:/Users/user/Documents/Thesis/Code/hdl/elink_mux.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/elink_mux.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package NUMERIC_STD
--- Loading package pack_cru_core
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading package pack_mid_ul
--- Compiling entity elink_mux
--- Compiling architecture rtl of elink_mux
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/cru_files/pack_cru_core.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/cru_files/pack_cru_core.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package NUMERIC_STD
--- Compiling package pack_cru_core
--- Compiling package body pack_cru_core
--- Loading package pack_cru_core
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/ttc_ulogic.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/ttc_ulogic.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading package NUMERIC_STD
--- Loading package pack_cru_core
--- Loading package pack_mid_ul
--- Compiling entity ttc_ulogic
--- Compiling architecture rtl of ttc_ulogic
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/transmitter.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/transmitter.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading package NUMERIC_STD
--- Loading package pack_cru_core
--- Loading package pack_mid_ul
--- Compiling entity transmitter
--- Compiling architecture rtl of transmitter
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/ip/fifo_168x64.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/ip/fifo_168x64.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Compiling entity fifo_168x64
--- Compiling architecture SYN of fifo_168x64
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/regional_decoder.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/regional_decoder.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Compiling entity regional_decoder
--- Compiling architecture rtl of regional_decoder
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/ip/fifo_64x8.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/ip/fifo_64x8.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Compiling entity fifo_64x8
--- Compiling architecture SYN of fifo_64x8
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcreduce.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcreduce.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Compiling entity cdcreduce
--- Compiling architecture imp of cdcreduce
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/cru_files/ulverinfo.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/cru_files/ulverinfo.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Compiling package ulverinfo
--- Loading package verinfopkg
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading package NUMERIC_STD
--- Loading package pack_cru_core
--- Loading package pack_mid_ul
--- Compiling entity gbt_ulogic
--- Compiling architecture rtl of gbt_ulogic
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfopkg.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfopkg.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Compiling package verinfopkg
--- Compiling package body verinfopkg
--- Loading package verinfopkg
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcbus.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcbus.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Compiling entity cdcbus
--- Compiling architecture imp of cdcbus
--- Loading entity cdcor
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/local_decoder.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/local_decoder.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading package NUMERIC_STD
--- Compiling entity local_decoder
--- Compiling architecture rtl of local_decoder
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/regional_control.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/regional_control.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package NUMERIC_STD
--- Loading package std_logic_textio
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading package pack_cru_core
--- Loading package pack_mid_ul
--- Compiling entity regional_control
--- Compiling architecture rtl of regional_control
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_bus_arbitrer.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_bus_arbitrer.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package NUMERIC_STD
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading package pack_cru_core
--- Compiling entity avalon_mm_bus_arbitrer
--- Compiling architecture imp of avalon_mm_bus_arbitrer
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/packetizer.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/packetizer.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading package NUMERIC_STD
--- Loading package pack_cru_core
--- Loading package pack_mid_ul
--- Compiling entity packetizer
--- Compiling architecture rtl of packetizer
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/regional_elink.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/regional_elink.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package NUMERIC_STD
--- Loading package std_logic_textio
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading package pack_cru_core
--- Loading package pack_mid_ul
--- Compiling entity regional_elink
--- Compiling architecture rtl of regional_elink
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/local_control.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/local_control.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading package NUMERIC_STD
--- Loading package std_logic_textio
--- Loading package pack_cru_core
--- Loading package pack_mid_ul
--- Compiling entity local_control
--- Compiling architecture rtl of local_control
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/ip/fifo_16x8.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/ip/fifo_16x8.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Compiling entity fifo_16x8
--- Compiling architecture SYN of fifo_16x8
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/user_logic_tb.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/user_logic_tb.vhd
+C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/user_logic_tb.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/user_logic_tb.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
@@ -220,7 +12,34 @@ Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 
 -- Compiling entity user_logic_tb
 -- Compiling architecture sim of user_logic_tb
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/user_logic.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/user_logic.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/regional_elink.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/regional_elink.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Loading package std_logic_textio
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading package pack_cru_core
+-- Loading package pack_mid_ul
+-- Compiling entity regional_elink
+-- Compiling architecture rtl of regional_elink
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/payload_serializer.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/payload_serializer.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading package NUMERIC_STD
+-- Loading package pack_cru_core
+-- Loading package pack_mid_ul
+-- Compiling entity payload_serializer
+-- Compiling architecture rtl of payload_serializer
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/user_logic.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/user_logic.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
@@ -233,7 +52,21 @@ Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 
 -- Compiling entity user_logic
 -- Compiling architecture rtl of user_logic
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/local_elink.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/local_elink.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/regional_sync.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/regional_sync.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Loading package std_logic_textio
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading package pack_cru_core
+-- Loading package pack_mid_ul
+-- Compiling entity regional_sync
+-- Compiling architecture rtl of regional_sync
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/local_elink.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/local_elink.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
@@ -247,7 +80,7 @@ Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 
 -- Compiling entity local_elink
 -- Compiling architecture rtl of local_elink
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_ttc_tb.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_ttc_tb.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_ttc_tb.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_ttc_tb.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
@@ -259,23 +92,7 @@ Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 
 -- Compiling entity read_ttc_tb
 -- Compiling architecture sim of read_ttc_tb
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/ip/fifo_256x256.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/ip/fifo_256x256.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Compiling entity fifo_256x256
--- Compiling architecture SYN of fifo_256x256
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/ip/fifo_168x128.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/ip/fifo_168x128.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Compiling entity fifo_168x128
--- Compiling architecture SYN of fifo_168x128
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_select.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_select.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/data_readout.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/data_readout.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
@@ -283,12 +100,13 @@ Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 
 -- Loading package ATTRIBUTES
 -- Loading package std_logic_misc
 -- Loading package NUMERIC_STD
+-- Loading package std_logic_textio
 -- Loading package pack_cru_core
 -- Loading package pack_mid_ul
--- Compiling entity gbt_ulogic_select
--- Compiling architecture rtl of gbt_ulogic_select
+-- Compiling entity data_readout
+-- Compiling architecture rtl of data_readout
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_gbt_tb.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/read_gbt_tb.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_gbt_tb.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/read_gbt_tb.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
@@ -300,31 +118,7 @@ Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 
 -- Compiling entity read_gbt_sim
 -- Compiling architecture sim of read_gbt_sim
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcor.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/cru_files/cdcor.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Compiling entity cdcor
--- Compiling architecture imp of cdcor
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading entity cdcreduce
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_slave.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/cru_files/avalon_mm_slave.vhd
-Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
--- Loading package STANDARD
--- Loading package TEXTIO
--- Loading package std_logic_1164
--- Loading package ATTRIBUTES
--- Loading package std_logic_misc
--- Loading package NUMERIC_STD
--- Loading package pack_cru_core
--- Compiling entity avalon_mm_slave
--- Compiling architecture imp of avalon_mm_slave
--- Loading package MATH_REAL
-
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_mux.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/gbt_ulogic_mux.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/local_sync.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/local_sync.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
@@ -335,10 +129,21 @@ Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 
 -- Loading package std_logic_textio
 -- Loading package pack_cru_core
 -- Loading package pack_mid_ul
--- Compiling entity gbt_ulogic_mux
--- Compiling architecture rtl of gbt_ulogic_mux
+-- Compiling entity local_sync
+-- Compiling architecture rtl of local_sync
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/pack_mid_ul.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/pack_mid_ul.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcor.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcor.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Compiling entity cdcor
+-- Compiling architecture imp of cdcor
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading entity cdcreduce
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/pack_mid_ul.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/pack_mid_ul.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
@@ -351,15 +156,20 @@ Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 
 -- Compiling package body pack_mid_ul
 -- Loading package pack_mid_ul
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfov203a.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/cru_files/verinfov203a.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_slave.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_slave.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
 -- Loading package std_logic_1164
--- Compiling package verinfo
--- Loading package verinfopkg
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading package NUMERIC_STD
+-- Loading package pack_cru_core
+-- Compiling entity avalon_mm_slave
+-- Compiling architecture imp of avalon_mm_slave
+-- Loading package MATH_REAL
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/header.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/header.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/header.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/header.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
@@ -372,15 +182,15 @@ Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 
 -- Compiling entity header
 -- Compiling architecture rtl of header
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/ip/fifo_40x64.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/ip/fifo_40x64.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfov203a.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfov203a.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
 -- Loading package std_logic_1164
--- Compiling entity fifo_40x64
--- Compiling architecture SYN of fifo_40x64
+-- Compiling package verinfo
+-- Loading package verinfopkg
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/clk_gen_tb.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/sim/ul_testbench_files/clk_gen_tb.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/clk_gen_tb.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/ul_testbench_files/clk_gen_tb.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
@@ -391,15 +201,33 @@ Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 
 -- Compiling entity clk_gen
 -- Compiling architecture behavior of clk_gen
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/ip/fifo_40x128.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/ip/fifo_40x128.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/gbt_map.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/gbt_map.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
 -- Loading package std_logic_1164
--- Compiling entity fifo_40x128
--- Compiling architecture SYN of fifo_40x128
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading package NUMERIC_STD
+-- Loading package pack_cru_core
+-- Loading package pack_mid_ul
+-- Compiling entity gbt_map
+-- Compiling architecture rtl of gbt_map
 
-} {} {}} C:/Users/user/Documents/Thesis/Code/hdl/avalon_ulogic.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Documents/Thesis/Code/hdl/avalon_ulogic.vhd
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/event_mux.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/event_mux.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Loading package pack_cru_core
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading package pack_mid_ul
+-- Compiling entity event_mux
+-- Compiling architecture rtl of event_mux
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/avalon_ulogic.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/avalon_ulogic.vhd
 Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
 -- Loading package STANDARD
 -- Loading package TEXTIO
@@ -413,5 +241,121 @@ Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 
 -- Compiling architecture rtl of avalon_ulogic
 -- Loading package verinfopkg
 -- Loading package ulverinfo
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/pack_cru_core.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/pack_cru_core.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Compiling package pack_cru_core
+-- Compiling package body pack_cru_core
+-- Loading package pack_cru_core
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/ttc_ulogic.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/ttc_ulogic.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading package NUMERIC_STD
+-- Loading package pack_cru_core
+-- Loading package pack_mid_ul
+-- Compiling entity ttc_ulogic
+-- Compiling architecture rtl of ttc_ulogic
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/transmitter.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/transmitter.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading package NUMERIC_STD
+-- Loading package pack_cru_core
+-- Loading package pack_mid_ul
+-- Compiling entity transmitter
+-- Compiling architecture rtl of transmitter
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/regional_zs.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/regional_zs.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Compiling entity regional_zs
+-- Compiling architecture rtl of regional_zs
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/ulverinfo.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/ulverinfo.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Compiling package ulverinfo
+-- Loading package verinfopkg
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcreduce.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcreduce.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Compiling entity cdcreduce
+-- Compiling architecture imp of cdcreduce
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/local_zs.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/local_zs.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading package NUMERIC_STD
+-- Compiling entity local_zs
+-- Compiling architecture rtl of local_zs
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/hdl/gbt_ulogic.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/hdl/gbt_ulogic.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading package NUMERIC_STD
+-- Loading package pack_cru_core
+-- Loading package pack_mid_ul
+-- Compiling entity gbt_ulogic
+-- Compiling architecture rtl of gbt_ulogic
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfopkg.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/verinfopkg.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Compiling package verinfopkg
+-- Compiling package body verinfopkg
+-- Loading package verinfopkg
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcbus.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/cdcbus.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Compiling entity cdcbus
+-- Compiling architecture imp of cdcbus
+-- Loading entity cdcor
+
+} {} {}} C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_bus_arbitrer.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Users/user/Desktop/Meng-Thesis/sim/cru_files/avalon_mm_bus_arbitrer.vhd
+Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Loading package ATTRIBUTES
+-- Loading package std_logic_misc
+-- Loading package pack_cru_core
+-- Compiling entity avalon_mm_bus_arbitrer
+-- Compiling architecture imp of avalon_mm_bus_arbitrer
 
 } {} {}}
